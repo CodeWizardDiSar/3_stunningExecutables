@@ -6,12 +6,19 @@ insertExercise = putStrLn "insertExercise"
 insertSubject  = putStrLn "insertSubject"
 
 insert = do
-  newline
-  printStrings [ "1: Insert Exercise"
-               , "2: Insert Subject" 
-               ]
-  newline
-  n <- getNumber
-  case n of 
-    1 -> insertExercise
-    2 -> insertSubject
+  subject <- askAndGet "subject plz"
+  findOrAddSuject
+  numberInString <- askAndGet "exercise number plz"
+  let number = read numberInString :: Int
+  date <- askAndGet "date plz"
+  saveExercise $ InfoToExercise 
+  --return $ InfoToExercise number subject
+
+findOrAddSubject = do
+  openDataFile
+
+openDataFile = do
+  answer <- isThereADataFile
+  case answer of 
+    True -> 
+
