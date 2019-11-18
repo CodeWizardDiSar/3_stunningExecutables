@@ -1,8 +1,8 @@
-sr = ../1_source
+sr = $(shell find '../1_source' -name '*.hs')
 ex = ../3_executable/exercises
 nf = ../4_notForMe
 
-all: $(sr)/*
+all: $(sr)
 	ghc -o $(ex) -odir $(nf) -hidir $(nf) $^ 
 
 clean:
