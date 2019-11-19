@@ -1,6 +1,11 @@
-module GeneralFunctions where
+module General where
 import System.Directory
 import Types
+
+myFoldr myFForA =
+  foldr (\a b -> myFForA a ++ b) []
+
+dataFile = "../0_data/data"
 
 getNumber :: IO Int
 getNumber = do

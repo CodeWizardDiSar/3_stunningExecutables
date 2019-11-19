@@ -1,39 +1,39 @@
 {-# LANGUAGE LambdaCase #-} 
 
 module FileToSubs where
+import Data.Function
 import Control.Arrow
 import Control.Monad.State
 import System.Directory
 import Types
+import General
 
-dataFile = "../0_data/data"
-isThereA = doesFileExist 
-readFrom = readFile
-flipArgsOf = flip
+exists = doesFileExist 
+contents = readFile
 noSubs = []
 
 fileSubs :: IO Subjects
 fileSubs = 
-  isThereA dataFile >>=
+  dataFile & exists >>=
   \case True  -> subsFromFile
         False -> return noSubs
 
 subsFromFile :: IO Subjects
 subsFromFile =
-  readFrom dataFile >>= subsFromFileConts
+  dataFile & contents >>= (subsFromString >>> return)
 
-subsFromFileConts :: String -> IO Subjects
-subsFromFileConts =
-  lines >>> evalState subs >>> return
+subsFromString :: String -> Subjects
+subsFromString =
+  lines >>> (subs & evalState)
 
 subs :: SLSubs
 subs =
-  get >>= ifNotEmpty remSubs
+  get >>= (remSubs & ifNotEmpty)
 
-ifNotEmpty :: State a [b] -> [c] -> State a [b]
-ifNotEmpty f =
+ifNotEmpty :: SLSubs -> Lines -> SLSubs
+ifNotEmpty = \s ->
   \case [] -> return []
-        _  -> f
+        _  -> s
 
 remSubs :: SLSubs
 remSubs =
@@ -44,32 +44,31 @@ remSubs =
 sub :: SLSub
 sub =
   getName >>= \name ->
-  exsUntil "ToDo" >>= \done ->
-  exsUntil "SubEnd" >>= \todo ->
-  return (name,done,todo)
+  exsTo "ToDo" >>= \done ->
+  exsTo "SubEnd" >>= \todo ->
+  return (name,done,todo) 
 
 getName =
   get >>= \(fst:rem) ->
   put rem >> return fst
 
-exsUntil :: Line -> SLExs
-exsUntil stopLine =
+exsTo :: Line -> SLExs
+exsTo = \stopLine ->
   get >>= \(fst:rem) ->
   case fst == stopLine of
     True  -> put rem >> return []
-    False -> remExsUntil stopLine
+    False -> remExsTo stopLine
 
-remExsUntil :: Line -> SLExs
-remExsUntil stopLine =
+remExsTo :: Line -> SLExs
+remExsTo = \stopLine ->
   ex >>= \x ->
-  exsUntil stopLine >>= \xs ->
+  exsTo stopLine >>= \xs ->
   return $ x:xs
 
 ex :: SLEx
 ex = 
   get >>= \(fst:rem) ->
-  put rem >>
-  (return $ processed fst)
+  put rem >> (return $ processed fst)
 
 processed :: String -> Exercise
 processed =
@@ -77,6 +76,6 @@ processed =
   \case
     ["NoName",num] -> (Nothing,read num)
     [name,num]     -> (Just name,read num)
-    x              -> error $ exError ++ show x
+    x              -> show x & (exError ++) & error 
 
 exError = "Wrong Exercise Format in file: "
