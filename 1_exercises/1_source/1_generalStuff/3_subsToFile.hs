@@ -5,11 +5,11 @@ import Control.Arrow
 import Types
 import General
 
-writeTo = writeFile
-
 subsToFile :: Subjects -> IO ()
 subsToFile = 
-  subsToString >>> (writeTo dataFile)
+  subsToString >>> \s ->
+  nextVersFile >>= \f ->
+  writeFile f s
 
 subsToString :: Subjects -> String
 subsToString =
@@ -17,10 +17,22 @@ subsToString =
 
 subToString :: Subject -> String
 subToString = \(name,done,todo) -> 
-  name ++ "\n" ++ myFoldr exsToString [done,todo]
-  
-exsToString :: Exercises -> String
-exsToString = myFoldr exToString
+  concat [name,"\n"
+         ,exsToString done
+         ,"ToDo","\n"
+         ,exsToString todo
+         ,"SubEnd","\n"
+         ]
 
-exToString
-  
+exsToString :: Exercises -> String
+exsToString =
+  myFoldr exToString
+
+exToString :: Exercise -> String
+exToString = \(maybeExName,num) ->
+  concat [maybeExNameToString maybeExName," ",show num,"\n"]
+
+maybeExNameToString :: MaybeExName -> String
+maybeExNameToString =
+  \case Nothing     -> "NoName"
+        Just exName ->  exName 

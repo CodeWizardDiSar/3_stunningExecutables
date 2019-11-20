@@ -1,81 +1,89 @@
 {-# LANGUAGE LambdaCase #-} 
 
 module FileToSubs where
-import Data.Function
+import System.Directory
 import Control.Arrow
 import Control.Monad.State
-import System.Directory
+import Data.Function
 import Types
 import General
 
-exists = doesFileExist 
-contents = readFile
 noSubs = []
 
-fileSubs :: IO Subjects
-fileSubs = 
-  dataFile & exists >>=
-  \case True  -> subsFromFile
-        False -> return noSubs
+applyToFst :: (String -> SL a) -> SL a
+applyToFst f = do
+  fst:rem <- get
+  put rem
+  f fst
 
-subsFromFile :: IO Subjects
-subsFromFile =
-  dataFile & contents >>= (subsFromString >>> return)
+glue2 :: Monad m => m a -> m b -> m (a,b)
+glue2 f s = do
+  f' <- f
+  s' <- s
+  return (f',s') 
+
+glue3 :: Monad m => m a -> m b -> m c -> m (a,b,c)
+glue3 f s t = do
+  f' <- f
+  s' <- s
+  t' <- t
+  return (f',s',t') 
+
+glue2List :: Monad m => m a -> m [a] -> m [a]
+glue2List fst rem = do
+  x <- fst
+  xs <- rem
+  return $ x:xs
+
+(=:) :: Monad m => m a -> m [a] -> m [a]
+(=:) = glue2List
+
+(==:) :: Monad m => m a -> m b -> m (a,b)
+(==:) = glue2
+
+fileToSubs :: IO Subjects
+fileToSubs = 
+  currVersFile >>= \f -> exists f >>=
+  \case True  -> f & contents >>= (subsFromString >>> return)
+        False -> error $ "Current File does NOT Exist: " ++ f
 
 subsFromString :: String -> Subjects
-subsFromString =
-  lines >>> (subs & evalState)
+subsFromString = lines >>> evalState subs 
 
-subs :: SLSubs
-subs =
-  get >>= (remSubs & ifNotEmpty)
+subs :: SL Subjects
+subs = get >>= ifNotEmpty remSubs
 
-ifNotEmpty :: SLSubs -> Lines -> SLSubs
-ifNotEmpty = \s ->
-  \case [] -> return []
-        _  -> s
+ifNotEmpty :: SL Subjects -> Lines -> SL Subjects
+ifNotEmpty s = \case [] -> return []
+                     _  -> s
 
-remSubs :: SLSubs
-remSubs =
-  sub >>= \s ->
-  subs >>= \ss ->
-  return $ s:ss
+remSubs :: SL Subjects
+remSubs = sub =: subs
 
-sub :: SLSub
-sub =
-  getName >>= \name ->
-  exsTo "ToDo" >>= \done ->
-  exsTo "SubEnd" >>= \todo ->
-  return (name,done,todo) 
+sub :: SL Subject
+sub = glue3 getName (exsTo "ToDo") (exsTo "SubEnd")
 
-getName =
-  get >>= \(fst:rem) ->
-  put rem >> return fst
+getName :: SL SubName
+getName = applyToFst return
 
-exsTo :: Line -> SLExs
-exsTo = \stopLine ->
-  get >>= \(fst:rem) ->
+exsTo :: Line -> SL Exercises
+exsTo stopLine = do
+  fst:rem <- get
   case fst == stopLine of
     True  -> put rem >> return []
     False -> remExsTo stopLine
 
-remExsTo :: Line -> SLExs
-remExsTo = \stopLine ->
-  ex >>= \x ->
-  exsTo stopLine >>= \xs ->
-  return $ x:xs
+remExsTo :: Line -> SL Exercises
+remExsTo stopLine = ex =: (exsTo stopLine)
 
-ex :: SLEx
-ex = 
-  get >>= \(fst:rem) ->
-  put rem >> (return $ processed fst)
+ex :: SL Exercise
+ex = applyToFst (process >>> return)
 
-processed :: String -> Exercise
-processed =
-  words >>>
-  \case
+process :: String -> Exercise
+process =
+  words >>> \case
     ["NoName",num] -> (Nothing,read num)
     [name,num]     -> (Just name,read num)
-    x              -> show x & (exError ++) & error 
+    x              -> error $ exError ++ show x 
 
 exError = "Wrong Exercise Format in file: "

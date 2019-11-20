@@ -14,13 +14,7 @@ type Subject           = (SubName,Done,ToDo)
 
 type Path              = String
 type Lines             = [Line]
-type SLName            = State Lines SubName
-type SLDone            = State Lines Done
-type SLToDo            = State Lines ToDo
-type SLSub             = State Lines Subject
-type SLSubs            = State Lines Subjects
-type SLEx              = State Lines Exercise
-type SLExs             = State Lines Exercises
+type SL a              = State Lines a
 
 type Exercises         = [Exercise] 
 type Strings           = [String] 
