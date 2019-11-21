@@ -1,4 +1,4 @@
-{-# LANGUAGE LambdaCase #-} 
+{-# LANGUAGE LambdaCase,TypeSynonymInstances,FlexibleInstances #-} 
 
 module SubsToFile where
 import Control.Arrow
@@ -6,33 +6,53 @@ import Types
 import General
 
 subsToFile :: Subjects -> IO ()
-subsToFile = 
-  subsToString >>> \s ->
-  nextVersFile >>= \f ->
-  writeFile f s
+subsToFile = toStrF >>> \s -> writeToNextVers >>= \w -> w s
 
-subsToString :: Subjects -> String
-subsToString =
-  myFoldr subToString
+writeToNextVers :: IO (String -> IO ())
+writeToNextVers = nextVersFile >>= (writeFile >>> return)
 
-subToString :: Subject -> String
-subToString = \(name,done,todo) -> 
-  concat [name,"\n"
-         ,exsToString done
-         ,"ToDo","\n"
-         ,exsToString todo
-         ,"SubEnd","\n"
-         ]
+class ToStringsForDecor a where
+  toStrsD :: a -> Strings
 
-exsToString :: Exercises -> String
-exsToString =
-  myFoldr exToString
+instance ToStringsForDecor Subject where
+  toStrsD (SU n d t) = [n,toStrF d,toStrF t]
 
-exToString :: Exercise -> String
-exToString = \(maybeExName,num) ->
-  concat [maybeExNameToString maybeExName," ",show num,"\n"]
+instance ToStringsForDecor DoneEx where
+  toStrsD (DE m n) = [toStrF m,show n]
 
-maybeExNameToString :: MaybeExName -> String
-maybeExNameToString =
-  \case Nothing     -> "NoName"
-        Just exName ->  exName 
+instance ToStringsForDecor ToDoEx where
+  toStrsD (TE m n (d,mo)) = [toStrF m,show n,show d,show mo]
+
+class ToStringForFile a where
+  toStrF :: a -> String
+
+instance ToStringForFile Subjects where
+  toStrF = map toStrF >>> concat
+
+instance ToStringForFile DoneExs where
+  toStrF = map toStrF >>> concat
+
+instance ToStringForFile ToDoExs where
+  toStrF = map toStrF >>> concat
+
+instance ToStringForFile Subject where
+  toStrF = toStrsD >>> decorateWith subDecor
+
+instance ToStringForFile DoneEx where
+  toStrF = toStrsD >>> decorateWith doneExDecor
+
+instance ToStringForFile ToDoEx where
+  toStrF = toStrsD >>> decorateWith toDoExDecor
+
+instance ToStringForFile MExName where
+  toStrF = getMEN >>> \case Nothing -> "NoName"; Just n -> n 
+
+decorateWith :: Decor -> Strings -> String
+decorateWith d s = case (s,d) of
+  (s:ss,d:ds) -> concat [s,d,decorateWith ds ss]
+  ([],[])     -> []
+  _           -> error "decoration failed"
+
+subDecor = ["\n","ToDo\n","SubEnd\n"] :: Decor
+doneExDecor = [" ","\n"] :: Decor
+toDoExDecor = [" "," "," ","\n"] :: Decor

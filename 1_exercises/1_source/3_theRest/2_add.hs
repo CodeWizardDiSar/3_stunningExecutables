@@ -6,7 +6,7 @@ import FileToSubs
 insertExercise = putStrLn "insertExercise"
 insertSubject  = putStrLn "insertSubject"
 
-insert =
+add =
   insertSubject
 -- fileSubs >>= \subs ->
 -- getSubName >>= \subName ->

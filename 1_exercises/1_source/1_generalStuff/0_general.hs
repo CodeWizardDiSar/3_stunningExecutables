@@ -7,51 +7,50 @@ import Control.Arrow
 import System.Directory
 import Types
 
-exists = doesFileExist 
-readFrom = readFile
-contents = readFile
-writeTo = writeFile
+printString = putStrLn :: String -> IO ()
+newline = printString "" :: IO ()
+printStrings = mapM_ printString :: Strings -> IO ()
+exists = doesFileExist  :: FilePath -> IO Bool
+readFrom = readFile :: FilePath -> IO String
+contents = readFile :: FilePath -> IO String
+writeTo = writeFile :: FilePath -> String -> IO ()
+dataDir = "../0_data" :: FilePath
+dataPrefix = dataDir ++ "/data" :: FilePath
+versionFile = dataDir ++ "/version" :: FilePath
+newVersFile = dataDir ++ "/versionNew" :: FilePath
 
-myFoldr myFForA =
-  foldr (\a b -> myFForA a ++ b) []
-
-versionFile :: FilePath
-versionFile = "../0_data/version"
-newVersionFile = "../0_data/versionNew"
+foldrF f = foldr (\a b -> f a ++ b) []
 
 version :: IO String
 version =
   versionFile & exists >>=
   \case True  -> readFrom versionFile
-        False -> writeTo versionFile "0" >> return "0"
+        False -> writeAndReturn "0" 
+
+writeAndReturn s =
+  writeTo versionFile s >> return s
 
 currVersFile :: IO FilePath
 currVersFile =
-  version >>= (("../0_data/data"++) >>> return)
+  version >>= ((dataPrefix++) >>> return)
 
 nextVersFile :: IO FilePath
 nextVersFile =
   version >>= 
-  (read >>> (+1) >>> show >>>
-  ("../0_data/data"++) >>>
+  (strPlusOne >>> (dataPrefix++) >>>
   return)
+
+strPlusOne :: String -> String
+strPlusOne = read >>> (+1) >>> show
 
 updateVersion :: IO ()
 updateVersion =
   version >>=
-  (read >>> (+1) >>> show >>> writeTo newVersionFile) >>
-  renameFile newVersionFile versionFile 
+  (strPlusOne >>> writeTo newVersFile) >>
+  renameFile newVersFile versionFile 
 
 getNumber :: IO Int
-getNumber =
-  getLine >>= (read >>> return)
+getNumber = getLine >>= (read >>> return)
 
 askAndGet :: String -> IO String
-askAndGet s = 
-  newline >> printString s >> getLine
-
-printString = putStrLn
-newline = printString ""
-
-printStrings :: Strings -> IO ()
-printStrings = mapM_ printString
+askAndGet s = newline >> printString s >> getLine
