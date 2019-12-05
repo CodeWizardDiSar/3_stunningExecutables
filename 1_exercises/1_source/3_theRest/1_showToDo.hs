@@ -1,14 +1,23 @@
 module ShowToDo where
---import _._
---
---showToDo =
---  getToDo >>= print 
---
---instance Show Exercise where
---  show (= 
+import Control.Arrow
+import FileToSubs
+import Types
+import General
 
---_ _ = _
+formatMsg = "\tSubject | Exercise Number | Exercise Name | Date"
 
---data _ = _ _ | _ _
---type _ = _ 
+showToDo = do
+  nli
+  pst formatMsg
+  nli
+  toDo
 
+toDo = fileToSubs >>= (map toDoFromSub >>> concat >>> pst)
+
+toDoFromSub (SU n _ t) =
+  (map (toDoStr >>> (("\t\t" ++ n ++ ", ") ++)) >>> concat) t
+
+toDoStr (TE na n (d,m)) =
+  show n ++ ", " ++
+  (case na of Nothing -> "Not Important"; Just n -> n) ++ ", " ++
+  show d ++ "/" ++ show m ++ "\n"

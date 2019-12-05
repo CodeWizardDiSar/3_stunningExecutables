@@ -5,54 +5,42 @@ import Control.Arrow
 import Types
 import General
 
-subsToFile :: Subjects -> IO ()
-subsToFile = toStrF >>> \s -> writeToNextVers >>= \w -> w s
+subsToFile :: Sbs -> IOU
+subsToFile = toFStr >>> \s -> writeToNextVers >>= \w -> w s
 
-writeToNextVers :: IO (String -> IO ())
-writeToNextVers = nextVersFile >>= (writeFile >>> return)
+writeToNextVers :: IO (STR -> IOU)
+writeToNextVers = nvf >>= (wrf >>> wim)
 
-class ToStringsForDecor a where
-  toStrsD :: a -> Strings
+instance ToStrsForDecor Sub where
+  toStrsD (SU n d t) = [n,toFStr d,toFStr t]
 
-instance ToStringsForDecor Subject where
-  toStrsD (SU n d t) = [n,toStrF d,toStrF t]
+instance ToStrsForDecor DEx where
+  toStrsD (DE m n) = [toFStr m,show n]
 
-instance ToStringsForDecor DoneEx where
-  toStrsD (DE m n) = [toStrF m,show n]
+instance ToStrsForDecor TEx where
+  toStrsD (TE na n (d,m)) = [toFStr na,show n,show d,show m]
 
-instance ToStringsForDecor ToDoEx where
-  toStrsD (TE m n (d,mo)) = [toStrF m,show n,show d,show mo]
+instance ToFileStr a => ToFileStr [a] where
+  toFStr = mco toFStr
 
-class ToStringForFile a where
-  toStrF :: a -> String
+instance ToFileStr Sub where
+  toFStr = toStrsD >>> decorateWith subDecor
 
-instance ToStringForFile Subjects where
-  toStrF = map toStrF >>> concat
+instance ToFileStr DEx where
+  toFStr = toStrsD >>> decorateWith doneExDecor
 
-instance ToStringForFile DoneExs where
-  toStrF = map toStrF >>> concat
+instance ToFileStr TEx where
+  toFStr = toStrsD >>> decorateWith toDoExDecor
 
-instance ToStringForFile ToDoExs where
-  toStrF = map toStrF >>> concat
+instance ToFileStr MEN where
+  toFStr = \case Nothing -> "NoName"; Just n -> n 
 
-instance ToStringForFile Subject where
-  toStrF = toStrsD >>> decorateWith subDecor
-
-instance ToStringForFile DoneEx where
-  toStrF = toStrsD >>> decorateWith doneExDecor
-
-instance ToStringForFile ToDoEx where
-  toStrF = toStrsD >>> decorateWith toDoExDecor
-
-instance ToStringForFile MExName where
-  toStrF = getMEN >>> \case Nothing -> "NoName"; Just n -> n 
-
-decorateWith :: Decor -> Strings -> String
+decorateWith :: Dcr -> Sts -> STR
 decorateWith d s = case (s,d) of
   (s:ss,d:ds) -> concat [s,d,decorateWith ds ss]
   ([],[])     -> []
   _           -> error "decoration failed"
 
-subDecor = ["\n","ToDo\n","SubEnd\n"] :: Decor
-doneExDecor = [" ","\n"] :: Decor
-toDoExDecor = [" "," "," ","\n"] :: Decor
+subDecor    = ["\n","ToDo\n","SubEnd\n"] :: Dcr
+doneExDecor = [" ","\n"] :: Dcr
+toDoExDecor = [" "," "," ","\n"] :: Dcr

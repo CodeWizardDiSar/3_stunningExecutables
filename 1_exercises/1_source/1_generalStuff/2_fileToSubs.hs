@@ -6,34 +6,35 @@ import System.Directory
 import Control.Arrow
 import Control.Monad.State
 import Data.Function
+import Data.List.Split
 import Types
 import General
 
-class FromFileConts a where
-  fromStrF :: String -> a
+fileToSubs :: IO Sbs
+fileToSubs = cvf >>= cns >>= (fromFStr >>> wim)
 
-class FromFileLines a where
-  fromStrsF :: String -> a
+instance FromFileStr Sbs where
+  fromFStr = lines >>> endBy ["SubEnd"] >>> map fromFLines
 
-instance FromFileConts Subjects where
-  fromStrF = subLines >>> map fromStrsF 
+instance FromFileStr MEN where
+  fromFStr = \case "NoName" -> Nothing; x -> Just x 
 
-instance FromFileString DoneExs where
-  fromStrsF = subsfromstring
+instance FromFileLines Sub where
+  fromFLines = \(n:e) -> case splitOn ["ToDo"] e of 
+    [d,t] -> SU n (fromFLines d) (fromFLines t)
+    _     -> printErrMsg "Sub"
 
-instance FromFileString ToDoExs where
-  fromStrsF = subsfromstring
+instance FromFileLine a => FromFileLines [a] where
+  fromFLines = map fromFLine
 
-instance FromFileString Subject where
-  fromStrsF = subsFromString
+instance FromFileLine DEx where
+  fromFLine = words >>> \case
+    [na,n] -> DE (fromFStr na) (read n)
+    _      -> printErrMsg "Done Exercise"
 
-instance FromFileString DoneEx where
-  fromStrsF = subsfromstring
+instance FromFileLine TEx where
+  fromFLine = words >>> \case
+    [na,n,d,m] -> TE (fromFStr na) (read n) (read d, read m)
+    _          -> printErrMsg "To Do Exercise"
 
-instance FromFileString ToDoEx where
-  fromStrsF = subsfromstring
-
-instance FromFileString MExName where
-  fromStrsF = \case "NoName" -> Nothing;x -> Just x 
-
-subLines = lines >>> splitOn ["SubEnd"]
+printErrMsg s = error $ "Wrong " ++ s ++ " format in file"
