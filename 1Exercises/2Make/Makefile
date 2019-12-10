@@ -1,6 +1,6 @@
-sr = $(shell find '../1Source' -name '*.hs')
-ex = ../3Executable/exercises
-nf = ../4NotForMe
+sr=$(shell find '../1Code' -name '*.hs')
+ex=../3Executable
+nf=../4NotForMe
 
 all: $(sr)
 	ghc -o $(ex) -odir $(nf) -hidir $(nf) $^ 

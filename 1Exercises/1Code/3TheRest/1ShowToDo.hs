@@ -4,20 +4,15 @@ import FileToSubs
 import Types
 import General
 
-formatMsg="\tSubject | Exercise Number | Exercise Name | Date"
+fom="\tSubject | Exercise Number | Exercise Name | Date"
+nim="Not Important"
 
-std=nli>>pst formatMsg>>nli>>toDo
-toDo=(fts>>=(map tts>>>cnc>>>pst))::IOU
+std=nli>>pst fom>>nli>>ptd
+ptd=(fts>>=(map tts>>>cnc>>>pst))::IOU
+tdd=[", ",", ","/","\n"]
 
-instance TTS SUB where
-  tts (Sub n _ t)=(map ((cnc ["\t\t",n,", "]++).toDoStr)>>>cnc) t
-
-toDoStr (Tex na n (d,m)) =
-  cnc [cts n
-      ,", "
-      ,case na of Nng->"Not Important";Idd n->n
-      ,", "
-      ,cts d
-      ,"/"
-      ,cts m
-      ,"\n"]
+instance TTS SUB where tts (Sub n _ t)=(map (tte n)>>>cnc) t
+tte n=tes>>>dew tdd>>>pnf n--To To do Exercise
+pnf n=(cnc ["\t\t",n,", "]++)--Put Name in Front
+tes (Tex na n (d,m))--To do Exercise Strings
+  =[cts n,case na of Nng->nim;Idd n->n,cts d,cts m]
