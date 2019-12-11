@@ -36,4 +36,6 @@ menu=pme>>getLine>>= \case
     "6"->pst bym
     _  ->pst cfm>>menu
 
-main=2&nls>>pst wem>>menu
+--main=2&nls>>pst wem>>menu
+--main=fts>>=stf>>upv
+main=(dkp++"0"&exi)>>=print
