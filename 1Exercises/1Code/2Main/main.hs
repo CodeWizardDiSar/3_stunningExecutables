@@ -38,4 +38,4 @@ menu=pme>>getLine>>= \case
 
 --main=2&nls>>pst wem>>menu
 --main=fts>>=stf>>upv
-main=(dkp++"0"&exi)>>=print
+main=date

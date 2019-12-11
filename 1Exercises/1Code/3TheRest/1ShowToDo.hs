@@ -1,10 +1,13 @@
 module ShowToDo where
 import Control.Arrow
+import Data.Time.Calendar
+import Data.Time.Clock
 import FileToSubs
 import Types
 import General
 
-fom="\tSubject | Exercise Number | Exercise Name | Date"
+date=getCurrentTime >>= return . toGregorian . utctDay >>= print
+fom="\tSubject | Exercise Number | Exercise Name | Remaining Days"
 nim="Not Important"
 
 std=nli>>pst fom>>nli>>ptd

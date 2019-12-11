@@ -23,10 +23,10 @@ pee=error        ::STR->a       --Pr
 
 --paths
 dkd::FPA--Data Dir
-dkd=",/0Data"
-vek=(dkd++"/ver")   ::FPA--VErsion Keeper
-tvk=(dkd++"/verTmp")::FPA--Temporary Version Keeper
-dkp=(dkd++"/data")  ::FPA--Data Keeper Prefix
+dkd="../../0Data/"
+vek=(dkd++"ver")   ::FPA--VErsion Keeper
+tvk=(dkd++"verTmp")::FPA--Temporary Version Keeper
+dkp=(dkd++"data")  ::FPA--Data Keeper Prefix
 
 --had to be done
 nli=pst ""                     ::IOU               --New LIne
@@ -42,13 +42,12 @@ dew d s=case (d,s) of (f:r,f':r')->cnc [f',f,dew r r'];([],[])->[];_->pde
 
 --version keeper exists > read version
 --doesn't > create one > write 0 to it > wrap 0 in IO
---ver=vke>>=bca rvk ww0 ::IOS         --VERsion
 ver=vke>>= \case True->rvk;_->ww0::IOS--VERsion
-vke=vek&exi           ::IOB         --Version Keeper Exists?
-rvk=rdf vek           ::IOS         --Read Version Keeper
-ww0=wwm "0"           ::IOS         --Write to vk and Wrap in monad "0"
-wwm=(\s->wvk s>>wim s)::STR->IOS    --Write to vk and Wrap in Monad
-wvk=wrf vek           ::STR->IOU    --Write to Version Keeper
+vke=vek&exi           ::IOB--Version Keeper Exists?
+rvk=rdf vek           ::IOS--Read Version Keeper
+ww0=wwm "0"           ::IOS--Write to vk and Wrap in monad "0"
+wwm=(\s->wvk s>>wim s)::STR->IOS--Write to vk and Wrap in Monad
+wvk=wrf vek           ::STR->IOU--Write to Version Keeper
 
 --get version > add one to it > write new version to version keeper
 upv=a1v>>rev          ::IOU     --UPdate Version
@@ -57,8 +56,8 @@ awt=aos>>>wtv         ::STR->IOU--Add 1 and Write to Temp vk
 wtv=wrf tvk           ::STR->IOU--Write to Temp Version keeper
 rev=renameFile tvk vek::IOU     --REname temp Vk to vk
 
-cdk=ver>>=apw    ::IOF     --Current Data Keeper
-apw=(dkp++)>>>wim::STR->IOF--Append to Prefix and Wrap in monad
+cdk=ver>>=ppw    ::IOF     --Current Data Keeper
+ppw=(dkp++)>>>wim::STR->IOF--Put Prefix and Wrap in monad
 
 ndk=ver>>=aaw::IOF     --Next Data Keeper
-aaw=aos>>>apw::STR->IOS--Add 1 Append to prefix and Wrap
+aaw=aos>>>ppw::STR->IOS--Add 1 Append to prefix and Wrap
