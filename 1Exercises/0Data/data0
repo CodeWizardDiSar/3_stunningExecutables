@@ -1,14 +1,18 @@
-SubName1
-Ex1 1 
-NoName 2 
-ToDo
-Ex2 3 11 9
-NoName 4 12 10
-SubEnd
-SubName2
-Ex3 5
-NoName 6
-ToDo
-Ex4 7 12 10
-NoName 8 12 10
-SubEnd
+d PL2 1 _
+d PL2 2 _
+d PL2 3 _
+d PL2 4 _
+d PL2 5 _
+d PL2 6 _
+d PL2 7 _
+d OSL 1 _
+d OSL 2 _
+d CMP 1 Lexer
+d CMP 2 Parser
+d PAP 1.1 _
+m QM2 1 _
+m PAP 1.2 _
+t PL2 9 Scripting 25/12/2019
+t QM2 2 _ 16/12/2019
+t CMP 3 Semantics 5/1/2020
+t PAP 2 _ 10/12/2019

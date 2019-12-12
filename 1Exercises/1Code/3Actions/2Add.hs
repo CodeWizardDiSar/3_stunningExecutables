@@ -1,13 +1,14 @@
+{-# LANGUAGE LambdaCase #-} 
 module Add where
-import Types
-import General
-import FileToSubs
-  
-insertExercise = putStrLn "insertExercise"
-insertSubject  = putStrLn "insertSubject"
-
-add =
-  insertSubject
+--import Types
+--import General
+--import FileToSubs
+--  
+--insertExercise = putStrLn "insertExercise"
+--insertSubject  = putStrLn "insertSubject"
+--
+--add =
+--  insertSubject
 -- fileSubs >>= \subs ->
 -- getSubName >>= \subName ->
 -- case elem subName $ map fst subs of
