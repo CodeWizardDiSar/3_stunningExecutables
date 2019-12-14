@@ -9,11 +9,11 @@ module Add where
 --
 --add =
 --  insertSubject
--- fileSubs >>= \subs ->
--- getSubName >>= \subName ->
+-- fileSubs>>=\subs ->
+-- getSubName>>=\subName ->
 -- case elem subName $ map fst subs of
---   True  -> addSub subName >> addEx
---   False -> addSub >> addEx
+--   True ->addSub subName >> addEx
+--   False->addSub >> addEx
 -- --findOrAddSuject
 -- numberInString <- askAndGet "exercise number plz"
 -- let number = read numberInString :: Int
@@ -33,5 +33,5 @@ module Add where
 ---openDataFile = do
 ---  answer <- isThereADataFile
 ---  case answer of 
----    True -> 
+---    True->
 ---

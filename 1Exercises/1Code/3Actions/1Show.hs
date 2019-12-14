@@ -1,57 +1,40 @@
-{-# LANGUAGE LambdaCase #-} 
+{-# LANGUAGE LambdaCase,TypeSynonymInstances,FlexibleInstances #-} 
 module Show where
+import Prelude hiding (all)
+import Control.Arrow
+import Data.Function
+import Renaming
+import Useful
+import Types
+import FcsToExs 
+import Messages
+import ActionMessages
 
---FOrmat String
---fos="\tSub Name |\tEx Number |\tEx Name |\tRemaining"
---SHOw
---sho=pst fos>>
+s :: SHO a => a->STR
+s = sho
+fill = \i s->take i $ s++repeat ' '
+f15  = fill 15
+mf15 = map f15
 
+instance SHO EXR where
+  sho =
+    \case Don (n,nu,e)   ->[n,nu,s e]     &(mf15>>>cnc)
+          Mis (n,nu,e)   ->[n,nu,s e]     &(mf15>>>cnc)
+          Tdo (n,nu,e) da->[n,nu,s e,s da]&(mf15>>>cnc)
 
+instance SHO EXS where sho = map (sho>>>(tbd 1)>>>(++"\n"))>>>cnc 
+instance SHO HEN where sho = \case Nng->"No Name";Idd e->e 
+instance SHO DAT where sho = \(d,m,y)->cnc [sho d,"/",sho m,"/",sho y]
+instance SHO INT where sho = cts
 
+pri=sho>>>pst
+isDone = \case (Don ed)  ->True;_->False
+isMisd = \case (Mis ed)  ->True;_->False
+isToDo = \case (Tdo ed d)->True;_->False
 
-
-
-
-
-
-
-
-
-
-
-
-
---import Prelude hiding (seq)
---import Control.Arrow
---import Control.Monad
---import Data.Function
---import Data.Time.Calendar
---import Data.Time.Clock
---import StrToExs
---import Types
---import General
-
---r3130=cnc $ repeat [31,30]
---r3031=(31:30:r3031)
---ok2=take 5 r3031
---ok1' y=31:take 7 (take 1 r3031 ++ [feb y] ++ drop 2 r3031)
---feb= (`mod` 4)>>>(==0)>>> \case True->29;_->28 
---
---date=getCurrentTime>>=(utctDay>>>toGregorian>>>wim)
---nim="Not Important"
---mtm="More than a month"
---seq=sequence
---mas f=map f>>>seq 
---
---std=nli>>pst fom>>nli>>ptd
---ptd=fts>>=mas tts>>=(cnc>>>pst)::IOU
---tdd=[", ",", ","\n"]
---
---instance TTS SUB where tts (Sub n _ t)=t&mas (tte n)>>=(cnc>>>wim)
---tte n=tes>>>seq>=>dew tdd>>>pnf n>>>wim--To To do Exercise
---pnf n=(cnc ["\t\t",n,", "]++)          --Put Name in Front
---tes (Tex na n d)                   --To do Exercise Strings
---  =map wim [cts n,case na of Nng->nim;Idd n->n]++[red d]
---
---red::DAT->IOS
---red (d,m,y)=date>>= \(y',m',d')->m'==m&(\case True->d'-d&cts;_->mtm)&wim
+sfil = \f->exs>>=(filter f>>>pri)
+--stdo = exs>>=(filter isToDo>>>pri)
+stdo = sfil isToDo
+sdon = exs>>=(filter isDone>>>pri)
+smsd = exs>>=(filter isMisd>>>pri)
+sall = exs>>=pri
