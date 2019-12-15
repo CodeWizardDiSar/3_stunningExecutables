@@ -11,16 +11,16 @@ module Add where
 --  insertSubject
 -- fileSubs>>=\subs ->
 -- getSubName>>=\subName ->
--- case elem subName $ map fst subs of
---   True ->addSub subName >> addEx
---   False->addSub >> addEx
+-- case elem subName$map fst subs of
+--   True ->addSub subName>>addEx
+--   False->addSub>>addEx
 -- --findOrAddSuject
 -- numberInString <- askAndGet "exercise number plz"
 -- let number = read numberInString :: Int
 -- date <- askAndGet "date plz"
 -- insertExercise
--- --saveExercise $ InfoToExercise 
--- --return $ InfoToExercise number subject
+-- --saveExercise$InfoToExercise 
+-- --return$InfoToExercise number subject
 --
 --etSubName =
 -- askAndGet subNameMes

@@ -12,7 +12,7 @@ import ActionMessages
 
 s :: SHO a => a->STR
 s = sho
-fill = \i s->take i $ s++repeat ' '
+fill = \i s->take i$s++repeat ' '
 f15  = fill 15
 mf15 = map f15
 
@@ -22,19 +22,18 @@ instance SHO EXR where
           Mis (n,nu,e)   ->[n,nu,s e]     &(mf15>>>cnc)
           Tdo (n,nu,e) da->[n,nu,s e,s da]&(mf15>>>cnc)
 
-instance SHO EXS where sho = map (sho>>>(tbd 1)>>>(++"\n"))>>>cnc 
+instance SHO EXS where sho = map (sho>>>tabBefore>>>(++"\n"))>>>cnc 
 instance SHO HEN where sho = \case Nng->"No Name";Idd e->e 
 instance SHO DAT where sho = \(d,m,y)->cnc [sho d,"/",sho m,"/",sho y]
 instance SHO INT where sho = cts
 
-pri=sho>>>pst
-isDone = \case (Don ed)  ->True;_->False
-isMisd = \case (Mis ed)  ->True;_->False
-isToDo = \case (Tdo ed d)->True;_->False
+pri=sho>>>printString
+isDone   = \case (Don ed)  ->True;_->False
+isMissed = \case (Mis ed)  ->True;_->False
+isToDo   = \case (Tdo ed d)->True;_->False
 
-sfil = \f->exs>>=(filter f>>>pri)
---stdo = exs>>=(filter isToDo>>>pri)
-stdo = sfil isToDo
-sdon = exs>>=(filter isDone>>>pri)
-smsd = exs>>=(filter isMisd>>>pri)
-sall = exs>>=pri
+filterAndPrint = \f->exs>>=(filter f>>>pri)
+showToDo   = filterAndPrint isToDo
+showDone   = filterAndPrint isDone
+showMissed = filterAndPrint isMissed
+showAll    = exs>>=pri

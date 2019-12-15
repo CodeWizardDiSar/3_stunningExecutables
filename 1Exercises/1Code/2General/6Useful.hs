@@ -5,19 +5,20 @@ import Data.Function
 import Types
 import Renaming
 
-nli = pst ""                               -- New LIne
-pss = mmp pst                              -- Print StringS
-nls = \case 0->wim ();i->nli>>((i-1)&nls) -- New LineS
-wnl = \p->nli>>p>>nli                      -- Wrap In Newlines
-pws = pss>>>wnl                            -- Print Wrapped in NLs Strings
-tbd = \i s->(rnt i '\t')++s                -- TaBbeD i times
-msf = \x y->[tbd 1 x]++map (tbd 2) y       -- MessageS Format
-pwmgl = \x->pws x >> getLine
+newLine = printString ""                               -- New LIne
+printStrings = mmp printString                              -- Print StringS
+newLines = \case 0->wim ();i->newLine>>((i-1)&newLines) -- New LineS
+wrapInNewLines = \p->newLine>>p>>newLine
+printStringsWrappedInNewLines = printStrings>>>wrapInNewLines
+tabsBefore = \i s->(rnt i '\t')++s
+tabBefore = 1&tabsBefore
+titleAndOptions = \x y->[tabBefore x]++map (2&tabsBefore) y
+printAndGet = \x->printStringsWrappedInNewLines x>>getLine
 
-nli :: IOU               
-pws :: STS->IOU          
-nls :: INT->IOU          
-wnl :: IOU->IOU          
-pss :: STS->IOU          
-msf :: MSG->MGS->MGS
-tbd :: INT->STR->STR
+newLine :: IOU               
+printStringsWrappedInNewLines :: STS->IOU          
+newLines :: INT->IOU          
+wrapInNewLines :: IOU->IOU          
+printStrings :: STS->IOU          
+titleAndOptions :: MSG->MGS->MGS
+tabsBefore :: INT->STR->STR

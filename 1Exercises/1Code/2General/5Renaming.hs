@@ -7,7 +7,7 @@ rdf = readFile      -- ReaD File
 cns = readFile      -- CoNtentS
 wrf = writeFile     -- WRite File
 rfi = renameFile    -- Rename FIle
-pst = putStrLn      -- Print STring
+printString = putStrLn      -- Print STring
 wim = return        -- Wrap In Monad
 cnc = concat        -- CoNCat
 fex = doesFileExist -- File EXists?
@@ -23,7 +23,7 @@ rdf :: PAT->IOS
 cns :: PAT->IOS     
 wrf :: PAT->STR->IOU
 rfi :: PAT->PAT->IOU
-pst :: STR->IOU     
+printString :: STR->IOU     
 wim :: MON m=>a->m a
 cnc :: [[a]]->[a]   
 fex :: PAT->IOB     

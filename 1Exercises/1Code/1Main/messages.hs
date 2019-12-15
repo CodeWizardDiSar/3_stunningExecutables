@@ -4,17 +4,17 @@ import Data.Function
 import Useful
 import Renaming
 
-exi=pst byem
-cnf=pst cnfm
+--exi=printString byeMessage
+--cnf=printString cnfm
 
-cdmm="Command me master" -- CommanD Me Message
-shom="a: Show"           -- SHOw Message
-addm="s: Add"            -- ADD Message
-cham="d: Change"         -- CHAnge Message
-movm="f: Move"           -- MOVe Message
-exim="enter: Exit"       -- EXIt Message
+commandMeMessage="Command me master"
+addMessage="a: Add"            
+showMessage="s: Show"           -- SHOw Message
+changeMessage="d: Change"         -- CHAnge Message
+moveMessage="f: Move"           -- MOVe Message
+exitOption="enter: Exit"       -- EXIt Message
 
-mems=msf cdmm [shom,addm,cham,movm,exim]     -- MEnu MessageS
-welm=tbd 1 "Welcome to the exercises manager"-- WELcoming Message
-byem="bye!"                                  -- BYE Message
-cnfm="Ehhh what?"                            -- CoNFused Message
+menuMessages=titleAndOptions commandMeMessage [addMessage,showMessage,changeMessage,moveMessage,exitOption]
+welcomingMessage=tabsBefore 1 "Welcome to the exercises manager"
+byeMessage="bye!"
+showConfusionMessage="Ehhh what?"

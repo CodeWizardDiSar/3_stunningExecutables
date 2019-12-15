@@ -3,19 +3,20 @@ module ActionMessages where
 import Useful
 import Messages
 
-shotm  = "Show"      -- SHOw      Title Message
-addtm  = "Add to"    -- ADD       Title Message
-chatm  = "Change"    -- CHAnge    Title Message
-movftm = "Move from" -- MOVe From Title Message
-movttm = "Move from" -- MOVe To   Title Message
-tdom   = "a: To Do"  -- To DO  Message
-donm   = "s: Done"   -- DONe   Message
-msdm   = "d: Missed" -- MiSseD Message
-allm   = "f: All"    -- ALL    Message
+showTitle     = "Show"
+addTitle      = "Add to"
+changeTitle   = "Change"
+moveFromTitle = "Move from"
+moveToTitle   = "Move to"
+toDoOption    = "a: To Do"
+doneOption    = "s: Done"
+missedOption  = "d: Missed"
+allOption     = "f: All"
 
-optms  = [tdom,donm,msdm,exim]       -- OPTions MessageS
-sopms  = take 3 optms ++ [allm,exim] -- Show OPtions MessageS
-shoms  = msf shotm  sopms            -- SHOw MessageS
-addms  = msf addtm  optms            -- ADD MessageS
-movfms = msf movftm optms            -- MOVe MessageS
-movtms = msf movftm optms            -- MOVe MessageS
+options          = [toDoOption,doneOption,missedOption,exitOption]
+showOptions      = take 3 options ++ [allOption,exitOption]
+showMessages     = titleAndOptions showTitle  showOptions    
+addMessages      = titleAndOptions addTitle  options
+changeMessages   = titleAndOptions changeTitle  options
+moveFromMessages = titleAndOptions moveFromTitle options 
+moveToMessages   = titleAndOptions moveToTitle options  
