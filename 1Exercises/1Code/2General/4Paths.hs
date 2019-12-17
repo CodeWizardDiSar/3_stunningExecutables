@@ -1,15 +1,18 @@
 {-# LANGUAGE LambdaCase #-} 
 module Paths where
 import Types
+import Renaming
 
-exd = "/home/gnostis/Desktop/2Github/3StunningExecutables/1Exercises"
-dad = exd++"/0Data"
-vek = dad++"/ver"   
-tvk = dad++"/verTmp"
-dkp = dad++"/data"  
+homeDir           ="/home/gnostis"
+githubDir         = homeDir`append`"/Desktop/2Github"
+exercisesDir      = githubDir`append`"/3StunningExecutables/1Exercises"
+dataDir           = exercisesDir`append`"/0Data"
+versionKeeper     = dataDir`append`"/ver"   
+tempVersionKeeper = dataDir`append`"/verTmp"
+dataKeeperPrefix  = dataDir`append`"/data"  
 
-exd :: PAT -- EXercises project Dir
-dad :: PAT -- DAta Dir
-vek :: PAT -- VErsion Keeper
-tvk :: PAT -- Temporary Version Keeper
-dkp :: PAT -- Data Keeper Prefix
+exercisesDir      :: PATH
+dataDir           :: PATH
+versionKeeper     :: PATH
+tempVersionKeeper :: PATH
+dataKeeperPrefix  :: PATH

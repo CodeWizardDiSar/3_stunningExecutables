@@ -1,39 +1,43 @@
 {-# LANGUAGE LambdaCase,TypeSynonymInstances,FlexibleInstances #-} 
 module Show where
-import Prelude hiding (all)
+import Prelude hiding (all,and,Nothing)
 import Control.Arrow
 import Data.Function
 import Renaming
 import Useful
 import Types
 import FcsToExs 
-import Messages
-import ActionMessages
+import MenuOptions
+import ActionOptions
 
 s :: SHO a => a->STR
-s = sho
-fill = \i s->take i$s++repeat ' '
-f15  = fill 15
-mf15 = map f15
+from = ($)
+fill               = \i s->take i`from`(s&withInfiniteSpaces)
+withInfiniteSpaces = \s->s`append`repeat ' '
+fill15ForEach      = forEach (fill 15)
 
+s = sho
 instance SHO EXR where
   sho =
-    \case Don (n,nu,e)   ->[n,nu,s e]     &(mf15>>>cnc)
-          Mis (n,nu,e)   ->[n,nu,s e]     &(mf15>>>cnc)
-          Tdo (n,nu,e) da->[n,nu,s e,s da]&(mf15>>>cnc)
+    \case Don (n,nu,e)   ->[n,nu,s e]     &(fill15ForEach`and`glue)
+          Mis (n,nu,e)   ->[n,nu,s e]     &(fill15ForEach`and`glue)
+          Tdo (n,nu,e) da->[n,nu,s e,s da]&(fill15ForEach`and`glue)
 
-instance SHO EXS where sho = map (sho>>>tabBefore>>>(++"\n"))>>>cnc 
-instance SHO HEN where sho = \case Nng->"No Name";Idd e->e 
-instance SHO DAT where sho = \(d,m,y)->cnc [sho d,"/",sho m,"/",sho y]
-instance SHO INT where sho = cts
+appendNewLine = (`append`"\n")
+instance SHO EXS where
+  sho = forEach (sho`and`tabBefore`and`appendNewLine)`and`glue 
+instance SHO HEN where sho = \case Nothing->"No Name";Indeed e->e 
+instance SHO DAT where sho = \(d,m,y)->glue [sho d,"/",sho m,"/",sho y]
+instance SHO INT where sho = convertToString
 
-pri=sho>>>printString
-isDone   = \case (Don ed)  ->True;_->False
-isMissed = \case (Mis ed)  ->True;_->False
-isToDo   = \case (Tdo ed d)->True;_->False
+pri=sho`and`printString
+done   = \case (Don ed)  ->True;_->False
+missed = \case (Mis ed)  ->True;_->False
+toDo   = \case (Tdo ed d)->True;_->False
+all    = \_              ->True
 
-filterAndPrint = \f->exs>>=(filter f>>>pri)
-showToDo   = filterAndPrint isToDo
-showDone   = filterAndPrint isDone
-showMissed = filterAndPrint isMissed
-showAll    = exs>>=pri
+filterAndPrint = \f->exercises`unwrapAnd`(filter f`and`pri)
+showToDo   = filterAndPrint toDo
+showDone   = filterAndPrint done
+showMissed = filterAndPrint missed
+showAll    = filterAndPrint all

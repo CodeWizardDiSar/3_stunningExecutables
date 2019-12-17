@@ -1,5 +1,6 @@
 {-# LANGUAGE LambdaCase #-} 
 module General where
+import Prelude hiding (and)
 import Control.Monad
 import Data.Function
 import Control.Arrow
@@ -10,32 +11,38 @@ import Paths
 import Renaming
 import Useful
 
---version keeper exists > read version
---doesn't > create one > write 0 to it > wrap 0 in IO
-ver = vke>>= \case True->rvk;_->ww0 -- VERsion
-vke = vek&fex                        -- Version Keeper Exists?
-rvk = rdf vek                        -- Read Version Keeper
-ww0 = wvk "0">>wim "0"               -- Write to vk and Wrap in monad "0"
-wvk = wrf vek                        -- Write to Version Keeper
-ver :: IOS     
-vke :: IOB     
-rvk :: IOS     
-ww0 :: IOS     
-wvk :: STR->IOU
+version = versionKeeperExists`unwrapAnd`\case True->readVersionKeeper
+                                              _   ->write0ToVKAndWrap0 
+versionKeeperExists  = versionKeeper&fileExists
+readVersionKeeper    = readFile versionKeeper
+write0ToVKAndWrap0   = writeToVersionKeeper "0"`andThen`wrap "0"
+writeToVersionKeeper = writeFile versionKeeper
+version              :: IOS     
+versionKeeperExists  :: IOB     
+readVersionKeeper    :: IOS     
+write0ToVKAndWrap0   :: IOS     
+writeToVersionKeeper :: STR->IOU
 
---get version > add one > write to temp > rename temp
-upv = ver>>=(aos>>>wtv)>>rnv -- UPdate Version
-aos = cfs>>>(+1)>>>cts       -- Add One to String
-wtv = wrf tvk                -- Write to Temp Version keeper
-rnv = rfi tvk vek            -- REname temp Vk to vk
-upv :: IOU     
-aos :: STR->STR
-wtv :: STR->IOU
-rnv :: IOU     
+updateVersion = version`unwrapAnd`addOneAndWriteToTVK`andThen`makeTVKVK
 
-cdk = ver>>=((dkp++)>>>wim)       -- Current Data Keeper
-ndk = ver>>=(aos>>>(dkp++)>>>wim) -- Next Data Keeper
-wnk = \s->ndk>>=(wrf>>> \f->f s)  -- Write to Next data Keeper
-cdk :: IOF     
-ndk :: IOF     
-wnk :: STR->IOU
+addOneAndWriteToTVK = addOneToString`and`writeToTVK
+addOneToString      = convertFromString`and`(+1)`and`convertToString
+writeToTVK          = writeFile tempVersionKeeper
+makeTVKVK           = renameFile tempVersionKeeper versionKeeper
+updateVersion       :: IOU     
+addOneToString      :: STR->STR
+writeToTVK          :: STR->IOU
+makeTVKVK           :: IOU     
+
+currentDataKeeper     = version`unwrapAnd`(addDKPrefix`and`wrap)
+nextDataKeeper        = version`unwrapAnd`(addOneAndAddDKPrefix`and`wrap)
+addOneAndAddDKPrefix  = addOneToString`and`addDKPrefix
+addDKPrefix           = (dataKeeperPrefix`append`)
+writeFileFL           = flip writeFile
+writeToNextDataKeeper = \s->nextDataKeeper`unwrapAnd`writeFileFL s 
+currentDataKeeper     :: IOF     
+nextDataKeeper        :: IOF     
+addOneAndAddDKPrefix  :: STR->STR
+addDKPrefix           :: STR->STR
+writeFileFL           :: STR->PATH->IOU
+writeToNextDataKeeper :: STR->IOU

@@ -11,7 +11,7 @@ module Add where
 --  insertSubject
 -- fileSubs>>=\subs ->
 -- getSubName>>=\subName ->
--- case elem subName$map fst subs of
+-- case elem subName$forEach fromString subs of
 --   True ->addSub subName>>addEx
 --   False->addSub>>addEx
 -- --findOrAddSuject

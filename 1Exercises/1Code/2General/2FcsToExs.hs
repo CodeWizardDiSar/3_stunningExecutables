@@ -1,23 +1,27 @@
 {-# LANGUAGE LambdaCase,TypeSynonymInstances,FlexibleInstances #-} 
 module FcsToExs where
-import Prelude hiding (fst,sin)
+import Prelude hiding (Nothing,fromString,splitInLines,and)
 import Data.List.Split
 import Control.Arrow
 import Types 
 import General
 import Renaming
 
-exs = cdk>>=rdf>>=(fte>>>wim)
-fte = sin>>>map lte
-lte = siw>>> \case ["d",sn,nu,en]   ->Don (sn,nu,fst en)
-                   ["m",sn,nu,en]   ->Mis (sn,nu,fst en)
-                   ["t",sn,nu,en,da]->Tdo (sn,nu,fst en)$fst da
-                   _                ->pem "Line To Exercise"
-fte :: FCS->EXS
-lte :: LIN->EXR
+exercises = readCurrentDataKeeper`unwrapAnd`(convertToExercises`and`wrap)
+readCurrentDataKeeper = currentDataKeeper`unwrapAnd`readFile
+convertToExercises    = splitInLines`and`forEach convertToExercise
+convertToExercise     = splitInWords`and`
+  \case ["d",sn,nu,en]   ->Don (sn,nu,fromString en)
+        ["m",sn,nu,en]   ->Mis (sn,nu,fromString en)
+        ["t",sn,nu,en,da]->Tdo (sn,nu,fromString en)$fromString da
+        _                ->printErrorMessage "Line To Exercise"
+convertToExercises :: FCS->EXS
+convertToExercise  :: LIN->EXR
 
 --from string
-instance FST HEN where fst= \case "_"->Nng;en->Idd en
+instance FST HEN where fromString= \case "_"->Nothing;exName->Indeed exName
 instance FST DAT where
-  fst=splitOn "/">>> \case [d,m,y]->(fst d,fst m,fst y);_->pem "Date"
-instance FST INT where fst=cfs
+  fromString=splitOn "/"`and`
+    \case [d,m,y]->(fromString d,fromString m,fromString y)
+          _      ->printErrorMessage "Date"
+instance FST INT where fromString=convertFromString
