@@ -6,14 +6,18 @@ import Types
 import General
 import Renaming
 
-etf = forEach etl`and`glue
-etl =
-  \case Don (n,nu,e)   ->glue ["d ",n," ",nu," ",tst e,"\n"]
-        Mis (n,nu,e)   ->glue ["m ",n," ",nu," ",tst e,"\n"]
-        Tdo (n,nu,e) da->glue ["t ",n," ",nu," ",tst e," ",tst da,"\n"]
-etf :: EXS->FCS
-etl :: EXR->LIN
+exercisesToString = forEach convertToLine`and`glue
+convertToLine =
+  \case Done   (n,nu,e)   ->glue ["d ",n," ",nu," ",toString e,"\n"]
+        Missed (n,nu,e)   ->glue ["m ",n," ",nu," ",toString e,"\n"]
+        ToDo   (n,nu,e) da->glue ["t ",n," ",nu," ",toString e," ",toString da,"\n"]
+exercisesToString :: Exercises->String
+convertToLine :: Exercise->Line
 
-instance TST HEN where tst = \case Nothing->"_"; Indeed e->e 
-instance TST DAT where tst = \(d,m,y)->glue [tst d,"/",tst m,"/",tst y]
-instance TST INT where tst = convertToString
+instance ToString HopefullyExerciseName where
+  toString = \case Nothing ->"_"
+                   Indeed e->e 
+instance ToString Date where
+  toString = \(d,m,y)->glue [toString d,"/",toString m,"/",toString y]
+instance ToString Int where
+  toString = convertToString

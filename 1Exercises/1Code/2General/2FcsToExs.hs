@@ -1,6 +1,6 @@
-{-# LANGUAGE LambdaCase,TypeSynonymInstances,FlexibleInstances #-} 
+{-# LANGUAGE LambdaCase,FlexibleInstances #-} 
 module FcsToExs where
-import Prelude hiding (Nothing,fromString,splitInLines,and)
+import Prelude hiding (Nothing,and)
 import Data.List.Split
 import Control.Arrow
 import Types 
@@ -11,17 +11,19 @@ exercises = readCurrentDataKeeper`unwrapAnd`(convertToExercises`and`wrap)
 readCurrentDataKeeper = currentDataKeeper`unwrapAnd`readFile
 convertToExercises    = splitInLines`and`forEach convertToExercise
 convertToExercise     = splitInWords`and`
-  \case ["d",sn,nu,en]   ->Don (sn,nu,fromString en)
-        ["m",sn,nu,en]   ->Mis (sn,nu,fromString en)
-        ["t",sn,nu,en,da]->Tdo (sn,nu,fromString en)$fromString da
+  \case ["d",sn,nu,en]   ->Done   (sn,nu,fromString en)
+        ["m",sn,nu,en]   ->Missed (sn,nu,fromString en)
+        ["t",sn,nu,en,da]->ToDo   (sn,nu,fromString en)$fromString da
         _                ->printErrorMessage "Line To Exercise"
-convertToExercises :: FCS->EXS
-convertToExercise  :: LIN->EXR
+convertToExercises :: String->Exercises
+convertToExercise  :: Line->Exercise
 
---from string
-instance FST HEN where fromString= \case "_"->Nothing;exName->Indeed exName
-instance FST DAT where
+instance FromString HopefullyExerciseName where
+  fromString= \case "_"   ->Nothing
+                    exName->Indeed exName
+instance FromString Date where
   fromString=splitOn "/"`and`
     \case [d,m,y]->(fromString d,fromString m,fromString y)
           _      ->printErrorMessage "Date"
-instance FST INT where fromString=convertFromString
+instance FromString Int where
+  fromString=convertFromString

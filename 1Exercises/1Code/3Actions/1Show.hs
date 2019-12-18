@@ -1,40 +1,39 @@
 {-# LANGUAGE LambdaCase,TypeSynonymInstances,FlexibleInstances #-} 
 module Show where
-import Prelude hiding (all,and,Nothing)
+import Prelude hiding (Show,show,all,and,Nothing)
 import Control.Arrow
 import Data.Function
 import Renaming
 import Useful
 import Types
 import FcsToExs 
-import MenuOptions
-import ActionOptions
+import RootMenu
+import Actions
 
-s :: SHO a => a->STR
+s :: Show a => a->String
 from = ($)
 fill               = \i s->take i`from`(s&withInfiniteSpaces)
 withInfiniteSpaces = \s->s`append`repeat ' '
 fill15ForEach      = forEach (fill 15)
-
-s = sho
-instance SHO EXR where
-  sho =
-    \case Don (n,nu,e)   ->[n,nu,s e]     &(fill15ForEach`and`glue)
-          Mis (n,nu,e)   ->[n,nu,s e]     &(fill15ForEach`and`glue)
-          Tdo (n,nu,e) da->[n,nu,s e,s da]&(fill15ForEach`and`glue)
+s = show
+instance Show Exercise where
+  show =
+    \case Done (n,nu,e)   ->[n,nu,s e]     &(fill15ForEach`and`glue)
+          Missed (n,nu,e)   ->[n,nu,s e]     &(fill15ForEach`and`glue)
+          ToDo (n,nu,e) da->[n,nu,s e,s da]&(fill15ForEach`and`glue)
 
 appendNewLine = (`append`"\n")
-instance SHO EXS where
-  sho = forEach (sho`and`tabBefore`and`appendNewLine)`and`glue 
-instance SHO HEN where sho = \case Nothing->"No Name";Indeed e->e 
-instance SHO DAT where sho = \(d,m,y)->glue [sho d,"/",sho m,"/",sho y]
-instance SHO INT where sho = convertToString
+instance Show Exercises where
+  show = forEach (show`and`tabBefore`and`appendNewLine)`and`glue 
+instance Show HopefullyExerciseName where show = \case Nothing->"No Name";Indeed e->e 
+instance Show Date where show = \(d,m,y)->glue [show d,"/",show m,"/",show y]
+instance Show Int where show = convertToString
 
-pri=sho`and`printString
-done   = \case (Don ed)  ->True;_->False
-missed = \case (Mis ed)  ->True;_->False
-toDo   = \case (Tdo ed d)->True;_->False
-all    = \_              ->True
+pri=show`and`printString
+done   = \case (Done ed)  ->True;_->False
+missed = \case (Missed ed)->True;_->False
+toDo   = \case (ToDo ed d)->True;_->False
+all    = \_               ->True
 
 filterAndPrint = \f->exercises`unwrapAnd`(filter f`and`pri)
 showToDo   = filterAndPrint toDo

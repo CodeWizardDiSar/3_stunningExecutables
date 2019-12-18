@@ -11,8 +11,8 @@ versionKeeper     = dataDir`append`"/ver"
 tempVersionKeeper = dataDir`append`"/verTmp"
 dataKeeperPrefix  = dataDir`append`"/data"  
 
-exercisesDir      :: PATH
-dataDir           :: PATH
-versionKeeper     :: PATH
-tempVersionKeeper :: PATH
-dataKeeperPrefix  :: PATH
+exercisesDir      :: FilePath
+dataDir           :: FilePath
+versionKeeper     :: FilePath
+tempVersionKeeper :: FilePath
+dataKeeperPrefix  :: FilePath

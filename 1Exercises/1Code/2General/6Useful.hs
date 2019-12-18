@@ -17,10 +17,10 @@ tabBefore = 1&tabsBefore
 titleAndOptions = \x y->[tabBefore x]`append`forEach (2&tabsBefore) y
 askFor = \x->printStringsWrappedInNewLines x>>getLine
 
-emptyLine :: IOU               
-printStringsWrappedInNewLines :: STS->IOU          
-emptyLines :: INT->IOU          
-wrapInNewLines :: IOU->IOU          
-printStrings :: STS->IOU          
-titleAndOptions :: MSG->MGS->MGS
-tabsBefore :: INT->STR->STR
+emptyLine                     :: IO ()               
+printStringsWrappedInNewLines :: Strings->IO ()          
+emptyLines                    :: Int->IO ()          
+wrapInNewLines                :: IO ()->IO ()          
+printStrings                  :: Strings->IO ()          
+titleAndOptions               :: Message->Messages->Messages
+tabsBefore                    :: Int->String->String
