@@ -1,5 +1,5 @@
 sr=$(shell find '../1Code' -name '*.hs')
-ex=../3Executable
+ex=../4Executable
 nf=../NotForMe
 
 all: $(sr)

@@ -1,42 +1,58 @@
 {-# LANGUAGE LambdaCase,TypeSynonymInstances,FlexibleInstances #-} 
 module Show where
-import Prelude hiding (Show,show,all,and,Nothing)
+import Prelude hiding (all,and,Nothing)
 import Control.Arrow
 import Data.Function
 import Renaming
 import Useful
 import Types
-import FcsToExs 
-import RootMenu
-import Actions
+import ExercisesFromFile 
+import Menus
 
-s :: Show a => a->String
-from = ($)
-fill               = \i s->take i`from`(s&withInfiniteSpaces)
-withInfiniteSpaces = \s->s`append`repeat ' '
-fill15ForEach      = forEach (fill 15)
-s = show
-instance Show Exercise where
-  show =
-    \case Done (n,nu,e)   ->[n,nu,s e]     &(fill15ForEach`and`glue)
-          Missed (n,nu,e)   ->[n,nu,s e]     &(fill15ForEach`and`glue)
-          ToDo (n,nu,e) da->[n,nu,s e,s da]&(fill15ForEach`and`glue)
-
-appendNewLine = (`append`"\n")
-instance Show Exercises where
-  show = forEach (show`and`tabBefore`and`appendNewLine)`and`glue 
-instance Show HopefullyExerciseName where show = \case Nothing->"No Name";Indeed e->e 
-instance Show Date where show = \(d,m,y)->glue [show d,"/",show m,"/",show y]
-instance Show Int where show = convertToString
-
-pri=show`and`printString
-done   = \case (Done ed)  ->True;_->False
-missed = \case (Missed ed)->True;_->False
-toDo   = \case (ToDo ed d)->True;_->False
-all    = \_               ->True
-
-filterAndPrint = \f->exercises`unwrapAnd`(filter f`and`pri)
+showList   = [showToDo,showDone,showMissed,showAll]
 showToDo   = filterAndPrint toDo
 showDone   = filterAndPrint done
 showMissed = filterAndPrint missed
 showAll    = filterAndPrint all
+filterAndPrint = \exType->exercises`unwrapAnd`(filter exType`and`printExs)
+done     = \case (Done   _)  ->True;_->False
+missed   = \case (Missed _)  ->True;_->False
+toDo     = \case (ToDo   _ _)->True;_->False
+all      = \_                ->True
+printExs = makeStringFrom`and`printString
+
+instance StringFrom Exercises where
+  makeStringFrom =
+    forEach (makeStringFrom`and`tabBefore`and`appendNL)`and`glue 
+appendNL = (`append`"\n")
+instance StringFrom Exercise where
+  makeStringFrom = \case
+    Done (subjectName,exerciseNumber,exerciseName)->
+      (indent`and`glue)
+        [subjectName
+        ,exerciseNumber
+        ,makeStringFrom exerciseName]
+    Missed (subjectName,exerciseNumber,exerciseName)   ->
+      (indent`and`glue)
+        [subjectName
+        ,exerciseNumber
+        ,makeStringFrom exerciseName]
+    ToDo (subjectName,exerciseNumber,exerciseName) da->
+      (indent`and`glue)
+        [subjectName
+        ,exerciseNumber
+        ,makeStringFrom exerciseName
+        ,makeStringFrom da]
+indent             = (fill 15)&forEach
+fill               = \i s->take i`from`(s&withInfiniteSpaces)
+withInfiniteSpaces = \s->s`append`repeat ' '
+instance StringFrom HopefullyExerciseName where
+  makeStringFrom = \case
+    Nothing     ->"No Name"
+    IndeedItIs e->e 
+instance StringFrom Date where
+  makeStringFrom = \(d,m,y)->glue [makeStringFrom d,"/"
+                                  ,makeStringFrom m,"/"
+                                  ,makeStringFrom y]
+instance StringFrom Int where
+  makeStringFrom = convertToString

@@ -1,9 +1,8 @@
 {-# LANGUAGE LambdaCase #-} 
 module Change where
---import _._
+import Renaming
 
---_ _ = _
-
---data _ = _ _ | _ _
---type _ = _ 
-
+changeList   = [changeToDo,changeDone,changeMissed]
+changeToDo   = printString "change To To Do"
+changeDone   = printString "change To Done"
+changeMissed = printString "change To Missed"

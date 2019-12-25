@@ -1,37 +1,30 @@
 {-# LANGUAGE LambdaCase #-} 
 module Add where
---import Types
---import General
---import FileToSubs
---  
---insertExercise = putStrLn "insertExercise"
---insertSubject  = putStrLn "insertSubject"
---
---add =
---  insertSubject
--- fileSubs>>=\subs ->
--- getSubName>>=\subName ->
--- case elem subName$forEach fromString subs of
---   True ->addSub subName>>addEx
---   False->addSub>>addEx
--- --findOrAddSuject
--- numberInString <- askAndGet "exercise number plz"
--- let number = read numberInString :: Int
--- date <- askAndGet "date plz"
--- insertExercise
--- --saveExercise$InfoToExercise 
--- --return$InfoToExercise number subject
---
---etSubName =
--- askAndGet subNameMes
---
---ubNameMes = "Subject Name If You Wish Master"
---
----findOrAddSubject = do
----  openDataFile
----
----openDataFile = do
----  answer <- isThereADataFile
----  case answer of 
----    True->
----
+import Control.Monad.Trans.State
+import Data.Function
+import Prelude hiding (Nothing,and)
+import Renaming
+import ExercisesFromFile
+import Types
+
+addToList     = [addToToDo,addToDone,addToMissed]
+addToToDo     = askForSubName []
+askForSubName = askFor"Subject Name?"`keepAnd`askForExNum
+askForExNum   = askFor"Exercise Number?"`keepAnd`askForExName
+askForExName  = askFor"Exercise Name?"`keepAnd`askForDate
+askForDate    = askFor"Date?"`keepAnd`(concat`and`printString)
+askFor question nextAction = \l->
+  ask question`unwrapAnd`\x->length x>14& \case
+    True->whine`andThen`askFor question nextAction l
+    _   ->l`append`[x]&nextAction
+whine = printString "More than 14 chars is not pretty"
+
+--let newExs = evalState (add (suna,exnu,exna,date) exercises)
+
+--newExs :: State Exercises Exercises
+--newExs = do
+--  exs <- get
+
+ask = \s -> printString s`andThen`getLine
+addToDone   = printString "Add To Done"
+addToMissed = printString "Add To Missed"

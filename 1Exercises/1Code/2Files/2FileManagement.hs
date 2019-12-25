@@ -1,5 +1,5 @@
 {-# LANGUAGE LambdaCase #-} 
-module General where
+module FileManagement where
 import Prelude hiding (and)
 import Control.Monad
 import Data.Function
@@ -11,9 +11,9 @@ import Paths
 import Renaming
 import Useful
 
-version = versionKeeperExists`unwrapAnd`\case True->readVersionKeeper
-                                              _   ->write0ToVKAndWrap0 
+version              = versionKeeperExists`unwrapAnd`actAccordingly
 versionKeeperExists  = versionKeeper&fileExists
+actAccordingly       = \case True->readVersionKeeper;_->write0ToVKAndWrap0
 readVersionKeeper    = readFile versionKeeper
 write0ToVKAndWrap0   = writeToVersionKeeper "0"`andThen`wrap "0"
 writeToVersionKeeper = writeFile versionKeeper
@@ -24,25 +24,23 @@ write0ToVKAndWrap0   :: IO String
 writeToVersionKeeper :: String->IO ()
 
 updateVersion = version`unwrapAnd`addOneAndWriteToTVK`andThen`makeTVKVK
-
 addOneAndWriteToTVK = addOneToString`and`writeToTVK
-addOneToString      = convertFromString`and`(+1)`and`convertToString
+addOneToString      = read`and`(+1)`and`convertToString
 writeToTVK          = writeFile tempVersionKeeper
 makeTVKVK           = renameFile tempVersionKeeper versionKeeper
 updateVersion       :: IO ()     
+addOneAndWriteToTVK :: String->IO ()     
 addOneToString      :: String->String
 writeToTVK          :: String->IO ()
 makeTVKVK           :: IO ()     
 
 currentDataKeeper     = version`unwrapAnd`(addDKPrefix`and`wrap)
+addDKPrefix           = (dataKeeperPrefix`append`)
 nextDataKeeper        = version`unwrapAnd`(addOneAndAddDKPrefix`and`wrap)
 addOneAndAddDKPrefix  = addOneToString`and`addDKPrefix
-addDKPrefix           = (dataKeeperPrefix`append`)
-writeFileFL           = flip writeFile
-writeToNextDataKeeper = \s->nextDataKeeper`unwrapAnd`writeFileFL s 
+writeToNextDataKeeper = \s->nextDataKeeper`unwrapAnd`flip writeFile s 
 currentDataKeeper     :: IO FilePath     
 nextDataKeeper        :: IO FilePath     
 addOneAndAddDKPrefix  :: String->FilePath
 addDKPrefix           :: String->FilePath
-writeFileFL           :: String->FilePath->IO ()
 writeToNextDataKeeper :: String->IO ()
