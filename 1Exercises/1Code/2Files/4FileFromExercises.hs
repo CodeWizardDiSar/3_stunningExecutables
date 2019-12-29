@@ -1,10 +1,10 @@
 {-# LANGUAGE LambdaCase,FlexibleInstances #-} 
 module FileFromExercises where
-import Prelude hiding (Nothing,and)
+import Prelude  (String,Int)
 import Renaming (forEach,and,glue,convertToString)
-import Types (StringVersionOf,Date,toString)
-import Types (HopefullySome(..),Exercise(..))
-import Types (HopefullyExerciseName,Line,Exercises)
+import Types    (StringVersionOf,Date,toString)
+import Types    (HopefullySome(..),Exercise(..))
+import Types    (HopefullyExerciseName,Line,Exercises)
 
 exercisesStringVersionOf = forEach convertToLine`and`glue
 convertToLine =

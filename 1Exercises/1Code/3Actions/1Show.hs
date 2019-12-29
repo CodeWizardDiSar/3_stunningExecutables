@@ -1,11 +1,12 @@
 {-# LANGUAGE LambdaCase,TypeSynonymInstances,FlexibleInstances #-} 
 module Show where
-import Prelude hiding (and,Nothing)
-import Data.Function ((&))
-import Renaming
-import Useful (doSequentially,tabBefore)
-import Types (StringFrom,makeStringFrom,Date,HopefullyExerciseName)
-import Types (Exercises,Exercise(..),HopefullySome(..))
+import Prelude           (Int,Bool(..),repeat,take,filter,($),concat)
+import Data.Function     ((&))
+import Renaming          (convertToString,glue,append,from,forEach,and)
+import Renaming          (printString,unwrapAnd,andThen)
+import Useful            (doSequentially,tabBefore)
+import Types             (StringFrom,makeStringFrom,HopefullyExerciseName)
+import Types             (Exercises,Date,Exercise(..),HopefullySome(..))
 import ExercisesFromFile (exercises)
 
 showList     = showFiltered`append`[showAll]
@@ -15,7 +16,7 @@ showFiltered =
   ,printStringAndPrint "Missed" missed]
 showAll    = doSequentially showFiltered
 printStringAndPrint = \a b->printMoreBeautiful a`andThen`filterAndPrint b
-printMoreBeautiful  = \a  ->printString$concat ["\n\t",a,"\n"] 
+printMoreBeautiful  = \a  ->printString$concat ["\t",a,"\n"] 
 filterAndPrint = \exType->exercises`unwrapAnd`(filter exType`and`printExs)
 [done,missed,toDo] = 
   [\case(Done   _)  ->True;_->False

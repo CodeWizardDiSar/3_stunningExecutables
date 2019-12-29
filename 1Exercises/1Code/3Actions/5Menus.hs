@@ -1,7 +1,7 @@
 {-# LANGUAGE LambdaCase #-} 
 module Menus where
 import Renaming (append,forEach)
-import Useful (titleAndOptions)
+import Useful   (titleAndOptions)
 
 rootMenu = titleAndOptions "Command me master"
   [addOption,showOption,changeOption,moveOption,exitOption]
