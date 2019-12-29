@@ -1,16 +1,19 @@
 {-# LANGUAGE LambdaCase,FlexibleInstances #-} 
 module ExercisesFromFile where
 import Prelude hiding (Nothing,and)
-import Data.List.Split
-import Data.Function
-import Control.Arrow
-import Types 
-import FileManagement
-import Renaming
+import Renaming (unwrapAnd,wrap,unwrapped,forEach)
+import Renaming (readFromFile,printErrorMessage)
+import FileManagement (currentDataKeeper)
+import Renaming (and,splitInLines,splitInWords)
+import Data.List.Split (splitOn)
+import Data.Function ((&))
+import Types (FromStringTo,toType,Date,Line)
+import Types (Exercises,HopefullyExerciseName)
+import Types (Exercise(..),HopefullySome(..))
 
 exercises           = readCurrentDK`unwrapAnd`convertToWrappedExs
 convertToWrappedExs = convertToExercises`and`wrap
-readCurrentDK       = readFile`unwrapped`currentDataKeeper
+readCurrentDK       = readFromFile`unwrapped`currentDataKeeper
 convertToExercises  = splitInLines`and`forEach convertToExercise
 convertToExercise   = splitInWords`and`\case
   ["d",subjectName,exerciseNumber,exerciseName]   ->

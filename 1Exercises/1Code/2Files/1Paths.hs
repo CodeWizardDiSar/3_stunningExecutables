@@ -1,6 +1,6 @@
 {-# LANGUAGE LambdaCase #-} 
 module Paths where
-import Renaming
+import Renaming (append)
 
 homeDir           ="/home/gnostis"
 githubDir         = homeDir`append`"/Desktop/2Github"
@@ -9,9 +9,3 @@ dataDir           = exercisesDir`append`"/3Data"
 versionKeeper     = dataDir`append`"/ver"   
 tempVersionKeeper = dataDir`append`"/verTmp"
 dataKeeperPrefix  = dataDir`append`"/data"  
-
-exercisesDir      :: FilePath
-dataDir           :: FilePath
-versionKeeper     :: FilePath
-tempVersionKeeper :: FilePath
-dataKeeperPrefix  :: FilePath

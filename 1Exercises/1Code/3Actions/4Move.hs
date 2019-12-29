@@ -1,12 +1,12 @@
 {-# LANGUAGE LambdaCase #-} 
 module Move where
-import Renaming
+import Renaming (printString)
 
 moveFromList   = [moveFromToDo,moveFromDone,moveFromMissed]
-moveFromToDo   = printString "change To To Do"
-moveFromDone   = printString "change To Done"
-moveFromMissed = printString "change To Missed"
+moveFromToDo   = printString "move From To Do"
+moveFromDone   = printString "move From Done"
+moveFromMissed = printString "move From Missed"
 moveToList   = [moveToToDo,moveToDone,moveToMissed]
-moveToToDo   = printString "change To To Do"
-moveToDone   = printString "change To Done"
-moveToMissed = printString "change To Missed"
+moveToToDo   = printString "move To To Do"
+moveToDone   = printString "move To Done"
+moveToMissed = printString "move To Missed"

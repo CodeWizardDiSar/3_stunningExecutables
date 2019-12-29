@@ -1,24 +1,26 @@
 {-# LANGUAGE LambdaCase,TypeSynonymInstances,FlexibleInstances #-} 
 module Show where
-import Prelude hiding (all,and,Nothing)
-import Control.Arrow
-import Data.Function
+import Prelude hiding (and,Nothing)
+import Data.Function ((&))
 import Renaming
-import Useful
-import Types
-import ExercisesFromFile 
-import Menus
+import Useful (doSequentially,tabBefore)
+import Types (StringFrom,makeStringFrom,Date,HopefullyExerciseName)
+import Types (Exercises,Exercise(..),HopefullySome(..))
+import ExercisesFromFile (exercises)
 
-showList   = [showToDo,showDone,showMissed,showAll]
-showToDo   = filterAndPrint toDo
-showDone   = filterAndPrint done
-showMissed = filterAndPrint missed
-showAll    = filterAndPrint all
+showList     = showFiltered`append`[showAll]
+showFiltered =
+  [printStringAndPrint "To Do"  toDo
+  ,printStringAndPrint "Done"   done
+  ,printStringAndPrint "Missed" missed]
+showAll    = doSequentially showFiltered
+printStringAndPrint = \a b->printMoreBeautiful a`andThen`filterAndPrint b
+printMoreBeautiful  = \a  ->printString$concat ["\n\t",a,"\n"] 
 filterAndPrint = \exType->exercises`unwrapAnd`(filter exType`and`printExs)
-done     = \case (Done   _)  ->True;_->False
-missed   = \case (Missed _)  ->True;_->False
-toDo     = \case (ToDo   _ _)->True;_->False
-all      = \_                ->True
+[done,missed,toDo] = 
+  [\case(Done   _)  ->True;_->False
+  ,\case(Missed _)  ->True;_->False
+  ,\case(ToDo   _ _)->True;_->False]
 printExs = makeStringFrom`and`printString
 
 instance StringFrom Exercises where

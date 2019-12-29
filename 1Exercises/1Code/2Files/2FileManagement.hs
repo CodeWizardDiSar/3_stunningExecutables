@@ -1,43 +1,28 @@
 {-# LANGUAGE LambdaCase #-} 
 module FileManagement where
 import Prelude hiding (and)
-import Control.Monad
-import Data.Function
-import Control.Arrow
-import System.Directory
-import System.Process
-import Types
-import Paths
-import Renaming
-import Useful
+import Data.Function ((&))
+import System.Directory (renameFile)
+import Paths (versionKeeper,tempVersionKeeper,dataKeeperPrefix)
+import Renaming (unwrapAnd,andThen,and,wrap,append,convertToString)
+import Renaming (convertFromString,fileExists,checkThat,writeToFile)
+import Renaming (readFromFile)
 
-version              = versionKeeperExists`unwrapAnd`actAccordingly
-versionKeeperExists  = versionKeeper&fileExists
-actAccordingly       = \case True->readVersionKeeper;_->write0ToVKAndWrap0
-readVersionKeeper    = readFile versionKeeper
-write0ToVKAndWrap0   = writeToVersionKeeper "0"`andThen`wrap "0"
-writeToVersionKeeper = writeFile versionKeeper
-version              :: IO String     
-versionKeeperExists  :: IO Boolean     
-readVersionKeeper    :: IO String     
-write0ToVKAndWrap0   :: IO String     
-writeToVersionKeeper :: String->IO ()
+getVersion = checkThat (versionKeeper&fileExists)`unwrapAnd`\case
+  True->readFromFile versionKeeper                    
+  _   ->writeToFile versionKeeper "0"`andThen`wrap "0"::IO String     
 
-updateVersion = version`unwrapAnd`addOneAndWriteToTVK`andThen`makeTVKVK
-addOneAndWriteToTVK = addOneToString`and`writeToTVK
-addOneToString      = read`and`(+1)`and`convertToString
-writeToTVK          = writeFile tempVersionKeeper
-makeTVKVK           = renameFile tempVersionKeeper versionKeeper
-updateVersion       :: IO ()     
-addOneAndWriteToTVK :: String->IO ()     
-addOneToString      :: String->String
-writeToTVK          :: String->IO ()
-makeTVKVK           :: IO ()     
+updateVersion = getVersion`unwrapAnd`
+  (addOneToString`and` writeToFile tempVersionKeeper)`andThen`
+  renameFile tempVersionKeeper versionKeeper::IO ()     
 
-currentDataKeeper     = version`unwrapAnd`(addDKPrefix`and`wrap)
-addDKPrefix           = (dataKeeperPrefix`append`)
-nextDataKeeper        = version`unwrapAnd`(addOneAndAddDKPrefix`and`wrap)
+addOneToString =
+  convertFromString`and`(+1)`and`convertToString::String->String
+
+nextDataKeeper    = getVersion`unwrapAnd`(addOneAndAddDKPrefix`and`wrap)
+currentDataKeeper = getVersion`unwrapAnd`(addDKPrefix`and`wrap)
 addOneAndAddDKPrefix  = addOneToString`and`addDKPrefix
+addDKPrefix           = (dataKeeperPrefix`append`)
 writeToNextDataKeeper = \s->nextDataKeeper`unwrapAnd`flip writeFile s 
 currentDataKeeper     :: IO FilePath     
 nextDataKeeper        :: IO FilePath     

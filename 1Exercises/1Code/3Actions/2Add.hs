@@ -1,11 +1,8 @@
 {-# LANGUAGE LambdaCase #-} 
 module Add where
-import Control.Monad.Trans.State
-import Data.Function
 import Prelude hiding (Nothing,and)
-import Renaming
-import ExercisesFromFile
-import Types
+import Data.Function ((&))
+import Renaming (printString,andThen,append,unwrapAnd,and,keepAnd)
 
 addToList     = [addToToDo,addToDone,addToMissed]
 addToToDo     = askForSubName []
