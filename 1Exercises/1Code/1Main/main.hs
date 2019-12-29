@@ -1,16 +1,16 @@
 {-# LANGUAGE LambdaCase #-} 
 module Main where
-import Renaming      (forEach,printString,andThen,unwrapAnd)
-import Useful        (doSequentially)
-import Useful        (printEmptyLine,tabBefore,printStrsWithNLs)
-import Prelude       (getLine)
-import Data.Function ((&))
-import Menus         (rootMenu,addMenu,showMenu,changeMenu)
-import Menus         (moveFromMenu,moveToMenu)
-import Show          (showList)
-import Add           (addList)
-import Change        (changeList)
-import Move          (moveFromList,moveToList)
+import Renaming        (forEach,printString,andThen,unwrapAnd)
+import UsefulFunctions (doSequentially)
+import UsefulFunctions (printEmptyLine,tabBefore,printStrsWithNLs)
+import Prelude         (getLine)
+import Data.Function   ((&))
+import Menus           (rootMenu,addMenu,showMenu,changeMenu)
+import Menus           (moveFromMenu,moveToMenu)
+import Show            (showList)
+import Add             (addList)
+import Change          (changeList)
+import Move            (moveFromList,moveToList)
 -- Main baby
 [main,welcome] =
  forEach doSequentially

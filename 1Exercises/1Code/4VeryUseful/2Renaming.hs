@@ -24,12 +24,12 @@ wrap      :: Monad m=>a->m a
 forEachDo :: (Monad m, Foldable t)=>(a->m b)->t a->m ()
 -- Very General Fuctions
 (forEach        ,printString      ,glue             ,fileExists  ,
- convertToString,convertFromString,printErrorMessage,splitInLines,
+ convertIntToString,convertIntFromString,printErrorMessage,splitInLines,
  splitInWords   ,repeatNTimes     ,writeToFile      ,readFromFile) =
   (map  ,putStrLn ,concat   ,doesFileExist,
    show ,read     ,error    ,lines        ,
    words,replicate,writeFile,readFile)
 glue              :: [[a]]->[a]   
-convertToString   :: Int->String     
-convertFromString :: String->Int
+convertIntToString   :: Int->String     
+convertIntFromString :: String->Int
 printErrorMessage :: String->a       

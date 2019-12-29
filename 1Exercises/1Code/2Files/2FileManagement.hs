@@ -6,9 +6,10 @@ import Paths            (versionKeeper,tempVersionKeeper,dataKeeperPrefix)
 import Data.Function    ((&))
 import Renaming         (readFromFile,writeToFile)
 import Renaming         (unwrapAnd,andThen,wrap,and,append)
-import Renaming         (convertFromString,convertToString)
+import Renaming         (convertIntFromString,convertIntToString)
 import System.Directory (renameFile)
--- Managing Data and Version Keepers
+import UsefulFunctions  (addOneToString)
+-- Managing the Version Keeper
 getVersion =
  checkThat (versionKeeper&fileExists)`unwrapAnd`\case
   True->readFromFile versionKeeper                    
@@ -17,13 +18,12 @@ updateVersion =
  getVersion`unwrapAnd`
  (addOneToString`and`writeToFile tempVersionKeeper)`andThen`
  renameFile tempVersionKeeper versionKeeper           ::IO ()     
-addOneToString =
- convertFromString`and`(+1)`and`convertToString       ::String->String
-nextDataKeeper =
- getVersion`unwrapAnd`(addOneAndAddDKPrefix`and`wrap) ::IO FilePath
+-- Managing Data Keepers
 currentDataKeeper =
  getVersion`unwrapAnd`(addDKPrefix`and`wrap)          ::IO FilePath
-addOneAndAddDKPrefix  = addOneToString`and`addDKPrefix::String->FilePath
-addDKPrefix           = (dataKeeperPrefix`append`)    ::String->FilePath
+addDKPrefix = (dataKeeperPrefix`append`)              ::String->FilePath
+nextDataKeeper =
+ getVersion`unwrapAnd`
+ (addOneToString`and`addDKPrefix`and`wrap)            ::IO FilePath
 writeToNextDataKeeper = (\s->
  nextDataKeeper`unwrapAnd`flip writeToFile s)         ::String->IO ()
