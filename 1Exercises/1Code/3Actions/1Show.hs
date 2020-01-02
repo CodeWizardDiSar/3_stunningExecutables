@@ -1,53 +1,40 @@
-{-# LANGUAGE LambdaCase,TypeSynonymInstances,FlexibleInstances #-} 
+{-# LANGUAGE LambdaCase,FlexibleInstances #-} 
 module Show where
-import Prelude           (Int,Bool(..),repeat,take,filter,($),concat)
-import Data.Function     ((&))
 import Renaming          (convertIntToString,glue,append,from,forEach,and)
-import Renaming          (printString,unwrapAnd,andThen)
-import UsefulFunctions   (doSequentially,tabBefore)
-import Types             (StringFrom,makeStringFrom,HopefullyExerciseName)
+import Renaming          (printString,unwrapAnd,andThen,inputTo)
+import Types             (Show,show,HopefullyExerciseName)
 import Types             (Exercises,Date,Exercise(..),HopefullySome(..))
+import UsefulFunctions   (doSequentially,tabBefore)
+import Prelude           (Int,Bool(..),repeat,take,filter,($),concat)
+import Data.List         (intercalate)
 import ExercisesFromFile (exercises)
-
-showList     = showFiltered`append`[showAll]
+-- Show list of actions
+showList     = showFiltered`append`[doSequentially showFiltered]
 showFiltered =
- [printStringAndPrint "To Do"  toDo,
-  printStringAndPrint "Done"   done,
-  printStringAndPrint "Missed" missed]
-showAll    = doSequentially showFiltered
-printStringAndPrint = \a b->printMoreBeautiful a`andThen`filterAndPrint b
-printMoreBeautiful  = \a  ->printString$concat ["\t",a,"\n"] 
-filterAndPrint = \exType->exercises`unwrapAnd`(filter exType`and`printExs)
-[done,missed,toDo] = 
- [\case(Done   _)  ->True;_->False,
-  \case(Missed _)  ->True;_->False,
-  \case(ToDo   _ _)->True;_->False]
-printExs = makeStringFrom`and`printString
-
-instance StringFrom Exercises where
- makeStringFrom =
-  forEach (makeStringFrom`and`tabBefore`and`(`append`"\n"))`and`glue 
-instance StringFrom Exercise where
- makeStringFrom = \case
-  Done (subjectName,exerciseNumber,exerciseName)->
-   (indent`and`glue)
-    [subjectName,exerciseNumber,makeStringFrom exerciseName]
-  Missed (subjectName,exerciseNumber,exerciseName)   ->
-   (indent`and`glue)
-    [subjectName,exerciseNumber,makeStringFrom exerciseName]
-  ToDo (subjectName,exerciseNumber,exerciseName) da->
-   (indent`and`glue)
-    [subjectName,exerciseNumber,makeStringFrom exerciseName,
-     makeStringFrom da]
-indent             = (fill 15)&forEach
-fill               = \i s->take i`from`(s&withInfiniteSpaces)
-withInfiniteSpaces = \s->s`append`repeat ' '
-instance StringFrom HopefullyExerciseName where
- makeStringFrom = \case
-  Nothing     ->"No Name"
-  IndeedItIs e->e 
-instance StringFrom Date where
- makeStringFrom = \(d,m,y)->
-  glue [makeStringFrom d,"/",makeStringFrom m,"/",makeStringFrom y]
-instance StringFrom Int where
- makeStringFrom = convertIntToString
+ [printMoreBeautiful "To Do" `andThen`filterAndPrint toDo,
+  printMoreBeautiful "Done"  `andThen`filterAndPrint done,
+  printMoreBeautiful "Missed"`andThen`filterAndPrint missed]
+printMoreBeautiful  = \a->printString$concat ["\t",a,"\n"] 
+filterAndPrint = \exerciseType->
+ exercises`unwrapAnd`(filter exerciseType`and`show`and`printString)
+[toDo,missed,done] = 
+ [\case ToDo _ _->True;_->False,
+  \case Done _  ->True;_->False,
+  \case Missed _->True;_->False]
+-- Instances of Show for types
+--  Exercises,Exercise,HopefullyExerciseName,Date,Int
+instance Show Exercises where
+ show = forEach (show`and`tabBefore`and`(`append`"\n"))`and`glue 
+instance Show Exercise where
+ show = \case
+  Done   (sub,exNum,exName)        -> putTogether [sub,exNum,show exName]
+  Missed (sub,exNum,exName)        -> putTogether [sub,exNum,show exName]
+  ToDo   (sub,exNumber,exName) date->
+   putTogether [sub,exNumber,show exName,show date]
+putTogether = forEach ((`append`repeat ' ')`and`take 15)`and`glue
+instance Show HopefullyExerciseName where
+ show = \case Nothing->"No Name";IndeedItIs e->e 
+instance Show Date where
+ show = \(d,m,y)->forEach show [d,m,y]`inputTo`intercalate "/"
+instance Show Int where
+ show = convertIntToString

@@ -5,31 +5,28 @@ import Prelude          (replicate,words,lines,error,read,show,concat)
 import Prelude          (putStrLn,map,mapM_,return,repeat,take,id)
 import Prelude          ((=<<),(>>=),(>>),(++),($))
 import Control.Arrow    ((>>>))
+import Data.Function    ((&))
 import System.Directory (doesFileExist)
 -- Jokers
-[checkThat] = take 1`from`repeat id
+[checkThat]    = take 1`from`repeat id
+[from,keepAnd] = take 2 $ repeat ($)
 -- Normal Operators
-([from,keepAnd],append,and)
-   = (take 2 $ repeat ($),(++),(>>>):: (a->b)->(b->c)->(a->c))
+(inputTo,append,and) = ((&),(++),(>>>):: (a->b)->(b->c)->(a->c))
 -- Monad operators And Functions
 andThen   = (>>)
-unwrapAnd = (>>=)
-unwrapped = (=<<)
-wrap      = return
-forEachDo = mapM_
 andThen   :: Monad m=>m a->m b->m b
+unwrapAnd = (>>=)
 unwrapAnd :: Monad m=>m a->(a->m b)->m b
+unwrapped = (=<<)
 unwrapped :: Monad m=>(a->m b)->m a->m b
+wrap      = return
 wrap      :: Monad m=>a->m a
-forEachDo :: (Monad m, Foldable t)=>(a->m b)->t a->m ()
+forEachDo = mapM_
+forEachDo :: Monad m=>(a->m b)->[a]->m ()
 -- Very General Fuctions
-(forEach        ,printString      ,glue             ,fileExists  ,
- convertIntToString,convertIntFromString,printErrorMessage,splitInLines,
- splitInWords   ,repeatNTimes     ,writeToFile      ,readFromFile) =
-  (map  ,putStrLn ,concat   ,doesFileExist,
-   show ,read     ,error    ,lines        ,
-   words,replicate,writeFile,readFile)
-glue              :: [[a]]->[a]   
-convertIntToString   :: Int->String     
-convertIntFromString :: String->Int
-printErrorMessage :: String->a       
+(forEach           ,glue                ,splitInWords,splitInLines      ,
+ convertIntToString,convertIntFromString,printString ,printErrorMessage ,
+ fileExists        ,readFromFile        ,writeToFile ,repeatNTimes      ) =
+ (map              ,concat::[[a]]->[a],words    ,lines            ,
+  show::Int->String,read::String->Int ,putStrLn ,error ::String->a,
+  doesFileExist    ,readFile          ,writeFile,replicate        )

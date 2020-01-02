@@ -1,21 +1,19 @@
 {-# LANGUAGE LambdaCase #-} 
 module FileManagement where
-import Prelude          (IO,String,FilePath,Bool(..),(+),flip)
 import Renaming         (checkThat,fileExists)
-import Paths            (versionKeeper,tempVersionKeeper,dataKeeperPrefix)
-import Data.Function    ((&))
 import Renaming         (readFromFile,writeToFile)
 import Renaming         (unwrapAnd,andThen,wrap,and,append)
 import Renaming         (convertIntFromString,convertIntToString)
-import System.Directory (renameFile)
 import UsefulFunctions  (addOneToString)
+import Prelude          (IO,String,FilePath,Bool(..),(+),flip)
+import Paths            (versionKeeper,tempVersionKeeper,dataKeeperPrefix)
+import System.Directory (renameFile)
+import Data.Function    ((&))
 -- Managing the Version Keeper
-getVersion =
- checkThat (versionKeeper&fileExists)`unwrapAnd`\case
+getVersion = checkThat (versionKeeper&fileExists)`unwrapAnd`\case
   True->readFromFile versionKeeper                    
   _   ->writeToFile versionKeeper "0"`andThen`wrap "0"::IO String     
-updateVersion =
- getVersion`unwrapAnd`
+updateVersion = getVersion`unwrapAnd`
  (addOneToString`and`writeToFile tempVersionKeeper)`andThen`
  renameFile tempVersionKeeper versionKeeper           ::IO ()     
 -- Managing Data Keepers

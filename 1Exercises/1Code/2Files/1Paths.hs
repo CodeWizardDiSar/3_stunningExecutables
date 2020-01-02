@@ -1,7 +1,7 @@
 {-# LANGUAGE LambdaCase #-} 
 module Paths where
 import Renaming (append)
-
+-- You migh have guessed: paths
 homeDir           = "/home/gnostis"
 githubDir         = homeDir     `append`"/Desktop/2Github"
 exercisesDir      = githubDir   `append`"/3StunningExecutables/1Exercises"

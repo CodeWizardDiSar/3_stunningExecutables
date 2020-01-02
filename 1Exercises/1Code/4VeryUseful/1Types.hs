@@ -23,6 +23,7 @@ type Exercises             = [Exercise]
 type ExerciseData          = (SubjectName
                              ,ExerciseNumber
                              ,HopefullyExerciseName)
-class FromStringTo    a where toType         :: String->a
-class StringVersionOf a where toString       :: a->String
-class StringFrom      a where makeStringFrom :: a->String
+-- Even more of pleasure, type classes
+class FromStringTo  a where toType         :: String->a
+class FileVersionOf a where toFileString   :: a->String
+class Show    a where show :: a->String
