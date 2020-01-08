@@ -1,20 +1,37 @@
-{-# LANGUAGE LambdaCase #-} 
 module Add where
-import Prelude       (Bool(..),concat,length,(>),getLine)
-import Renaming      (printString,andThen,append,unwrapAnd,and,keepAnd)
-import Renaming      (inputTo)
+import Renaming          (printString,andThen,append,unwrapAnd,and,keepAnd)
+import Renaming          (inputTo,wrap,glue,forEach)
+import Types             (Exercise(..),HopefullySome(..))
+import Prelude           (Bool(..),concat,length,(>),getLine,IO,($),read)
+import ExercisesFromFile (exercises)
+import FileFromExercises (exercisesToString)
+import FileManagement    (writeToNextDataKeeper,updateVersion)
 
-addList       = [addToToDo,addToDone,addToMissed]
-addToToDo     = askForSubName []
-askForSubName = askFor"Subject Name?"`keepAnd`askForExNum
-askForExNum   = askFor"Exercise Number?"`keepAnd`askForExName
-askForExName  = askFor"Exercise Name?"`keepAnd`askForDate
-askForDate    = askFor"Date?"`keepAnd`(concat`and`printString)
-askFor question nextAction = \l->
- printString question`andThen`getLine`unwrapAnd`\x->
- (length x>14)`inputTo`\case
-  True->whine`andThen`askFor question nextAction l
-  _   ->(l`append`[x])`inputTo`nextAction
-whine = printString "More than 14 chars is not pretty"
-addToDone   = printString "Add To Done"
-addToMissed = printString "Add To Missed"
+-- Add List Of Actions
+addList = [addTo toDo,addTo done,addTo missed]
+-- Add To
+addTo = (`unwrapAnd`\ex->exercises`unwrapAnd`(
+ (ex:)`and`exercisesToString`and`writeToNextDataKeeper)`andThen`
+ updateVersion)
+-- To Do, Done, Missed
+toDo   = subNumName`unwrapAnd`\sNN->date`unwrapAnd`(ToDo sNN`and`wrap)
+done   = subNumName`unwrapAnd`(Done  `and`wrap)
+missed = subNumName`unwrapAnd`(Missed`and`wrap)
+-- Get Subject,Exercise Number and Exercise Name
+subNumName = askFor "Subject Name?"   `unwrapAnd`\sub   -> 
+             askFor "Exercise Number?"`unwrapAnd`\number->
+             askFor "Exercise Name?"  `unwrapAnd`\name  -> 
+             case name of 
+              "" -> wrap (sub,number,Nothing)
+              _  -> wrap (sub,number,IndeedItIs name)
+askFor = \s -> printString s`getLineUnwrapAnd`\a->
+ case length a>14 of
+  True->printString "More than 14 chars is not pretty"`andThen`askFor s
+  _   ->wrap a
+getLineUnwrapAnd = \a->(a`andThen`getLine`unwrapAnd`)
+-- Get Day,Month and Year (as you might have guessed: date)
+date =
+ printString "Day Of The Month? (number)"`getLineUnwrapAnd`\day-> 
+ printString "Month? (number)"           `getLineUnwrapAnd`\month->
+ printString "Year?"                     `getLineUnwrapAnd`\year->
+ wrap $ forEach read [day,month,year]

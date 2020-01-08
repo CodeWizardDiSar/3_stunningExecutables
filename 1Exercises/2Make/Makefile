@@ -3,7 +3,7 @@ ex=../4Executable
 nf=../NotForMe
 
 all: $(sr)
-	ghc -o $(ex) -odir $(nf) -hidir $(nf) $^ 
+	ghc -XFlexibleInstances -XLambdaCase -o $(ex) -odir $(nf) -hidir $(nf) $^
 
 clean:
 	rm -f $(nf)/* $(ex)

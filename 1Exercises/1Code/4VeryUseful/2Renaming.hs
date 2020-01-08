@@ -1,4 +1,3 @@
-{-# LANGUAGE LambdaCase #-} 
 module Renaming where
 import Prelude          (String,Int,Monad,Foldable,readFile,writeFile)
 import Prelude          (replicate,words,lines,error,read,show,concat)
@@ -7,9 +6,10 @@ import Prelude          ((=<<),(>>=),(>>),(++),($))
 import Control.Arrow    ((>>>))
 import Data.Function    ((&))
 import System.Directory (doesFileExist)
+
 -- Jokers
-[checkThat]    = take 1`from`repeat id
-[from,keepAnd] = take 2 $ repeat ($)
+[checkThat,doNothing] = take 2`from`repeat id
+[from     ,keepAnd  ] = take 2 $ repeat ($)
 -- Normal Operators
 (inputTo,append,and) = ((&),(++),(>>>):: (a->b)->(b->c)->(a->c))
 -- Monad operators And Functions
@@ -24,9 +24,9 @@ wrap      :: Monad m=>a->m a
 forEachDo = mapM_
 forEachDo :: Monad m=>(a->m b)->[a]->m ()
 -- Very General Fuctions
-(forEach           ,glue                ,splitInWords,splitInLines      ,
- convertIntToString,convertIntFromString,printString ,printErrorMessage ,
- fileExists        ,readFromFile        ,writeToFile ,repeatNTimes      ) =
- (map              ,concat::[[a]]->[a],words    ,lines            ,
-  show::Int->String,read::String->Int ,putStrLn ,error ::String->a,
-  doesFileExist    ,readFile          ,writeFile,replicate        )
+(forEach           ,glue                ,splitInWords,splitInLines     ,
+ convertIntToString,convertIntFromString,printString ,printErrorMessage,
+ fileExists        ,readFromFile        ,writeToFile ,repeatNTimes     ) =
+ (map              ,concat::[[a]]->[a]  ,words       ,lines            ,
+  show::Int->String,read::String->Int   ,putStrLn    ,error::String->a ,
+  doesFileExist    ,readFile            ,writeFile   ,replicate        )

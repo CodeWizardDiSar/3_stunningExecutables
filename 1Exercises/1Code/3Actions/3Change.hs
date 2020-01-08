@@ -1,4 +1,3 @@
-{-# LANGUAGE LambdaCase #-} 
 module Change where
 import Renaming (printString)
 

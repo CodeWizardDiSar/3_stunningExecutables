@@ -1,10 +1,12 @@
-{-# LANGUAGE LambdaCase,FlexibleInstances #-} 
 module FileFromExercises where
-import Renaming (forEach,and,glue,convertIntToString)
-import Types    (FileVersionOf,Date,toFileString)
-import Types    (HopefullySome(..),Exercise(..))
-import Types    (HopefullyExerciseName,Line,Exercises)
-import Prelude  (String,Int)
+import Renaming  (forEach,and,glue,convertIntToString)
+import Types     (FileVersionOf,Date,toFileString)
+import Types     (HopefullySome(..),Exercise(..))
+import Types     (HopefullyExerciseName,Line,Exercises)
+import Prelude   (String,Int)
+import Data.List (intercalate)
+import Data.Function ((&))
+
 -- Exercises to string to be saved in the file
 exercisesToString = forEach convertToLine`and`glue::Exercises->String
 convertToLine = (\case
@@ -21,7 +23,6 @@ instance FileVersionOf HopefullyExerciseName where
   Nothing     ->"_"
   IndeedItIs e->e 
 instance FileVersionOf Date where
- toFileString = \(d,m,y)->
-  glue [toFileString d,"/",toFileString m,"/",toFileString y]
+ toFileString = forEach toFileString`and`intercalate "/"
 instance FileVersionOf Int where
  toFileString = convertIntToString

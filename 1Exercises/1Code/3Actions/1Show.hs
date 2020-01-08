@@ -1,40 +1,48 @@
-{-# LANGUAGE LambdaCase,FlexibleInstances #-} 
 module Show where
-import Renaming          (convertIntToString,glue,append,from,forEach,and)
-import Renaming          (printString,unwrapAnd,andThen,inputTo)
-import Types             (Show,show,HopefullyExerciseName)
-import Types             (Exercises,Date,Exercise(..),HopefullySome(..))
+import Renaming          (convertIntToString,glue,append,forEach,and)
+import Renaming          (printString,unwrapAnd,andThen,doNothing)
+import Types             (Exercise(..),Exercises,Date,HopefullySome(..))
+import Types             (HopefullyExerciseName,Show,show)
 import UsefulFunctions   (doSequentially,tabBefore)
 import Prelude           (Int,Bool(..),repeat,take,filter,($),concat)
+import Prelude           ((||),(<),(&&),(==),not)
 import Data.List         (intercalate)
+import Data.Function     ((.))
 import ExercisesFromFile (exercises)
+
 -- Show list of actions
 showList     = showFiltered`append`[doSequentially showFiltered]
 showFiltered =
- [printMoreBeautiful "To Do" `andThen`filterAndPrint toDo,
-  printMoreBeautiful "Done"  `andThen`filterAndPrint done,
-  printMoreBeautiful "Missed"`andThen`filterAndPrint missed]
-printMoreBeautiful  = \a->printString$concat ["\t",a,"\n"] 
-filterAndPrint = \exerciseType->
- exercises`unwrapAnd`(filter exerciseType`and`show`and`printString)
-[toDo,missed,done] = 
- [\case ToDo _ _->True;_->False,
-  \case Done _  ->True;_->False,
-  \case Missed _->True;_->False]
--- Instances of Show for types
---  Exercises,Exercise,HopefullyExerciseName,Date,Int
+ [printMoreBeautiful "To Do" `andThen`filterAndPrint sortChrono toDo  ,
+  printMoreBeautiful "Done"  `andThen`filterAndPrint doNothing  done  ,
+  printMoreBeautiful "Missed"`andThen`filterAndPrint doNothing  missed]
+printMoreBeautiful = \a->printString$"\t"`append`a`append`"\n"
+-- Filtering (and sorting for To Do)
+filterAndPrint = \f exerciseType->
+ exercises`unwrapAnd`(filter exerciseType`and`f`and`show`and`printString)
+sortChrono = \case 
+ ex:exs -> sortChrono (filter (before     ex) exs)`append`[ex]`append`
+           sortChrono (filter (not.before ex) exs)
+ []     -> []     
+-- Chrono comparison of 2 To Do Exercises and of 2 Dates
+before   = \(ToDo _ date1) (ToDo _ date2)->date2`isBefore`date1 
+isBefore = \[d,m,y] [d',m',y']->
+ y<y' || (y==y' && m<m') || (y==y' && m==m' && d<d')
+-- Used for filtering
+[toDo,done,missed] = [\case ToDo _ _->True;_->False,
+                      \case Done _  ->True;_->False,
+                      \case Missed _->True;_->False]
+-- show for Exercises,Exercise,HopefullyExerciseName,Date,Int
 instance Show Exercises where
  show = forEach (show`and`tabBefore`and`(`append`"\n"))`and`glue 
 instance Show Exercise where
  show = \case
-  Done   (sub,exNum,exName)        -> putTogether [sub,exNum,show exName]
-  Missed (sub,exNum,exName)        -> putTogether [sub,exNum,show exName]
-  ToDo   (sub,exNumber,exName) date->
-   putTogether [sub,exNumber,show exName,show date]
+  Done   (sub,num,name)     ->putTogether [sub,num,show name]
+  Missed (sub,num,name)     ->putTogether [sub,num,show name]
+  ToDo   (sub,num,name) date->putTogether [sub,num,show name,show date]
+-- For each fill with spaces till you hit 15 chars and glue them
 putTogether = forEach ((`append`repeat ' ')`and`take 15)`and`glue
 instance Show HopefullyExerciseName where
- show = \case Nothing->"No Name";IndeedItIs e->e 
-instance Show Date where
- show = \(d,m,y)->forEach show [d,m,y]`inputTo`intercalate "/"
-instance Show Int where
- show = convertIntToString
+ show = \case Nothing->"No Name";IndeedItIs n->n 
+instance Show Date where show = forEach show`and`intercalate "/"
+instance Show Int  where show = convertIntToString

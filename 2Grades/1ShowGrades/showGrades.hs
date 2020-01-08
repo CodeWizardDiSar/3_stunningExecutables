@@ -46,5 +46,5 @@ moreInfo csv =
         l_p_r = length $ passedRoes subjects 
 
 main = do
-  csv <- readFile gradesCsv
+  csv <- getContents
   putStr $ concat [nicerKormos csv, nicerRoes csv, moreInfo csv]

@@ -1,4 +1,3 @@
-{-# LANGUAGE LambdaCase,FlexibleInstances #-} 
 module ExercisesFromFile where
 import Renaming        (unwrapAnd,wrap,unwrapped,forEach)
 import Renaming        (readFromFile,printErrorMessage)
@@ -11,6 +10,7 @@ import Prelude         (String,Int,IO)
 import FileManagement  (currentDataKeeper)
 import Data.List.Split (splitOn)
 import Data.Function   ((&))
+
 -- exercises from file
 exercises =
  readFromFile`unwrapped`currentDataKeeper`unwrapAnd`
@@ -24,15 +24,15 @@ convertToExercise   = (
   ["t",subjectName,exerciseNumber,exerciseName,date]->
    ToDo   (subjectName,exerciseNumber,exerciseName&toType) (date&toType)
   _                                                 ->
-   printErrorMessage "Line To Exercise")::Line->Exercise
--- Instances of FromStringTo HopefullyExerciseName,Date,Int
+   printErrorMessage "Line To Exercise")              ::Line->Exercise
+-- toType for HopefullyExerciseName,Date,Int
 instance FromStringTo HopefullyExerciseName where
  toType = \case
   "_"         ->Nothing
   exerciseName->IndeedItIs exerciseName
 instance FromStringTo Date where
  toType = splitOn "/"`and`\case
-  [d,m,y]->(toType d,toType m,toType y)
+  [d,m,y]->forEach toType [d,m,y]
   _      ->printErrorMessage "Date"
 instance FromStringTo Int where
  toType = convertIntFromString
