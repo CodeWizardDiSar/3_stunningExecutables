@@ -25,8 +25,8 @@ subNumName = askFor "Subject Name?"   `unwrapAnd`\sub   ->
               "" -> wrap (sub,number,Nothing)
               _  -> wrap (sub,number,IndeedItIs name)
 askFor = \s -> printString s`getLineUnwrapAnd`\a->
- case length a>14 of
-  True->printString "More than 14 chars is not pretty"`andThen`askFor s
+ case length a>20 of
+  True->printString "More than 20 chars is not pretty"`andThen`askFor s
   _   ->wrap a
 getLineUnwrapAnd = \a->(a`andThen`getLine`unwrapAnd`)
 -- Get Day,Month and Year (as you might have guessed: date)

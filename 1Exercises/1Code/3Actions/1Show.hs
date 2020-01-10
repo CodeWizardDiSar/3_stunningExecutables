@@ -7,15 +7,20 @@ import UsefulFunctions   (doSequentially,tabBefore)
 import Prelude           (Int,Bool(..),repeat,take,filter,($),concat)
 import Prelude           ((||),(<),(&&),(==),not)
 import Data.List         (intercalate)
-import Data.Function     ((.))
+import Data.Function     ((.),(&))
 import ExercisesFromFile (exercises)
 
 -- Show list of actions
 showList     = showFiltered`append`[doSequentially showFiltered]
 showFiltered =
- [printMoreBeautiful "To Do" `andThen`filterAndPrint sortChrono toDo  ,
+ [printHeader`andThen`
+  printMoreBeautiful "To Do" `andThen`filterAndPrint sortChrono toDo  ,
   printMoreBeautiful "Done"  `andThen`filterAndPrint doNothing  done  ,
   printMoreBeautiful "Missed"`andThen`filterAndPrint doNothing  missed]
+printHeader = printMoreBeautiful header
+headerList = ["Subject","Ex Number","Ex Name","Date"]
+header = forEach ((`append`repeat ' ')`and`take 25) headerList&glue
+--take 15 ("Subject"`append`repeat' ') 
 printMoreBeautiful = \a->printString$"\t"`append`a`append`"\n"
 -- Filtering (and sorting for To Do)
 filterAndPrint = \f exerciseType->
@@ -41,7 +46,7 @@ instance Show Exercise where
   Missed (sub,num,name)     ->putTogether [sub,num,show name]
   ToDo   (sub,num,name) date->putTogether [sub,num,show name,show date]
 -- For each fill with spaces till you hit 15 chars and glue them
-putTogether = forEach ((`append`repeat ' ')`and`take 15)`and`glue
+putTogether = forEach ((`append`repeat ' ')`and`take 25)`and`glue
 instance Show HopefullyExerciseName where
  show = \case Nothing->"No Name";IndeedItIs n->n 
 instance Show Date where show = forEach show`and`intercalate "/"

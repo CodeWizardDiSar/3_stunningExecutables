@@ -1,0 +1,20 @@
+t,Compilers,3,Semantics,30/1/2020
+d,Compilers,2,Parser
+d,Compilers,1,Lexer
+t,ProgLang2,9,palidrome site,20/1/2020
+t,QuantMech2,4,QM4,21/1/2020
+t,QuantMech2,3,QM3,13/1/2020
+t,QuantMech2,2,QM2,13/1/2020
+t,OSLab,3.3,virtio,23/1/2020
+t,OSLab,3.2,tcp-ip encrypted,16/1/2020
+d,OSLab,3.1,tcp-ip chat
+d,OSLab,2,sensor
+d,ProgLang2,7,Denotational
+d,ProgLang2,6,Type-Inference
+d,ProgLang2,5,vm-gc
+d,ProgLang2,4,vm
+d,ProgLang2,3,trees++
+d,ProgLang2,2,trees
+d,ProgLang2,1,Παλίνδρομα
+d,OSLab,1,Riddle
+t,QuantMech2,1,QM1,13/1/2020
