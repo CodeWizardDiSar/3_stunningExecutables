@@ -1,4 +1,4 @@
-gradesCsv = "/home/gnostis/Dropbox/2_Hobbies/1_Prog/1_Projects/1_UniRelated/2_Grades/grades.csv"
+gradesCsv = "grades.csv"
  
 main = do
   putStrLn "Εισάγετε 'k' για κορμό ή 'r' για ροή" 
