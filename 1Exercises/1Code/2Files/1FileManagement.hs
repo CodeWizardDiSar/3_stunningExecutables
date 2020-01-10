@@ -10,8 +10,8 @@ import Data.Function    ((&))
 
 -- Paths
 homeDir           = "/home/gnostis"
-githubDir         = homeDir     `append`"/Desktop/1Github"
-exercisesDir      = githubDir   `append`"/3StunningExecutables/1Exercises"
+desktopDir        = homeDir     `append`"/Desktop"
+exercisesDir      = desktopDir  `append`"/3StunningExecutables/1Exercises"
 dataDir           = exercisesDir`append`"/3Data"
 versionKeeper     = dataDir     `append`"/ver"   
 tempVersionKeeper = dataDir     `append`"/verTmp"
@@ -25,7 +25,7 @@ updateVersion = getVersion`unwrapAnd`
  renameFile tempVersionKeeper versionKeeper           ::IO ()     
 downdateVersion = getVersion`unwrapAnd`\case
  "0" -> printString "Who you kidding brother?"
-s   -> (subOneFromString`and`writeToFile tempVersionKeeper) s`andThen`
+ s   -> (subOneFromString`and`writeToFile tempVersionKeeper) s`andThen`
       renameFile tempVersionKeeper versionKeeper      ::IO ()     
 -- Managing Data Keepers
 currentDataKeeper =
