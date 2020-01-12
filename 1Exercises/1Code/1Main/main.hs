@@ -1,4 +1,4 @@
-Zodule Main where
+module Main where
 import Renaming        (forEach,printString,andThen,unwrapAnd,append,and)
 import UsefulFunctions (doSequentially)
 import UsefulFunctions (printEmptyLine,tabBefore)
