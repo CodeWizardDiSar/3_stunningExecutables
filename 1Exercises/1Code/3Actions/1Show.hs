@@ -18,7 +18,7 @@ showFiltered =
   printMoreBeautiful "Done"  `andThen`filterAndPrint doNothing  done  ,
   printMoreBeautiful "Missed"`andThen`filterAndPrint doNothing  missed]
 printHeader = printMoreBeautiful header
-headerList = ["Subject","Ex Number","Ex Name","Date"]
+headerList = ["Subject","Exercise Number","Exercise Name","Date"]
 header = forEach ((`append`repeat ' ')`and`take 25) headerList&glue
 --take 15 ("Subject"`append`repeat' ') 
 printMoreBeautiful = \a->printString$"\t"`append`a`append`"\n"

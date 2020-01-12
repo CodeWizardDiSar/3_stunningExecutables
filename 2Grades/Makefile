@@ -1,5 +1,5 @@
-sg=showGrades
-ag=addGrade
+sg=1ShowGrades
+ag=2AddGrade
 all: $(sg) $(ag)
   
 $(sg): 
