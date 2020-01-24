@@ -22,7 +22,7 @@ titleAndOptions = (\x y->
  )::String->Strings->String
 -- Options
 rootOptions = 
- ["a: Add","s: Show","d: Change","f: Move","u: Undo"]`append`[exitOption]
+ ["1: Add","2: Show","3: Change","4: Move","5: Undo"]`append`[exitOption]
 exitOption = "enter: Exit"
-exceptAllOptions = ["a: To Do","s: Done","d: Missed",exitOption]
-showOptions      = take 3 exceptAllOptions`append`["f: All",exitOption]
+exceptAllOptions = ["1: To Do","2: Done","3: Missed",exitOption]
+showOptions      = take 3 exceptAllOptions`append`["4: All",exitOption]

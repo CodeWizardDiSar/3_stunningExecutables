@@ -32,9 +32,9 @@ menuAndChosen = \(menu,actionList)->
  printString menu`andThen`getLine`unwrapAnd`doChosenFrom actionList
 -- Do Chosen From Action List
 doChosenFrom = \case
- [a,s,d,f,u]-> \case "u"->u;otherChoise->doChosenFrom [a,s,d,f] otherChoise
- [a,s,d,f]  -> \case "f"->f;otherChoise->doChosenFrom [a,s,d]   otherChoise
- [a,s,d]    -> \case "a"->a;"s"->s;"d"->d;""->waveAndExit;_->confusionAndRoot
+ [a1,a2,a3,a4,a5]-> \case "5"->a5;otherChoise->doChosenFrom [a1,a2,a3,a4] otherChoise
+ [a1,a2,a3,a4]   -> \case "4"->a4;otherChoise->doChosenFrom [a1,a2,a3]    otherChoise
+ [a1,a2,a3]      -> \case "1"->a1;"2"->a2;"3"->a3;""->waveAndExit;_->confusionAndRoot
 -- Action Lists
 [addThenRootList,showThenRootList,changeThenRootList,moveFromThenRootList,
  moveToThenRootList,[confusionAndRoot]] =
