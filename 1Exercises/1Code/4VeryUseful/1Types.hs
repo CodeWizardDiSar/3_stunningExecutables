@@ -2,10 +2,14 @@ module Types where
 import Prelude (String,Int,Bool)
 
 -- Always a pleasure to have types (sorry python)
-data HopefullySome a = IndeedItIs a|Nothing
-data Exercise = Done   ExerciseData
-              | Missed ExerciseData
-              | ToDo   ExerciseData Date
+data HopefullySome a =
+ IndeedItIs a |
+ Nothing
+data Exercise =
+ Done   ExerciseData      |
+ Missed ExerciseData      |
+ ToDo   ExerciseData Date
+
 type Strings               = [String]
 type Line                  = String  
 type Lines                 = [Line] 
@@ -18,9 +22,10 @@ type SubjectName           = String
 type ExerciseNumber        = String
 type HopefullyExerciseName = HopefullySome String
 type Exercises             = [Exercise]
-type ExerciseData          = (SubjectName
-                             ,ExerciseNumber
-                             ,HopefullyExerciseName)
+type ExerciseData          = (SubjectName          ,
+                              ExerciseNumber       ,
+                              HopefullyExerciseName)
+
 -- Even more of a pleasure, type classes
 class FromStringTo  a where toType         :: String->a
 class FileVersionOf a where toFileString   :: a->String
