@@ -5,7 +5,7 @@ import Types             (Exercise(..),Exercises,Date,HopefullySome(..))
 import Types             (HopefullyExerciseName,Show,show)
 import UsefulFunctions   (doSequentially,tabBefore)
 import Prelude           (Int,Bool(..),repeat,take,filter,($),concat)
-import Prelude           ((||),(<),(&&),(==),not)
+import Prelude           ((||),(<),(&&),(==),not,IO)
 import Data.List         (intercalate)
 import Data.Function     ((.),(&))
 import ExercisesFromFile (getExercises,getToDo,getDone,getMissed)
@@ -28,6 +28,7 @@ showTitleGetDo = \title get doThis->
 beautify = ("\t"`append`)`and`(`append`"\n")
 printMoreBeautiful = beautify`and`printString
 print = show`and`printString
+printEx = show`and`printString :: Exercise->IO ()
 
 -- Header
 printHeader = printMoreBeautiful header
@@ -75,7 +76,7 @@ instance Show HopefullyExerciseName where
  show = \case Nothing->"No Name";IndeedItIs n->n 
 
 instance Show Date where
- show = forEach show`and` intercalate "/"
+ show = forEach show`and`intercalate "/"
 
 instance Show Int  where
  show = convertIntToString

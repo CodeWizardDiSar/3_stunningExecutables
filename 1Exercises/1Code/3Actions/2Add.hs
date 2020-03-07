@@ -18,9 +18,9 @@ addTo = (`unwrapAnd`\ex->
 -- To Do, Done, Missed
 toDo =
  subNumName`unwrapAnd`\sNN->
- date`unwrapAnd` (ToDo sNN`and` wrap)
+ date`unwrapAnd`(ToDo sNN`and` wrap)
 
-done = subNumName`unwrapAnd` (Done`and` wrap)
+done = subNumName`unwrapAnd`(Done`and` wrap)
 missed = subNumName`unwrapAnd`(Missed`and`wrap)
 
 -- Get Subject,Exercise Number and Exercise Name
@@ -33,8 +33,8 @@ subNumName =
 
 askFor = \s ->
  printString s`getLineUnwrapAnd`\a->
- case length a>19 of
-  True->printString "More than 19 chars is not pretty"`andThen`askFor s
+ case length a>20 of
+  True->printString "More than 20 chars is not pretty"`andThen`askFor s
   _   ->wrap a
 
 getLineUnwrapAnd = \a->(a`andThen`getLine`unwrapAnd`)

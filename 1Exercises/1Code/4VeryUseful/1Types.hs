@@ -1,14 +1,16 @@
 module Types where
-import Prelude (String,Int,Bool)
+import Prelude (Eq,String,Int,Bool)
 
 -- Always a pleasure to have types (sorry python)
 data HopefullySome a =
  IndeedItIs a |
  Nothing
+ deriving(Eq)
 data Exercise =
  Done   ExerciseData      |
  Missed ExerciseData      |
  ToDo   ExerciseData Date
+ deriving(Eq)
 
 type Strings               = [String]
 type Line                  = String  
