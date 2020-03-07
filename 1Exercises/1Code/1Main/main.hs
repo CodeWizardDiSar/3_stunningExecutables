@@ -4,59 +4,64 @@ import UsefulFunctions  (doSequentially)
 import UsefulFunctions  (printEmptyLine,tabBefore)
 import Prelude          (getLine)
 import FileManagement   (getCurrentDataKeeper,downdateVersion,dataKeeperPrefix)
-import Menus            (rootMenu,addMenu,showMenu,deleteMenu)
-import Menus            (moveFromMenu,moveToMenu)
+import Menus            (rootMenu,addMenu,showMenu,editMenu,deleteMenu)
+import Menus            (moveMenu)
 import Show             (showList)
 import Add              (addList)
+import Edit             (editList)
 import Delete           (deleteList)
-import Move             (moveFromList,moveToList)
+import Move             (moveList)
 import System.Directory (removeFile)
 
 -- Main baby
 main = doSequentially
- [printEmptyLine,printWelcomingMessage,presentRootMenu] 
+ [printEmptyLine,printWelcomingMessage,root] 
 
 -- Exciting actions
-[presentRootMenu,add   ,
- show           ,delete,
- moveFrom       ,moveTo] =
+[root,add,show,edit,delete,move] =
  forEach menuAndChosen 
-  [(rootMenu    ,rootList            ),(addMenu   ,addThenRootList   ),
-   (showMenu    ,showThenRootList    ),(deleteMenu,deleteThenRootList),
-   (moveFromMenu,moveFromThenRootList),(moveToMenu,moveToThenRootList)]
+  [(rootMenu,rootList),(addMenu,addThenRootList),(showMenu,showThenRootList),
+   (editMenu,editThenRootList),(deleteMenu,deleteThenRootList),(moveMenu,moveThenRootList)]
 
 -- Print menu and do chosen from action list
 menuAndChosen = \(menu,actionList)->
- printString menu`andThen`
- getLine         `unwrapAnd`
+ printString menu`andThen`getLine`unwrapAnd`
  doChosenFrom actionList
 
 -- Do Chosen From Action List
 doChosenFrom = \case
- [a1,a2,a3,a4,a5]-> \case
+ [a1,a2,a3,a4,a5,a6]-> \case
+  "6"        ->a6
+  otherChoise->doChosenFrom [a1,a2,a3,a4,a5] otherChoise
+ [a1,a2,a3,a4,a5]   -> \case
   "5"        ->a5
-  otherChoise->doChosenFrom [a1,a2,a3,a4] otherChoise
- [a1,a2,a3,a4]   -> \case
+  otherChoise->doChosenFrom [a1,a2,a3,a4]    otherChoise
+ [a1,a2,a3,a4]      -> \case
   "4"        ->a4
-  otherChoise->doChosenFrom [a1,a2,a3]    otherChoise
+  otherChoise->doChosenFrom [a1,a2,a3]       otherChoise
  [a1,a2,a3]      -> \case
   "1"->a1;"2"->a2;"3"->a3
   "" ->waveAndExit
   _  ->confusionAndRoot
 
 -- Action Lists
-[addThenRootList   ,showThenRootList    ,
- deleteThenRootList,moveFromThenRootList,
- moveToThenRootList,[confusionAndRoot]  ] =
+[addThenRootList,showThenRootList,editThenRootList,
+ deleteThenRootList,moveThenRootList,[confusionAndRoot]] =
  forEach rootMenuAfterEachAction
-  [addList   ,showList       ,
-   deleteList,moveFromList   ,
-   moveToList,[showConfusion]]
+  [addList,showList,editList,deleteList,
+   moveList,[showConfusion]]
 
-rootList = [add,show,delete,moveFrom,undo]
+rootList = [add,show,edit,delete,move,undo]
+
+-- Undo
+undo =
+ getCurrentDataKeeper`unwrapAnd`
+ removeFile `andThen`
+ downdateVersion`andThen`
+ root
 
 -- Present root menu after each action in the action list
-rootMenuAfterEachAction = forEach (`andThen`presentRootMenu) 
+rootMenuAfterEachAction = forEach (`andThen`root) 
 
 -- Printing strings
 [printWelcomingMessage,
@@ -66,10 +71,3 @@ rootMenuAfterEachAction = forEach (`andThen`presentRootMenu)
   [tabBefore "Welcome to the exercises manager",
    "bye!"                                      ,
    "Ehhh what?"                                ]
-
--- Undo
-undo =
- getCurrentDataKeeper`unwrapAnd`
- removeFile `andThen`
- downdateVersion`andThen`
- presentRootMenu

@@ -7,15 +7,13 @@ import Prelude         (take,($),String)
 import Data.Function   ((&))
 
 -- Menus
-[rootMenu    ,addMenu   ,
- showMenu    ,deleteMenu,
- moveFromMenu,moveToMenu] = 
+[rootMenu,addMenu,showMenu,editMenu,
+ deleteMenu,moveMenu] = 
   forEach2 titleAndOptions titles optionsList
 
 titles =
- ["Command me master","Add to"     ,
-  "Show"             ,"Delete From",
-  "Move from"        ,"Move to"    ]::Strings
+ ["Command me master","Add to","Show",
+  "Edit","Delete From","Move From"]::Strings
 
 optionsList =
  [rootOptions     ,exceptAllOptions,
@@ -31,8 +29,8 @@ titleAndOptions = (\x y->
 
 -- Options
 rootOptions = 
- ["1: Add" ,"2: Show","3: Delete",
-  "4: Move","5: Undo",exitOption ]
+ ["1: Add","2: Show","3: Edit",
+  "4: Delete","5: Move","6: Undo",exitOption]
 
 exceptAllOptions =
  ["1: To Do" ,"2: Done","3: Missed",exitOption]

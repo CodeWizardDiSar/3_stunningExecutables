@@ -20,9 +20,9 @@ deleteFrom = \exType ->
  updateVersion
   
 getAllExs = \case
- "todo"  -> join [deleteGet getToDo,getDone,getMissed]
- "done"  -> join [getToDo,deleteGet getDone,getMissed]
- "missed"-> join [getToDo,getDone,deleteGet getMissed]
+ "todo"  -> join [delete getToDo,getDone,getMissed]
+ "done"  -> join [getToDo,delete getDone,getMissed]
+ "missed"-> join [getToDo,getDone,delete getMissed]
 
 join = \case
  []  ->wrap []
@@ -31,7 +31,7 @@ join = \case
   join as`unwrapAnd`\joinedAs->
   wrap $ glue [a',joinedAs]
 
-deleteGet = \getExs->
+delete = \getExs->
  getExs        `unwrapAnd`\exs   ->((exs)&
  showSubjects) `andThen`
  getChoice     `unwrapAnd`\subNum->((exs,subNum)&
