@@ -1,6 +1,6 @@
-sr=$(shell find '../1Code' -name '*.hs')
-ex=../4Executable
-nf=../NotForMe
+sr=$(shell find '.' -name '*.hs')
+ex=./4Executable
+nf=./NotForMe
 
 all: $(sr)
 	ghc -XFlexibleInstances -XLambdaCase -o $(ex) -odir $(nf) -hidir $(nf) $^

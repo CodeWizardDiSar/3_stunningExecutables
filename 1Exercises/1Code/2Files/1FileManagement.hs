@@ -12,7 +12,7 @@ import Data.Function    ((&))
 homeDir           = "/home/gnostis"
 desktopDir        = homeDir     `append`"/Desktop"
 exercisesDir      = desktopDir  `append`"/3StunningExecutables/1Exercises"
-dataDir           = exercisesDir`append`"/3Data"
+dataDir           = exercisesDir`append`"/2Data"
 versionKeeper     = dataDir     `append`"/ver"   
 tempVersionKeeper = dataDir     `append`"/verTmp"
 dataKeeperPrefix  = dataDir     `append`"/data"  

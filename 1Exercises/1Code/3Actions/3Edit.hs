@@ -1,100 +1,83 @@
 module Edit where
+import Add (date,askFor)
 import Renaming (glue,printString,wrap,unwrapAnd,andThen,and)
---import Renaming (convertIntToString,convertIntFromString)
---import ExercisesFromFile (getToDo,getDone,getMissed)
---import Prelude ((.),not,filter,(-),(!!),(+),elem,Bool(..),(==))
---import Prelude (getLine,IO,Int)
---import Data.Function ((&),($))
---import Show (printEx)
---import FileFromExercises (exercisesToString)
---import FileManagement (writeToNextDataKeeper,updateVersion)
---import Types (Strings,Exercises,Exercise(..))
+import Renaming (convertIntToString,convertIntFromString)
+import ExercisesFromFile (getToDo,getDone,getMissed)
+import Prelude ((.),not,filter,(-),(!!),(+),elem,Bool(..),(==))
+import Prelude (getLine,IO,Int)
+import Data.Function ((&),($))
+import Show (printEx)
+import FileFromExercises (exercisesToString)
+import FileManagement (writeToNextDataKeeper,updateVersion)
+import Types (Strings,Exercises,Exercise(..),HopefullySome(..))
+import UsefulFunctions (printStrings)
+import Delete (join,showSubjects,getSubjects,printSubjects,getSub)
+import Delete (getChoice,showExercises,subIs,printExercises)
 
--- deleteFrom list of actions
+-- edit list of actions
 editList =
- [printString "todo",printString "done",printString "missed"]
+ [edit "todo",edit "done",edit "missed"]
 
---deleteFrom = \exType ->
--- getAllExs exType`unwrapAnd`
--- (exercisesToString`and`writeToNextDataKeeper)`andThen`
--- updateVersion
---  
---getAllExs = \case
--- "todo"  -> join [delete getToDo,getDone,getMissed]
--- "done"  -> join [getToDo,delete getDone,getMissed]
--- "missed"-> join [getToDo,getDone,delete getMissed]
---
---join = \case
--- []  ->wrap []
--- a:as->
---  a`unwrapAnd`\a'->
---  join as`unwrapAnd`\joinedAs->
---  wrap $ glue [a',joinedAs]
---
---delete = \getExs->
--- getExs        `unwrapAnd`\exs   ->((exs)&
--- showSubjects) `andThen`
--- getChoice     `unwrapAnd`\subNum->((exs,subNum)&
--- showExercises)`andThen`
--- getChoice     `unwrapAnd`\exNum ->(exs,subNum,exNum)&
--- deleteChosen
---
----- Show Subjects
---showSubjects = \exs->(exs&
--- getSubjects)`unwrapAnd`
--- printSubjects 1
---
---getSubjects = \case
--- []    ->wrap []
--- ex:exs->
---  getSub ex& \sub->
---  getSubjects exs`unwrapAnd`\subs->
---  elem sub subs& \case 
---   True->wrap subs
---   _   ->wrap (sub:subs)
---
---printSubjects :: Int->Strings->IO ()
---printSubjects = \i-> \case
--- []      ->wrap ()
--- sub:subs->
---  (printString $ glue [convertIntToString i,": ",sub])`andThen`
---  printSubjects (i+1) subs
--- 
---getSub = \case
--- Done   (sub,_,_)  ->sub
--- Missed (sub,_,_)  ->sub
--- ToDo   (sub,_,_) _->sub
---
----- Get Choice
---getChoice =
--- getLine`unwrapAnd`
--- (convertIntFromString`and`wrap)
---
----- Show Exercises
---showExercises = \(exs,subNum)->
--- getSubjects exs`unwrapAnd`\subs->
--- let sub=subs!!(subNum-1) in
--- printExercises 1 $ filter (subIs sub) exs
---
---subIs = \sub-> \case
--- ToDo   (subName,_,_) _->subName==sub
--- Done   (subName,_,_)  ->subName==sub
--- Missed (subName,_,_)  ->subName==sub
--- 
---printExercises :: Int->Exercises->IO ()
---printExercises = \i-> \case
--- []    -> wrap ()
--- ex:exs->
---  (printString$glue [convertIntToString i,": "])`andThen`
---  printEx ex`andThen`
---  printExercises (i+1) exs
---
----- Delete Chosen
---deleteChosen = \(exs,subNum,exNum)->
--- getSubjects exs`unwrapAnd`\subs->
--- let
---  sub=subs!!(subNum-1)
---  subExs=filter (subIs sub) exs
---  ex=subExs!!(exNum-1)
--- in
---  wrap $ filter (not.(==ex)) exs
+edit = \exType ->
+ getAllExs exType`unwrapAnd`
+ (exercisesToString`and`writeToNextDataKeeper)`andThen`
+ updateVersion
+  
+getAllExs = \case
+ "todo"  -> join [editGet getToDo,getDone,getMissed]
+ "done"  -> join [getToDo,editGet getDone,getMissed]
+ "missed"-> join [getToDo,getDone,editGet getMissed]
+
+editGet = \getExs->
+ getExs        `unwrapAnd`\exs   ->((exs)&
+ showSubjects) `andThen`
+ getChoice     `unwrapAnd`\subNum->((exs,subNum)&
+ showExercises)`andThen`
+ getChoice     `unwrapAnd`\exNum ->(exs,subNum,exNum)&
+ editChosen
+
+-- Edit Chosen
+editChosen = \(exs,subNum,exNum)->
+ getSubjects exs`unwrapAnd`\subs->
+ let
+  sub=subs!!(subNum-1)
+  subExs=filter (subIs sub) exs
+  ex=subExs!!(exNum-1)
+ in
+ modify ex`unwrapAnd`\newEx->
+ wrap $ newEx:(filter (not.(==ex)) exs)
+
+modify = \case
+ ToDo   (s,eNum,eName) d ->
+  chooseAttributeWithDate`unwrapAnd` \case
+   "1"->getNewSubject`unwrapAnd` \newSub  ->wrap $ ToDo (newSub,eNum,eName) d
+   "2"->getNewENum   `unwrapAnd` \newENum ->wrap $ ToDo (s,newENum,eName) d
+   "3"->getNewEName  `unwrapAnd` \newEName->wrap $ ToDo (s,eNum,IndeedItIs newEName) d
+   "4"->getNewDate   `unwrapAnd` \newDate ->wrap $ ToDo (s,eNum,eName) newDate
+ Done   (s,eNum,eName)   ->
+  chooseAttribute        `unwrapAnd` \case
+   "1"->getNewSubject`unwrapAnd` \newSub  ->wrap $ Done (newSub,eNum,eName) 
+   "2"->getNewENum   `unwrapAnd` \newENum ->wrap $ Done (s,newENum,eName)
+   "3"->getNewEName  `unwrapAnd` \newEName->wrap $ Done (s,eNum,IndeedItIs newEName)
+ Missed (s,eNum,eName)   ->
+  chooseAttribute        `unwrapAnd` \case
+   "1"->getNewSubject`unwrapAnd` \newSub  ->wrap $ Missed (newSub,eNum,eName)
+   "2"->getNewENum   `unwrapAnd` \newENum ->wrap $ Missed (s,newENum,eName)
+   "3"->getNewEName  `unwrapAnd` \newEName->wrap $ Missed (s,eNum,IndeedItIs newEName)
+
+chooseAttributeWithDate =
+ printBasic`andThen`
+ printDate`andThen`
+ getLine
+
+chooseAttribute =
+ printBasic`andThen`
+ getLine
+
+printBasic = printStrings ["1: Subject","2: Exercise Number","3: Exercise Name"]
+printDate = printString "4: Date"
+
+getNewSubject = askFor "New Subject?"
+getNewENum    = askFor "New Exercise Number?"
+getNewEName   = askFor "New Exercise Name?"
+getNewDate    = date
