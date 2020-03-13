@@ -9,19 +9,13 @@ import FileManagement    (writeToNextDataKeeper,updateVersion)
 
 -- Add List Of Actions
 addList = [addTo toDo,addTo done,addTo missed]
-
 addTo = (`unwrapAnd`\ex->
  getExercises`unwrapAnd`(
   (ex:)`and`exercisesToString`and`writeToNextDataKeeper
  )`andThen`updateVersion)
-
--- To Do, Done, Missed
-toDo =
- subNumName`unwrapAnd`\sNN->
- date`unwrapAnd`(ToDo sNN`and` wrap)
-
 done = subNumName`unwrapAnd`(Done`and` wrap)
 missed = subNumName`unwrapAnd`(Missed`and`wrap)
+toDo = subNumName`unwrapAnd`\sNN->date`unwrapAnd`(ToDo sNN`and` wrap)
 
 -- Get Subject,Exercise Number and Exercise Name
 subNumName =

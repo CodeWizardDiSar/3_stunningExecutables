@@ -30,14 +30,10 @@ missed = \case Missed _->True;_->False
 instance FromStringTo Exercise where
  toType = (
   splitOn ","`and`\case
-   ["d",sub,exNum,exName]     ->
-    Done   (sub,exNum,exName&toType)
-   ["m",sub,exNum,exName]     ->
-    Missed (sub,exNum,exName&toType)
-   ["t",sub,exNum,exName,date]->
-    ToDo   (sub,exNum,exName&toType) (date&toType)
-   _                                                 ->
-    printErrorMessage "Line To Exercise")::Line->Exercise
+   ["d",s,exNum,exName]     -> Done   (s,exNum,exName&toType)
+   ["m",s,exNum,exName]     -> Missed (s,exNum,exName&toType)
+   ["t",s,exNum,exName,date]-> ToDo   (s,exNum,exName&toType) (date&toType)
+   _                        -> printErrorMessage "Line To Exercise")
 
 instance FromStringTo HopefullyExerciseName where
  toType = \case "_"->Nothing;exName->IndeedItIs exName

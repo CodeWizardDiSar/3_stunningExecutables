@@ -14,14 +14,14 @@ import Move             (moveList)
 import System.Directory (removeFile)
 
 -- Main baby
-main = doSequentially
- [printEmptyLine,printWelcomingMessage,root] 
+main = doSequentially [printEmptyLine,printWelcomingMessage,root] 
 
 -- Exciting actions
 [root,add,show,edit,delete,move] =
  forEach menuAndChosen 
-  [(rootMenu,rootList),(addMenu,addThenRootList),(showMenu,showThenRootList),
-   (editMenu,editThenRootList),(deleteMenu,deleteThenRootList),(moveMenu,moveThenRootList)]
+  [(rootMenu,rootList)            ,(addMenu,addThenRootList)  ,
+   (showMenu,showThenRootList)    ,(editMenu,editThenRootList),
+   (deleteMenu,deleteThenRootList),(moveMenu,moveThenRootList)]
 
 -- Print menu and do chosen from action list
 menuAndChosen = \(menu,actionList)->
@@ -50,24 +50,13 @@ doChosenFrom = \case
  forEach rootMenuAfterEachAction
   [addList,showList,editList,deleteList,
    moveList,[showConfusion]]
-
 rootList = [add,show,edit,delete,move,undo]
-
--- Undo
+rootMenuAfterEachAction = forEach (`andThen`root) 
 undo =
  getCurrentDataKeeper`unwrapAnd`
- removeFile `andThen`
- downdateVersion`andThen`
- root
-
--- Present root menu after each action in the action list
-rootMenuAfterEachAction = forEach (`andThen`root) 
+ removeFile`andThen`downdateVersion`andThen`root
 
 -- Printing strings
-[printWelcomingMessage,
- waveAndExit          ,
- showConfusion        ] =
+[printWelcomingMessage,waveAndExit,showConfusion] =
  forEach printString
-  [tabBefore "Welcome to the exercises manager",
-   "bye!"                                      ,
-   "Ehhh what?"                                ]
+  [tabBefore "Welcome to the exercises manager","bye!","Ehhh what?"]

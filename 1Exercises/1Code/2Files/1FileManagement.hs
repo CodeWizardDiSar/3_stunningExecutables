@@ -20,45 +20,21 @@ dataKeeperPrefix  = dataDir     `append`"/data"
 -- Get, Update and Downdate verion
 getVersion =
  checkThat (versionKeeper&fileExists)`unwrapAnd`\case
-  True->
-   readFromFile versionKeeper                    
-  _   ->
-   writeToFile versionKeeper "0"`andThen`
-   wrap "0"::IO String     
-
+  True-> readFromFile versionKeeper                    
+  _   -> writeToFile versionKeeper "0"`andThen`wrap "0"
 updateVersion =
- getVersion`unwrapAnd`(
-  addOneToString`and`
-  writeToTemp
- )`andThen`
+ getVersion`unwrapAnd`(addOneToString`and`writeToTemp)`andThen`
  renameTemp::IO ()     
-
 downdateVersion =
  getVersion`unwrapAnd`\case
-  "0"->
-   printString "Who you kidding brother?"
-  s  ->
-   (subOneFromString`and`
-    writeToTemp) s`andThen`
-   renameTemp::IO ()     
-
+  "0"-> printString "Who you kidding brother?"
+  s  -> (subOneFromString`and`writeToTemp) s`andThen`renameTemp
 writeToTemp = writeToFile tempVersionKeeper
 renameTemp = renameFile tempVersionKeeper versionKeeper
 
 -- Get Current and Next Data Keeper + Write to Next
-getCurrentDataKeeper =
- getVersion`unwrapAnd`
- (addDKPrefix`and`
-  wrap)::IO FilePath
-
+getCurrentDataKeeper = getVersion`unwrapAnd`(addDKPrefix`and`wrap)
 getNextDataKeeper =
- getVersion`unwrapAnd`
- (addOneToString`and`
-  addDKPrefix   `and`
-  wrap)::IO FilePath
-
-writeToNextDataKeeper = (\s->
- getNextDataKeeper`unwrapAnd`
- flip writeToFile s)::String->IO ()
-
-addDKPrefix = (dataKeeperPrefix`append`)::String->FilePath
+ getVersion`unwrapAnd` (addOneToString`and`addDKPrefix`and`wrap)
+writeToNextDataKeeper = \s->getNextDataKeeper`unwrapAnd`flip writeToFile s
+addDKPrefix = (dataKeeperPrefix`append`)
