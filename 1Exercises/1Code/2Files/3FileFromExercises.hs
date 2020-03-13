@@ -23,7 +23,7 @@ instance FileVersionOf HopefullyExerciseName where
  toFileString = \case Nothing->"_";IndeedItIs e->e 
 
 instance FileVersionOf Date where
- toFileString = forEach toFileString`and` intercalate "/"
+ toFileString = forEach toFileString`and`intercalate "/"
 
 instance FileVersionOf Int where
  toFileString = convertIntToString

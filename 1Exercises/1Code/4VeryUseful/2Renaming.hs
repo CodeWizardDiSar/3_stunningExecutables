@@ -12,19 +12,19 @@ import System.Directory (doesFileExist)
 [from     ,keepAnd  ] = take 2 $ repeat ($)
 
 -- Normal Operators
-(inputTo,append,and) = ((&),(++),(>>>):: (a->b)->(b->c)->(a->c))
+(inputTo,append,and) = ((&),(++),(>>>)::(a->b)->(b->c)->(a->c))
 
 -- Monad operators And Functions
-andThen   = (>>)
 andThen   :: Monad m=>m a->m b->m b
-unwrapAnd = (>>=)
+andThen   = (>>)
 unwrapAnd :: Monad m=>m a->(a->m b)->m b
-unwrapped = (=<<)
+unwrapAnd = (>>=)
 unwrapped :: Monad m=>(a->m b)->m a->m b
-wrap      = return
+unwrapped = (=<<)
 wrap      :: Monad m=>a->m a
-forEachDo = mapM_
+wrap      = return
 forEachDo :: Monad m=>(a->m b)->[a]->m ()
+forEachDo = mapM_
 
 -- Very General Fuctions
 (forEach           ,glue                ,splitInWords,splitInLines     ,

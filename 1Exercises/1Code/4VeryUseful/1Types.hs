@@ -2,14 +2,13 @@ module Types where
 import Prelude (Eq,String,Int,Bool)
 
 -- Always a pleasure to have types (sorry python)
-data HopefullySome a =
- IndeedItIs a |
- Nothing
+data HopefullySome a = IndeedItIs {getA::a} | Nothing
  deriving(Eq)
+
 data Exercise =
- Done   ExerciseData      |
- Missed ExerciseData      |
- ToDo   ExerciseData Date
+ Done   {getData::ExerciseData} |
+ Missed {getData::ExerciseData}      |
+ ToDo   {getData::ExerciseData, getTDate::Date}
  deriving(Eq)
 
 type Strings               = [String]

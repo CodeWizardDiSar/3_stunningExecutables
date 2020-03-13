@@ -24,7 +24,7 @@ printEmptyLines = \case
  i-> printEmptyLine`andThen`(i-1&printEmptyLines)
 
 -- Add/Subtract One To/From String
-addOneToString =
+addOneToString = 
  convertIntFromString`and`(+1)`and`
  convertIntToString
 subOneFromString =

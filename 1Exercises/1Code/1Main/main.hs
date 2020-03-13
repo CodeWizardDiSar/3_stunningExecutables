@@ -1,11 +1,9 @@
 module Main where
 import Renaming         (forEach,printString,andThen,unwrapAnd,append,and)
-import UsefulFunctions  (doSequentially)
-import UsefulFunctions  (printEmptyLine,tabBefore)
+import UsefulFunctions  (doSequentially,printEmptyLine,tabBefore)
 import Prelude          (getLine)
 import FileManagement   (getCurrentDataKeeper,downdateVersion,dataKeeperPrefix)
-import Menus            (rootMenu,addMenu,showMenu,editMenu,deleteMenu)
-import Menus            (moveMenu)
+import Menus            (rootMenu,addMenu,showMenu,editMenu,deleteMenu,moveMenu)
 import Show             (showList)
 import Add              (addList)
 import Edit             (editList)
@@ -48,13 +46,10 @@ doChosenFrom = \case
 [addThenRootList,showThenRootList,editThenRootList,
  deleteThenRootList,moveThenRootList,[confusionAndRoot]] =
  forEach rootMenuAfterEachAction
-  [addList,showList,editList,deleteList,
-   moveList,[showConfusion]]
+  [addList,showList,editList,deleteList, moveList,[showConfusion]]
 rootList = [add,show,edit,delete,move,undo]
 rootMenuAfterEachAction = forEach (`andThen`root) 
-undo =
- getCurrentDataKeeper`unwrapAnd`
- removeFile`andThen`downdateVersion`andThen`root
+undo = getCurrentDataKeeper`unwrapAnd`removeFile`andThen`downdateVersion`andThen`root
 
 -- Printing strings
 [printWelcomingMessage,waveAndExit,showConfusion] =

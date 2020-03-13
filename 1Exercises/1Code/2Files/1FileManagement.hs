@@ -23,8 +23,7 @@ getVersion =
   True-> readFromFile versionKeeper                    
   _   -> writeToFile versionKeeper "0"`andThen`wrap "0"
 updateVersion =
- getVersion`unwrapAnd`(addOneToString`and`writeToTemp)`andThen`
- renameTemp::IO ()     
+ getVersion`unwrapAnd`(addOneToString`and`writeToTemp)`andThen` renameTemp
 downdateVersion =
  getVersion`unwrapAnd`\case
   "0"-> printString "Who you kidding brother?"
@@ -34,7 +33,6 @@ renameTemp = renameFile tempVersionKeeper versionKeeper
 
 -- Get Current and Next Data Keeper + Write to Next
 getCurrentDataKeeper = getVersion`unwrapAnd`(addDKPrefix`and`wrap)
-getNextDataKeeper =
- getVersion`unwrapAnd` (addOneToString`and`addDKPrefix`and`wrap)
+getNextDataKeeper = getVersion`unwrapAnd`(addOneToString`and`addDKPrefix`and`wrap)
 writeToNextDataKeeper = \s->getNextDataKeeper`unwrapAnd`flip writeToFile s
 addDKPrefix = (dataKeeperPrefix`append`)
