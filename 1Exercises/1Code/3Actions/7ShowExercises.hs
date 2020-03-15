@@ -1,22 +1,21 @@
 module ShowExercises where
-import Prelude       (Bool(..),elem,(!!),filter,concat,(==),(-))
-import Data.Function ((&),($))
-import Renaming (unwrapAnd,wrap,andThen,convertIntToString,printString)
-import Show    (printEx)
-import Types    (Exercise(..))
+import Prelude           (Bool(..),elem,(!!),filter,(==),(-))
+import Data.Function     ((&),($))
+import Renaming          (glue,unwrapAnd,wrap,andThen,convertIntToString,printString)
+import Show              (printEx)
+import Types             (Exercise(..))
 import UsefulForActions  (getChoice,showSubjects)
 
 showExercises = \(exs,subNum)->
- let subs=getSubjects exs in
- filter (subIs (subs!!(subNum-1))) exs&printExercises
-
+ let sub=getSubjects exs!!(subNum-1)
+ in filter (subIs sub) exs&printExercises
 subIs = \subName ex-> getData ex& \(s,_,_)->s==subName
-printExercises = printExercise 1
 
+printExercises = printExercise 1
 printExercise = \i -> \case
  []     ->wrap ()
  ex:exs->
-  (concat [convertIntToString i,": "]&printString)`andThen`
+  (glue [convertIntToString i,": "]&printString)`andThen`
   printEx ex`andThen`printExercise 2 exs
 
 getSubjects = \case 

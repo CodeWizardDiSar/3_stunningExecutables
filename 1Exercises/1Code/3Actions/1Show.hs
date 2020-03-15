@@ -1,19 +1,16 @@
 module Show where
-import Renaming          (convertIntToString,glue,append,forEach,and)
-import Renaming          (printString,unwrapAnd,andThen,doNothing)
+import Renaming          (convertIntToString,glue,forEach,and)
+import Renaming          (printString,unwrapAnd,andThen)
 import Types             (Exercise(..),Exercises,Date,HopefullySome(..))
 import Types             (HopefullyExerciseName,Show,show)
-import UsefulFunctions   (doSequentially,tabBefore)
-import Prelude           (Int,Bool(..),repeat,take,filter,($),concat)
-import Prelude           ((||),(<),(&&),(==),not,IO)
+import UsefulFunctions   (doSequentially)
+import Prelude           (Int,($),IO)
 import Data.List         (intercalate)
-import Data.Function     ((.),(&))
-import ExercisesFromFile (getExercises,getToDo,getDone,getMissed)
+import ExercisesFromFile (getToDo,getDone,getMissed)
 import UsefulForActions  (beautify,putTogether,printBeutified,sortChrono)
 
 -- Show list of actions
-showList =
- forEach (printHeader`andThen`) $ [showToDo,showDone,showMissed,showAll]
+showList = forEach (printHeader`andThen`) $ [showToDo,showDone,showMissed,showAll]
 
 printHeader    = printBeutified header
 showToDo       = showTitleGetDo "ToDo"   getToDo   (sortChrono`and`print)

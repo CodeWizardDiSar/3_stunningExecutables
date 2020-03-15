@@ -9,7 +9,6 @@ import Data.Function   ((&))
 -- Menus
 [rootMenu,addMenu,showMenu,editMenu,deleteMenu,moveMenu] = 
  forEach2 titleAndOptions titles optionsList
-
 titleAndOptions = \t os->
  [tabBefore t]`append`(forEach (2&tabsBefore) os)&forEach (`append`"\n")&glue
 titles = ["Command me master","Add to","Show","Edit","Delete From","Move From"]

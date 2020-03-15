@@ -3,42 +3,31 @@ import Renaming            (glue,printString,wrap,unwrapAnd,andThen,and)
 import Renaming            (convertIntToString,convertIntFromString)
 import ExercisesFromFile   (getToDo,getDone,getMissed)
 import Prelude             ((.),not,filter,(-),(!!),(+),elem,Bool(..),(==))
-import Prelude             (getLine,IO,Int)
+import Prelude             (sequence,getLine,IO,Int)
 import Data.Function       ((&),($))
 import Show                (printEx)
 import StringFromExercises (exercisesToString)
 import FileManagement      (writeToNextDataKeeper,updateVersion)
 import Types               (Strings,Exercises,Exercise(..))
-import Delete              (join)
 import Add                 (getDate)
 import UsefulFunctions     (printStrings)
-import UsefulForActions    (showSubjects,getChoice,getSubjects,exercisesToFile)
+import UsefulForActions    (combine,showSubjects,getChoice,getSubjects,exercisesToFile)
 import ShowExercises       (showExercises,subIs,getChosen)
 
 -- moveFrom list of actions
-moveList =
- [moveFrom "todo",moveFrom "done",moveFrom "missed"]
-
-moveFrom = \exType ->
- getAllExs exType`unwrapAnd`exercisesToFile`andThen`updateVersion
-  
+moveList = [moveFrom "todo",moveFrom "done",moveFrom "missed"]
+moveFrom = \exType -> getAllExs exType`unwrapAnd`exercisesToFile`andThen`updateVersion
 getAllExs = \case
- "todo"  -> join [move getToDo,getDone,getMissed]
- "done"  -> join [getToDo,move getDone,getMissed]
- "missed"-> join [getToDo,getDone,move getMissed]
-
+ "todo"  -> combine [move getToDo,getDone,getMissed]
+ "done"  -> combine [getToDo,move getDone,getMissed]
+ "missed"-> combine [getToDo,getDone,move getMissed]
 move = \getExs-> getChosen getExs`unwrapAnd`moveChosen
 
 -- Move Chosen
 moveChosen = \(exs,subNum,exNum)->
- let
-  subs = getSubjects exs
-  sub=subs!!(subNum-1)
-  subExs=filter (subIs sub) exs
-  ex=subExs!!(exNum-1)
- in
-  moveOld ex`unwrapAnd`\newEx->
-  wrap $ newEx:(filter (not.(==ex)) exs)
+ let sub=getSubjects exs!!(subNum-1)
+     ex=filter (subIs sub) exs!!(exNum-1)
+ in moveOld ex`unwrapAnd`\newEx-> newEx:(filter (not.(==ex)) exs)&wrap
 
 moveOld = \ex->
  printStrings ["Move To?","\t1: To Do","\t2: Done","\t3: Missed"]`andThen`
@@ -49,11 +38,11 @@ moveOld = \ex->
  _  ->printString "what?"`andThen`moveOld ex
 
 moveToToDo = \case 
- ToDo   a b -> wrap $ ToDo a b
+ ToDo   a b -> ToDo a b&wrap
  Done   a   -> getDate`unwrapAnd`(ToDo a`and`wrap)
  Missed a   -> getDate`unwrapAnd`(ToDo a`and`wrap)
  
 moveTo = \x-> \case
- ToDo   a b -> wrap $ x a
- Done   a   -> wrap $ x a
- Missed a   -> wrap $ x a
+ ToDo   a b -> x a&wrap
+ Done   a   -> x a&wrap
+ Missed a   -> x a&wrap

@@ -1,30 +1,26 @@
 module Edit where
 import Add                 (getDate)
-import UsefulForActions    (getChoice,printSubjects,askFor,exercisesToFile,getSubjects,showSubjects,getSub)
+import UsefulForActions    (combine,getChoice,printSubjects,askFor,exercisesToFile,getSubjects,showSubjects,getSub)
 import Renaming            (glue,printString,wrap,unwrapAnd,andThen,and)
 import Renaming            (convertIntToString,convertIntFromString)
 import ExercisesFromFile   (getToDo,getDone,getMissed)
 import Prelude             ((.),not,filter,(-),(!!),(+),elem,Bool(..),(==))
-import Prelude             (getLine,IO,Int)
+import Prelude             (sequence,getLine,IO,Int)
 import Data.Function       ((&),($))
 import Show                (printEx)
 import StringFromExercises (exercisesToString)
 import FileManagement      (writeToNextDataKeeper,updateVersion)
 import Types               (Strings,Exercises,Exercise(..),HopefullySome(..))
 import UsefulFunctions     (printStrings)
-import Delete              (join)
 import ShowExercises       (getChosen,showExercises,subIs)
 
 -- edit list of actions
 editList = [edit "todo",edit "done",edit "missed"]
-
 edit = \exType -> getAllExs exType`unwrapAnd`exercisesToFile`andThen`updateVersion
-
 getAllExs = \case
- "todo"  -> join [editGet getToDo,getDone,getMissed]
- "done"  -> join [getToDo,editGet getDone,getMissed]
- "missed"-> join [getToDo,getDone,editGet getMissed]
-
+ "todo"  -> combine [editGet getToDo,getDone,getMissed]
+ "done"  -> combine [getToDo,editGet getDone,getMissed]
+ "missed"-> combine [getToDo,getDone,editGet getMissed]
 editGet = \getExs-> getChosen getExs`unwrapAnd`editChosen
 
 -- Edit Chosen

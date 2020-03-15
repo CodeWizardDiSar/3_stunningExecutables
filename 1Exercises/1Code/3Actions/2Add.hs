@@ -7,15 +7,16 @@ import ExercisesFromFile   (getExercises)
 import StringFromExercises (exercisesToString)
 import FileManagement      (writeToNextDataKeeper,updateVersion)
 import UsefulForActions    (askFor,exercisesToFile)
+import Control.Monad       ((>=>))
 
 -- Add List Of Actions
-addList = [addTo toDo,addTo done,addTo missed]
-addTo = (`unwrapAnd`\ex->
+addList = [add getToDo,add getDone,add getMissed]
+add = (`unwrapAnd`\ex->
  getExercises`unwrapAnd`((ex:)`and`exercisesToFile)`andThen`updateVersion)
-done   = getSubjectNumberName`unwrapAnd`(Done    `and`wrap)
-missed = getSubjectNumberName`unwrapAnd`(Missed  `and`wrap)
-toDo   = getSubjectNumberName`unwrapAnd`
-                \sNN->getDate`unwrapAnd`(ToDo sNN`and`wrap)
+getDone   = getSubjectNumberName`unwrapAnd`(Done    `and`wrap)
+getMissed = getSubjectNumberName`unwrapAnd`(Missed  `and`wrap)
+getToDo   = getSubjectNumberName`unwrapAnd`
+                   \sNN->getDate`unwrapAnd`(ToDo sNN`and`wrap)
 
 -- Get Subject,Exercise Number and Exercise Name
 getSubjectNumberName =

@@ -23,12 +23,12 @@ main = doSequentially [printEmptyLine,printWelcomingMessage,root]
 rootActions = [add,show,edit,delete,move,undo]
 printMenuDoChosen = \(menu,actions)->
  printString menu`andThen`getLine`unwrapAnd`doChosenFrom actions
-doChosenFrom = \actions s-> case readMaybe s :: Maybe Int of
+doChosenFrom = \actions chosen-> case readMaybe chosen :: Maybe Int of
  Just i  -> actions!!(i-1)
- Nothing -> case s of ""->waveAndExit;_->confusionAndRoot
+ Nothing -> case chosen of ""->waveAndExit;_->confusionAndRoot
 [addActions,showActions,editActions,deleteActions,moveActions,[confusionAndRoot]] =
  forEach rootMenuAfterEachAction
-  [addList,showList,editList,deleteList, moveList,[showConfusion]]
+  [addList,showList,editList,deleteList,moveList,[showConfusion]]
 rootMenuAfterEachAction = forEach (`andThen`root) 
 undo = getCurrentDataKeeper`unwrapAnd`removeFile`andThen`downdateVersion`andThen`root
 
