@@ -6,7 +6,7 @@ all: $(sr)
 	ghc -XFlexibleInstances -XLambdaCase -o $(ex) -odir $(nf) -hidir $(nf) $^
 
 clean:
-	rm -f $(nf)/* $(ex)
+	rm -f $(nf)/*.o $(nf)/*.hi $(ex)
 
 clean_:
 	rm -f $(nf)/*
