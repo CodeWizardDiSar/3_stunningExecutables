@@ -23,7 +23,7 @@ getVersion =
   True-> readFromFile versionKeeper                    
   _   -> writeToFile versionKeeper "0"`andThen`wrap "0"
 updateVersion =
- getVersion`unwrapAnd`(addOneToString`and`writeToTemp)`andThen` renameTemp
+ getVersion`unwrapAnd`(addOneToString`and`writeToTemp)`andThen`renameTemp
 downdateVersion =
  getVersion`unwrapAnd`\case
   "0"-> printString "Who you kidding brother?"

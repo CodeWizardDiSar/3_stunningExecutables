@@ -9,6 +9,7 @@ import Prelude           ((||),(<),(&&),(==),not,IO)
 import Data.List         (intercalate)
 import Data.Function     ((.),(&))
 import ExercisesFromFile (getExercises,getToDo,getDone,getMissed)
+import UsefulForActions  (beautify,putTogether,printBeutified,sortChrono)
 
 -- Show list of actions
 showList =
@@ -20,31 +21,12 @@ showDone       = showTitleGetDo "Done"   getDone   print
 showMissed     = showTitleGetDo "Missed" getMissed print
 showAll        = doSequentially [showToDo,showDone,showMissed]
 
-printBeutified = beautify`and`printString
 showTitleGetDo = \t g d-> printBeutified t`andThen`g`unwrapAnd`d
 print          = show`and`printString
 printEx        = show`and`printString :: Exercise->IO ()
 
-beautify       = ("\t"`append`)`and`(`append`"\n")
 header         = putTogether headerList
-putTogether    = forEach ((`append`repeat ' ')`and`take 25)`and`glue
 headerList     = ["Subject","Exercise Number","Exercise Name","Date"]
-
--- Sort Chronologically
-sortChrono = \case 
- []    ->[]     
- ex:exs-> sortChrono (filter (before     ex) exs)`append`[ex]`append`
-          sortChrono (filter (not.before ex) exs)
-before   = \e1 e2->getTDate e2`isBefore`getTDate e2
-isBefore = \[d,m,y] [d',m',y']-> y<y'||(y==y'&&m<m')||(y==y'&&m==m'&&d<d')
-
--- Sort Numerically
---sortNum = \case
--- [] -> []
--- ex:es -> sortNum (filter (lowerThan ex) exs)`append`[ex]`append`
---          sortNum (filter (not.lowerThan ex) exs)
---lowerThan = \ex1 ex2 ->
--- ex1&getData&\(_,n1,_)->ex1&getData&\(_,n2,_)->
 
 -- show for Exercises,Exercise,HopefullyExerciseName,Date,Int
 instance Show Exercises where show = forEach (show`and`beautify)`and`glue 

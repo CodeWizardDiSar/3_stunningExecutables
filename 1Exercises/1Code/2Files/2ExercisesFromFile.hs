@@ -34,14 +34,10 @@ instance FromStringTo Exercise where
    ["m",s,exNum,exName]     -> Missed (s,exNum,exName&toType)
    ["t",s,exNum,exName,date]-> ToDo   (s,exNum,exName&toType) (date&toType)
    _                        -> printErrorMessage "Line To Exercise")
-
 instance FromStringTo HopefullyExerciseName where
  toType = \case "_"->Nothing;exName->IndeedItIs exName
-
 instance FromStringTo Date where
  toType = splitOn "/"`and`\case
   [d,m,y]->forEach toType [d,m,y]
   _      ->printErrorMessage "Date"
-
-instance FromStringTo Int where
- toType = convertIntFromString
+instance FromStringTo Int where toType = convertIntFromString

@@ -1,6 +1,6 @@
 module Menus where
 import Renaming        (append,forEach,glue,and,convertIntToString)
-import UsefulFunctions (wrapInNLs,tabBefore,tabsBefore)
+import UsefulFunctions (tabBefore,tabsBefore)
 import UsefulFunctions (forEach2)
 import Types           (Strings)
 import Prelude         (take,($),String,(+))
@@ -23,9 +23,8 @@ putNumber = \i -> \case
  []   -> []
  s:ss -> glue [convertIntToString i,": ", s]:putNumber (i+1) ss
 
-execerciseTypes = ["To Do","Done","Missed"]
-exceptAllOptions = putNumbers execerciseTypes`append`[exitOption]
-rootOptions = 
- putNumbers ["Add","Show","Edit","Delete","Move","Undo"]`append`[exitOption]
-showOptions = putNumbers (execerciseTypes`append`["All"])`append`[exitOption]
+exerciseTypes = ["To Do","Done","Missed"]
+exceptAllOptions = putNumbers exerciseTypes`append`[exitOption]
+rootOptions = putNumbers ["Add","Show","Edit","Delete","Move","Undo"]`append`[exitOption]
+showOptions = putNumbers (exerciseTypes`append`["All"])`append`[exitOption]
 exitOption = "enter: Exit"

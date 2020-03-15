@@ -18,15 +18,13 @@ forEach2 = \f as bs->case (as,bs) of
 -- Printing
 printStrings = forEachDo printString::Strings->IO ()
 printEmptyLine = printString ""::IO ()
-wrapInNLs = ("\n"`append`)`and`(`append`"\n")
 printEmptyLines = \case
  0-> wrap ()
  i-> printEmptyLine`andThen`(i-1&printEmptyLines)
 
 -- Add/Subtract One To/From String
-addOneToString = 
- convertIntFromString`and`(+1)`and`
+addNToString = \n->
+ convertIntFromString`and`(+n)`and`
  convertIntToString
-subOneFromString =
- convertIntFromString`and`(+(-1))`and`
- convertIntToString
+addOneToString = addNToString 1
+subOneFromString = addNToString (-1)
