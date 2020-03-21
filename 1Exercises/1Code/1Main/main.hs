@@ -1,8 +1,8 @@
 module Main where
-import Renaming         (forEach,printString,andThen,unwrapAnd,append,and)
+import Renaming         (forEach,printString,andThen,unwrapAnd)
 import UsefulFunctions  (doSequentially,printEmptyLine,tabBefore)
 import Prelude          (getLine,Maybe(..),Int(..),(-),(!!))
-import FileManagement   (getCurrentDataKeeper,downdateVersion,dataKeeperPrefix)
+import FileManagement   (getCurrentDataKeeper,downdateVersion)
 import Menus            (rootMenu,addMenu,showMenu,editMenu,deleteMenu,moveMenu)
 import Show             (showList)
 import Add              (addList)
