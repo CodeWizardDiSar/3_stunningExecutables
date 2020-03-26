@@ -13,7 +13,7 @@ import Control.Monad    ((>=>))
 
 -- deleteFrom list of actions
 deleteList = [deleteFrom "todo",deleteFrom "done",deleteFrom "missed"]
-deleteFrom = \exType -> getAllExs exType`unwrapAnd`exercisesToFile`andThen`updateVersion
+deleteFrom = \exType -> (exType&(getAllExs>=>exercisesToFile))`andThen`updateVersion
 getAllExs = \case
  "todo"  -> combine [getToDo&delete,getDone,getMissed]
  "done"  -> combine [getToDo,getDone&delete,getMissed]

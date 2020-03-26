@@ -1,11 +1,11 @@
 module ExercisesFromFile where
-import Renaming        (unwrapAnd,wrap,unwrapped,forEach,andThen)
-import Renaming        (readFromFile,printErrorMessage,printString)
-import Renaming        (convertIntFromString)
-import Renaming        (and,splitInLines,splitInWords)
-import Types           (FromStringTo,toType,Date,Line)
-import Types           (Exercises,HopefullyExerciseName)
-import Types           (Exercise(..),HopefullySome(..))
+import Renaming        (unwrapAnd,wrap,unwrapped,forEach,
+                        andThen,readFromFile,printErrorMessage,
+                        printString,convertIntFromString,and,
+                        splitInLines,splitInWords)
+import Types           (FromStringTo,toType,Date,Line,
+                        Exercises,HopefullyExerciseName,
+                        Exercise(..),HopefullySome(..))
 import Prelude         (String,Int,IO,filter,Bool(..))
 import FileManagement  (getCurrentDataKeeper,getVersion)
 import Data.List.Split (splitOn)
@@ -28,12 +28,14 @@ missed = \case Missed _->True;_->False
 
 -- toType for Exercise,HopefullyExerciseName,Date,Int
 instance FromStringTo Exercise where
- toType = (
+ toType = 
   splitOn ","`and`\case
    ["d",s,exNum,exName]     -> Done   (s,exNum,exName&toType)
    ["m",s,exNum,exName]     -> Missed (s,exNum,exName&toType)
-   ["t",s,exNum,exName,date]-> ToDo   (s,exNum,exName&toType) (date&toType)
-   _                        -> printErrorMessage "Line To Exercise")
+   ["t",s,exNum,exName,date]-> ToDo   (s,exNum,exName&toType)
+                                      (date&toType)
+   _                        -> printErrorMessage
+                                "Line To Exercise"
 instance FromStringTo HopefullyExerciseName where
  toType = \case "_"->Nothing;exName->IndeedItIs exName
 instance FromStringTo Date where

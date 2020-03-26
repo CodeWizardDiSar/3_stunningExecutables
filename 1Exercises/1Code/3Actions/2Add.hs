@@ -1,18 +1,23 @@
 module Add where
-import Renaming            (printString,andThen,append,unwrapAnd,and,keepAnd)
-import Renaming            (inputTo,wrap,glue,forEach)
+import Renaming            (printString,andThen,append,
+                            unwrapAnd,and,keepAnd,
+                            inputTo,wrap,glue,forEach)
 import Types               (Exercise(..),HopefullySome(..))
-import Prelude             (Bool(..),concat,length,(>),getLine,IO,($),read)
+import Prelude             (Bool(..),concat,length,(>),getLine,
+                            IO,($),read)
 import ExercisesFromFile   (getExercises)
 import StringFromExercises (exercisesToString)
-import FileManagement      (writeToNextDataKeeper,updateVersion)
+import FileManagement      (writeToNextDataKeeper,
+                            updateVersion)
 import UsefulForActions    (askFor,exercisesToFile)
 import Control.Monad       ((>=>))
+import Data.Function       ((&))
 
 -- Add List Of Actions
-addList = [add getToDo,add getDone,add getMissed]
+addList = [getToDo&add,getDone&add,getMissed&add]
 add = (`unwrapAnd`\ex->
- getExercises`unwrapAnd`((ex:)`and`exercisesToFile)`andThen`updateVersion)
+ getExercises`unwrapAnd`((ex:)`and`exercisesToFile)`andThen`
+ updateVersion)
 getDone   = getSubjectNumberName`unwrapAnd`(Done    `and`wrap)
 getMissed = getSubjectNumberName`unwrapAnd`(Missed  `and`wrap)
 getToDo   = getSubjectNumberName`unwrapAnd`
