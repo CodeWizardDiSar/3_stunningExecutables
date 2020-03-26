@@ -3,10 +3,9 @@ import Renaming      (forEach,and,glue,convertIntToString,
                       append)
 import Types         (FileVersionOf,Date,toFileString,
                       HopefullySome(..),Exercise(..),
-                      HopefullyExerciseName,Line,Exercises)
+                      HopefullyExerciseName,Exercises)
 import Prelude       (String,Int)
 import Data.List     (intercalate)
-import Data.Function ((&))
 
 -- Exercises to string to be saved in the file
 exercisesToString =

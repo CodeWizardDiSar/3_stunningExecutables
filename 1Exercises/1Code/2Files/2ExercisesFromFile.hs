@@ -1,12 +1,12 @@
 module ExercisesFromFile where
-import Renaming        (unwrapAnd,wrap,unwrapped,forEach,
+import Renaming        (unwrapAnd,wrap,forEach,
                         andThen,readFromFile,printErrorMessage,
                         printString,convertIntFromString,and,
-                        splitInLines,splitInWords)
-import Types           (FromStringTo,toType,Date,Line,
-                        Exercises,HopefullyExerciseName,
+                        splitInLines)
+import Types           (FromStringTo,toType,Date,
+                        HopefullyExerciseName,
                         Exercise(..),HopefullySome(..))
-import Prelude         (String,Int,IO,filter,Bool(..))
+import Prelude         (Int,filter,Bool(..))
 import FileManagement  (getCurrentDataKeeper,getVersion)
 import Data.List.Split (splitOn)
 import Data.Function   ((&))
@@ -17,7 +17,7 @@ getExercises =
  "0"-> printString "Who you kiddin?"`andThen`wrap []
  _  ->
   getCurrentDataKeeper`unwrapAnd`readFromFile`unwrapAnd`
-  (splitInLines`and`forEach toType`and`wrap)::IO Exercises
+  (splitInLines`and`forEach toType`and`wrap)
 
 -- get To Do, Done, Missed
 [getToDo,getDone,getMissed] = [get toDo,get done,get missed]

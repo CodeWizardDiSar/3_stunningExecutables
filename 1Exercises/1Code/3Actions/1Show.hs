@@ -1,18 +1,19 @@
 module Show where
-import Renaming          (convertIntToString,glue,forEach,and)
-import Renaming          (printString,unwrapAnd,andThen)
-import Types             (Exercise(..),Exercises,Date,HopefullySome(..))
-import Types             (HopefullyExerciseName,Show,show)
+import Renaming          (convertIntToString,glue,forEach,and,
+                          printString,unwrapAnd,andThen)
+import Types             (Exercise(..),Exercises,Date,
+                          HopefullySome(..),
+                          HopefullyExerciseName,Show,show)
 import UsefulFunctions   (doSequentially)
 import Prelude           (Int,($),IO)
 import Data.List         (intercalate)
 import ExercisesFromFile (getToDo,getDone,getMissed)
-import UsefulForActions  (beautify,putTogether,printBeutified,sortChrono)
+import UsefulForActions  (beautify,putTogether,printBeutified,
+                          sortChrono)
 
 -- Show list of actions
-showList =
- forEach (printHeader`andThen`) $
-  [showToDo,showDone,showMissed,showAll]
+showList = forEach (printHeader`andThen`)$[showToDo,showDone,
+                                           showMissed,showAll]
 
 printHeader    = printBeutified header
 showToDo       = showTitleGetDo "ToDo"   getToDo   (sortChrono
@@ -21,8 +22,8 @@ showDone       = showTitleGetDo "Done"   getDone   print
 showMissed     = showTitleGetDo "Missed" getMissed print
 showAll        = doSequentially [showToDo,showDone,showMissed]
 
-showTitleGetDo = \t g d->
- printBeutified t`andThen`g`unwrapAnd`d
+showTitleGetDo = \t g d-> printBeutified t`andThen`g`unwrapAnd`
+                          d
 print          = show`and`printString
 printEx        = show`and`printString :: Exercise->IO ()
 

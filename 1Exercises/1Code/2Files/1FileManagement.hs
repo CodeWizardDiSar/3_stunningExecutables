@@ -1,14 +1,11 @@
 module FileManagement where
 import Renaming         (checkThat,fileExists,printString,
                          readFromFile,writeToFile,
-                         unwrapAnd,andThen,wrap,and,append,
-                         unwrapped,convertIntFromString,
-                         convertIntToString)
+                         unwrapAnd,andThen,wrap,and,append)
 import UsefulFunctions  (addOneToString,subOneFromString)
-import Prelude          (IO,String,FilePath,Bool(..),(+),flip)
+import Prelude          (Bool(..),flip)
 import System.Directory (renameFile)
 import Data.Function    ((&))
-import Control.Monad    ((>=>))
 
 -- Paths
 homeDir           = "/home/gnostis"
@@ -20,7 +17,7 @@ versionKeeper     = dataDir     `append`"/ver"
 tempVersionKeeper = dataDir     `append`"/verTmp"
 dataKeeperPrefix  = dataDir     `append`"/data"  
 
--- Get, Update and Downdate verion
+-- Get, Update and Downdate Verion
 getVersion =
  checkThat (versionKeeper&fileExists)`unwrapAnd`\case
   True-> readFromFile versionKeeper                    

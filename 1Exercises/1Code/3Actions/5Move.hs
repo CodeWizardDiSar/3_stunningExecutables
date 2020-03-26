@@ -1,6 +1,6 @@
 module Move where
-import Renaming            (glue,printString,wrap,unwrapAnd,andThen,and)
-import Renaming            (convertIntToString,convertIntFromString)
+import Renaming            (printString,wrap,unwrapAnd,andThen,
+                            and)
 import ExercisesFromFile   (getToDo,getDone,getMissed)
 import Prelude             ((.),not,filter,(-),(!!),(+),elem,Bool(..),(==))
 import Prelude             (sequence,getLine,IO,Int)
