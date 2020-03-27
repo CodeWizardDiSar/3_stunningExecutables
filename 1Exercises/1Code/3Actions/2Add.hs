@@ -9,9 +9,8 @@ import Data.Function       ((&))
 
 -- Add List Of Actions
 addList = [getToDo&add,getDone&add,getMissed&add]
-add = (`unwrapAnd`\ex->
- getExercises`unwrapAnd`((ex:)`and`exercisesToFile)`andThen`
- updateVersion)
+add = (`unwrapAnd`\ex->getExercises`unwrapAnd`((ex:)`and`
+                       exercisesToFile)`andThen`updateVersion)
 getDone   = getSubjectNumberName`unwrapAnd`(Done    `and`wrap)
 getMissed = getSubjectNumberName`unwrapAnd`(Missed  `and`wrap)
 getToDo   = getSubjectNumberName`unwrapAnd`

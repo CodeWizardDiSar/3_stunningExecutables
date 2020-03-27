@@ -1,8 +1,7 @@
 module Menus where
 import Renaming        (append,forEach,glue,and,
                         convertIntToString)
-import UsefulFunctions (tabBefore,tabsBefore)
-import UsefulFunctions (forEach2)
+import UsefulFunctions (tabBefore,tabsBefore,forEach2)
 import Types           (Strings)
 import Prelude         (take,($),String,(+))
 import Data.Function   ((&))

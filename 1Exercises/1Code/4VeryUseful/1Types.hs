@@ -12,12 +12,6 @@ data Exercise =
  deriving(Eq)
 
 type Strings               = [String]
-type Line                  = String  
-type Lines                 = [Line] 
-type Word                  = String
-type Words                 = [Word]
-type Message               = String
-type Messages              = [Message]
 type Date                  = [Int]
 type SubjectName           = String
 type ExerciseNumber        = String
