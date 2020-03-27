@@ -3,7 +3,7 @@ import Add                 (getDate)
 import UsefulForActions    (combine,askFor,exercisesToFile,
                             getSubjects)
 import Renaming            (printString,wrap,unwrapAnd,
-                            andThen,and)
+                            andThen,and,append)
 import ExercisesFromFile   (getToDo,getDone,getMissed)
 import Prelude             ((.),not,filter,(-),(!!),(==),
                             getLine)
@@ -13,6 +13,7 @@ import Types               (Exercise(..),HopefullySome(..))
 import UsefulFunctions     (printStrings)
 import ShowExercises       (getChosen,subIs)
 import Control.Monad       ((>=>))
+import Menus               (putNumbers)
 
 -- edit list of actions
 editList = [edit "todo",edit "done",edit "missed"]
@@ -65,12 +66,12 @@ modify = \case
                                                  newEName)&wrap
 
 chooseAttribute         = printBasic`andThen`getLine
-chooseAttributeWithDate = printBasic`andThen`printDate`andThen`
-                          getLine
+chooseAttributeWithDate = printBasicAndDate`andThen` getLine
 
-printBasic = printStrings ["1: Subject","2: Exercise Number",
-                           "3: Exercise Name"]
-printDate  = printString "4: Date"
+exData =["Subject","Exercise Number","Exercise Name"]
+printBasic = exData&putNumbers&printStrings
+printBasicAndDate = exData`append`["Date"]&putNumbers
+                                          &printStrings
 
 getSubject = askFor "New Subject?"
 getENum    = askFor "New Exercise Number?"
