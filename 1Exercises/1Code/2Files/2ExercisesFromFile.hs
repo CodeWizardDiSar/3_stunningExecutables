@@ -14,7 +14,7 @@ import Data.Function   ((&))
 -- exercises from file
 getExercises =
  getVersion`unwrapAnd`\case
- "0"-> printString "Who you kiddin?"`andThen`wrap []
+ "0"-> wrap []
  _  ->
   getCurrentDataKeeper`unwrapAnd`readFromFile`unwrapAnd`
   (splitInLines`and`forEach toType`and`wrap)
