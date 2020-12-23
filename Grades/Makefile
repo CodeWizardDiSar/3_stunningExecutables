@@ -1,14 +1,11 @@
 sg=ShowGrades
-ag=AddGrade
 
-all: $(sg) $(ag)
+all: $(sg)
   
 $(sg): 
 	ghc $(sg).hs
-$(ag): 
-	ghc $(ag).hs
 
 clean:
-	rm -f *.hi *.o $(sg) $(ag)
+	rm -f *.hi *.o $(sg)
 clean_:
 	rm -f *.hi *.o
