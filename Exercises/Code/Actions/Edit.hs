@@ -5,18 +5,17 @@ import UsefulForActions    (combine,askFor,exercisesToFile,
 import Renaming            (printString,wrap,unwrapAnd,
                             andThen,and,append)
 import ExercisesFromFile   (getToDo,getDone,getMissed)
-import Prelude             ((.),not,filter,(-),(!!),(==),
-                            getLine)
+import Prelude             ((.),not,filter,(-),(!!),(==), getLine)
 import Data.Function       ((&))
 import FileManagement      (updateVersion)
 import Types               (Exercise(..),HopefullySome(..))
 import UsefulFunctions     (printStrings)
 import ShowExercises       (getChosen,subIs)
 import Control.Monad       ((>=>))
-import Menus               (putNumbers)
+import Choices             (putNumbers)
 
 -- edit list of actions
-editList = [edit "todo",edit "done",edit "missed"]
+editActions = [edit "todo",edit "done",edit "missed"]
 edit     = getAllExs>=>exercisesToFile>=> \_->updateVersion
 getAllExs = \case
  "todo"  -> combine [getToDo&getAndEditChosen,getDone,

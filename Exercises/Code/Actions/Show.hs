@@ -12,7 +12,7 @@ import UsefulForActions  (beautify,putTogether,printBeutified,
                           sortChrono)
 
 -- Show list of actions
-showList = forEach (printHeader`andThen`)$[showToDo,showDone,
+showActions = forEach (printHeader`andThen`)$[showToDo,showDone,
                                            showMissed,showAll]
 
 printHeader    = printBeutified header

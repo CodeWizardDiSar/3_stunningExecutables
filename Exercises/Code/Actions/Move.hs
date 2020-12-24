@@ -15,7 +15,7 @@ import UsefulForActions    (combine,showSubjects,getChoice,getSubjects,exercises
 import ShowExercises       (showExercises,subIs,getChosen)
 
 -- moveFrom list of actions
-moveList = [moveFrom "todo",moveFrom "done",moveFrom "missed"]
+moveActions = [moveFrom "todo",moveFrom "done",moveFrom "missed"]
 moveFrom = \exType -> getAllExs exType`unwrapAnd`exercisesToFile`andThen`updateVersion
 getAllExs = \case
  "todo"  -> combine [move getToDo,getDone,getMissed]

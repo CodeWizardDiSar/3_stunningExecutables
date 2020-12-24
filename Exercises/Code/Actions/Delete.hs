@@ -12,7 +12,7 @@ import ShowExercises       (getChosen,subIs)
 import Control.Monad       ((>=>))
 
 -- deleteFrom list of actions
-deleteList = [deleteFrom "todo",deleteFrom "done",deleteFrom
+deleteActions = [deleteFrom "todo",deleteFrom "done",deleteFrom
                                                   "missed"]
 deleteFrom = getAllExs>=>exercisesToFile>=> \_->updateVersion
 getAllExs = \case

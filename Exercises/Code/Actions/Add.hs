@@ -8,7 +8,7 @@ import UsefulForActions    (askFor,exercisesToFile)
 import Data.Function       ((&))
 
 -- Add List Of Actions
-addList = [getToDo&add,getDone&add,getMissed&add]
+addActions = [getToDo & add, getDone & add, getMissed & add]
 add = (`unwrapAnd`\ex->getExercises`unwrapAnd`((ex:)`and`
                        exercisesToFile)`andThen`updateVersion)
 getDone   = getSubjectNumberName`unwrapAnd`(Done    `and`wrap)
@@ -18,15 +18,15 @@ getToDo   = getSubjectNumberName`unwrapAnd`
 
 -- Get Subject,Exercise Number and Exercise Name
 getSubjectNumberName =
- askFor "Subject Name?"   `unwrapAnd`\sub   -> 
- askFor "Exercise Number?"`unwrapAnd`\number->
- askFor "Exercise Name?"  `unwrapAnd`\case
-  ""  -> (sub,number,Nothing)        &wrap 
-  name-> (sub,number,IndeedItIs name)&wrap 
+  askFor "Subject Name?"   `unwrapAnd`\sub   -> 
+  askFor "Exercise Number?"`unwrapAnd`\number->
+  askFor "Exercise Name?"  `unwrapAnd`\case
+    ""  -> (sub,number,Nothing)        &wrap 
+    name-> (sub,number,IndeedItIs name)&wrap 
 
 -- Get Day,Month and Year (as you might have guessed: date)
 getDate =
- askFor "Day Of The Month? (number)"`unwrapAnd`\day-> 
- askFor "Month? (number)"           `unwrapAnd`\month->
- askFor "Year?"                     `unwrapAnd`\year->
-  forEach read [day,month,year]&wrap
+  askFor "Day Of The Month? (number)"`unwrapAnd`\day-> 
+  askFor "Month? (number)"           `unwrapAnd`\month->
+  askFor "Year?"                     `unwrapAnd`\year->
+    forEach read [day,month,year] & wrap
