@@ -45,25 +45,31 @@ print = show >>> printString
 printEx :: Exercise -> IO ()
 printEx = show >>> printString
 
+type Header = String
+header :: Header
 header = putTogether headerList
 
-headerList = ["Subject","Number","Name", "Date"]
+headerList :: [String]
+headerList = ["Subject", "Number", "Name", "Date"]
 
 -- show for Exercises,Exercise,HopefullyExerciseName,Date,Int
 instance Show Exercises where
- show = forEachIn (show >>> beautify) >>> glue 
+  show = forEachIn (show >>> beautify) >>> glue 
 
 instance Show Exercise where
   show = \case
-    Done   (sub,num,name)      -> putTogether [sub, num, show name]
-    Missed (sub,num,name)      -> putTogether [sub, num, show name]
-    ToDo   (sub,num,name) date -> putTogether [sub, num, show name, show date]
+    Done (sub,num,name) ->
+      putTogether [sub, num, show name]
+    Missed (sub,num,name) ->
+      putTogether [sub, num, show name]
+    ToDo (sub,num,name) date ->
+      putTogether [sub, num, show name, show date]
 
 instance Show HopefullyExerciseName where
   show = \case
-    Nothing->
+    Nothing ->
       "No Name"
-    IndeedItIs n->
+    IndeedItIs n ->
       n 
 
 instance Show Date where

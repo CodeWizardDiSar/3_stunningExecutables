@@ -3,19 +3,19 @@ import Renaming         (checkThat,fileExists,printString,
                          readFromFile,writeToFile,
                          unwrapAnd,andThen,wrap,(>>>),append)
 import UsefulFunctions  (addOneToString,subOneFromString)
-import Prelude          (Bool(..),flip)
+import Prelude          (Bool(..), flip, (++))
 import System.Directory (renameFile)
 import Data.Function    ((&))
 
 -- Paths
 homeDir           = "/home/gnostis"
-desktopDir        = homeDir     `append`"/Desktop"
-exercisesDir      = desktopDir  `append`
+desktopDir        = homeDir     ++"/Desktop"
+exercisesDir      = desktopDir  ++
                     "/StunningExecutables/Exercises"
-dataDir           = exercisesDir`append`"/Data"
-versionKeeper     = dataDir     `append`"/ver"   
-tempVersionKeeper = dataDir     `append`"/verTmp"
-dataKeeperPrefix  = dataDir     `append`"/data"  
+dataDir           = exercisesDir++"/Data"
+versionKeeper     = dataDir     ++"/ver"   
+tempVersionKeeper = dataDir     ++"/verTmp"
+dataKeeperPrefix  = dataDir     ++"/data"  
 
 -- Get, Update and Downdate Verion
 getVersion =
@@ -39,4 +39,4 @@ getNextDataKeeper =
  getVersion`unwrapAnd`(addOneToString>>>addDKPrefix>>>wrap)
 writeToNextDataKeeper = \s->
  getNextDataKeeper`unwrapAnd`flip writeToFile s
-addDKPrefix = (dataKeeperPrefix`append`)
+addDKPrefix = (dataKeeperPrefix++)

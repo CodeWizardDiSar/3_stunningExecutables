@@ -1,6 +1,6 @@
 module UsefulFunctions where
 import Prelude 
-  (IO, (+), (-), sequence_)
+  (IO, (+), (-), sequence_, (++))
 import Data.Function
   ((&))
 import Types
@@ -12,7 +12,7 @@ import Renaming
 doSequentially = sequence_ :: [IO ()] -> IO ()
 
 tabBefore = 1 & tabsBefore
-tabsBefore = \i s-> (repeatNTimes i '\t') `append` s
+tabsBefore = \i s-> (repeatNTimes i '\t') ++ s
 
 printStrings    = forEachDo printString
 printEmptyLine  = printString ""
