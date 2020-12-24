@@ -1,28 +1,41 @@
 module Main where
-import Prelude (String, IO, getLine, Maybe(..), Int(..), (-), (!!), (>>), (>>=))
-import Renaming (forEach, printString)
-import UsefulFunctions (doSequentially, printEmptyLine)
-import FileManagement (getCurrentDataKeeper, downdateVersion)
-import Choices (initialChoices, addChoices, showChoices, editChoices, deleteChoices
-               ,moveChoices)
-import Show (showActions)
-import Add (addActions)
-import Edit (editActions)
-import Delete (deleteActions)
-import Move (moveActions)
-import System.Directory (removeFile)
-import Text.Read (readMaybe)
+import Prelude
+  (String, IO, getLine, Maybe(..), Int(..), (-), (!!), (>>), (>>=))
+import Renaming
+  (forEachIn, printString)
+import UsefulFunctions
+  (doSequentially, printEmptyLine)
+import FileManagement
+  (getCurrentDataKeeper, downdateVersion)
+import Choices
+  (initialChoicesWT, addChoicesWT, showChoicesWT, editChoicesWT, deleteChoicesWT
+  ,moveChoicesWT)
+import Show
+  (showActions)
+import Add
+  (addActions)
+import Edit
+  (editActions)
+import Delete
+  (deleteActions)
+import Move
+  (moveActions)
+import System.Directory
+  (removeFile)
+import Text.Read
+  (readMaybe)
 
 main :: IO ()
 main = doSequentially [printEmptyLine, printWelcomingMessage, initialMenu] 
 
+-- TIM = Then Initial Menu
 menus :: [IO ()]
 menus = [initialMenu, addMenu, showMenu, editMenu, deleteMenu, moveMenu] 
 [initialMenu, addMenu, showMenu, editMenu, deleteMenu, moveMenu] =
-  forEach printChoicesAndDoChosenAction 
-    [(initialChoices, initialActions), (addChoices, addActionsTIM)
-    ,(showChoices, showActionsTIM), (editChoices, editActionsTIM)
-    ,(deleteChoices, deleteActionsTIM), (moveChoices, moveActionsTIM)
+  printChoicesAndDoChosenAction `forEachIn`
+    [(initialChoicesWT, initialActions), (addChoicesWT, addActionsTIM)
+    ,(showChoicesWT, showActionsTIM), (editChoicesWT, editActionsTIM)
+    ,(deleteChoicesWT, deleteActionsTIM), (moveChoicesWT, moveActionsTIM)
     ]
 
 initialActions :: [IO ()]
@@ -46,12 +59,11 @@ doChosenFrom actions input =
           showConfusion >>
           initialMenu
 
--- TIM = Then Initial Menu
 actionsTIM :: [[IO ()]]
 actionsTIM = 
   [addActionsTIM, showActionsTIM, editActionsTIM, deleteActionsTIM, moveActionsTIM] 
 [addActionsTIM, showActionsTIM, editActionsTIM, deleteActionsTIM, moveActionsTIM] =
-  forEach (forEach (>>initialMenu))
+  ((>>initialMenu)`forEachIn`)`forEachIn`
     [addActions, showActions, editActions, deleteActions, moveActions]
 
 undo :: IO ()
@@ -63,4 +75,4 @@ undo =
 printingStuff :: [IO ()]
 printingStuff = [printWelcomingMessage, waveAndExit, showConfusion]
 [printWelcomingMessage,waveAndExit,showConfusion] =
-  forEach printString ["\tWelcome to the exercises manager", "bye!", "Ehhh what?"]
+  printString`forEachIn`["\tWelcome to the exercises manager", "bye!", "Ehhh what?"]

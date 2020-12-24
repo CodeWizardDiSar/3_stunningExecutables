@@ -1,16 +1,17 @@
 module Renaming where
-import Prelude          (String,Int,Monad,readFile,
-                         writeFile,replicate,lines,error,
-                         read,show,concat,putStrLn,map,mapM_,
-                         return,id,(>>=),(>>),(++))
-import Control.Arrow    ((>>>))
+import Prelude 
+  (String, Int, Monad, readFile, writeFile, replicate, lines, error, read, show, concat
+  ,putStrLn, map, mapM_, return, id, (>>=), (>>), (++), flip, (.))
 import System.Directory (doesFileExist)
+
+(>>>) :: (a->b)->(b->c)->(a->c)
+(>>>) = flip (.)
 
 -- Jokers
 checkThat = id
 
 -- Normal Operators
-(append,and) = ((++),(>>>)::(a->b)->(b->c)->(a->c))
+append = (++)
 
 -- Monad operators And Functions
 andThen   :: Monad m=>m a->m b->m b
@@ -23,8 +24,7 @@ forEachDo :: Monad m=>(a->m b)->[a]->m ()
 forEachDo = mapM_
 
 -- Very General Fuctions
-(forEach,glue,splitInLines,convertIntToString,
- convertIntFromString,printString,printErrorMessage,
+(forEachIn,glue,splitInLines,convertIntToString, convertIntFromString,printString,printErrorMessage,
  fileExists,readFromFile,writeToFile,repeatNTimes) =
  (map,concat::[[a]]->[a],lines,show::Int->String,
   read::String->Int,putStrLn,error::String->a,doesFileExist,

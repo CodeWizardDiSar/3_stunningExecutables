@@ -1,7 +1,7 @@
 module UsefulForActions where
 import Types 
-import Renaming            (append,wrap,andThen,and,unwrapAnd,
-                            glue,forEach,printString,
+import Renaming            (append,wrap,andThen,(>>>),unwrapAnd,
+                            glue,forEachIn,printString,
                             convertIntToString,
                             convertIntFromString)
 import Prelude             (sequence,not,(<),(.),filter,(&&),
@@ -13,18 +13,19 @@ import FileManagement      (writeToNextDataKeeper)
 import Data.Function       ((&))
 import Control.Monad       ((>=>))
 
-beautify        = ("\t"`append`)`and`(`append`"\n")
-putTogether     = forEach ((`append`repeat ' ')`and`take 25)
-                  `and`glue
-printBeutified  = beautify`and`printString
-exercisesToFile = exercisesToString`and`writeToNextDataKeeper
-getChoice       = getLine`unwrapAnd`(convertIntFromString`and`
-                                     wrap)
-combine         = sequence>=>(glue`and`wrap) ::
-                  [IO Exercises]->IO Exercises
+beautify        = ("\t" `append`) >>> (`append` "\n")
+
+putTogether     = ( ( (`append` repeat ' ') >>> take 20 ) `forEachIn` ) >>> glue
+
+printBeutified  = beautify >>> printString
+
+exercisesToFile = exercisesToString >>> writeToNextDataKeeper
+
+getChoice       = getLine `unwrapAnd` (convertIntFromString >>> wrap)
+combine         = sequence >=> ( glue >>> wrap ) :: [IO Exercises]->IO Exercises
 
 -- Show Subjects
-showSubjects = getSubjects`and`printSubjects 1
+showSubjects = getSubjects>>>printSubjects 1
 getSubjects  = \case []     -> []
                      ex:exs -> let sub  = ex&getSub
                                    subs = exs&getSubjects
@@ -36,7 +37,7 @@ printSubjects = \i-> \case []      ->wrap ()
                                        ": ",sub]&glue&
                                        printString)`andThen`
                                        printSubjects (i+1) subs
-getSub = getData`and` \(s,_,_)->s
+getSub = getData>>> \(s,_,_)->s
 
 -- Sort Chronologically
 sortChrono = \case []    -> [] 

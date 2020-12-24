@@ -1,5 +1,5 @@
 module StringFromExercises where
-import Renaming      (forEach,and,glue,convertIntToString,
+import Renaming      (forEachIn,(>>>),glue,convertIntToString,
                       append)
 import Types         (FileVersionOf,Date,toFileString,
                       HopefullySome(..),Exercise(..),
@@ -8,9 +8,9 @@ import Prelude       (String,Int)
 import Data.List     (intercalate)
 
 -- Exercises to string to be saved in the file
+exercisesToString :: Exercises -> String
 exercisesToString =
- forEach (toFileString`and`(`append`"\n"))`and`
- glue::Exercises->String
+  ((toFileString>>>(`append`"\n"))`forEachIn`)  >>> glue
 
 -- toFileString for Exercise,HopefullyExerciseName,Date,Int
 instance FileVersionOf Exercise where
@@ -25,6 +25,6 @@ instance FileVersionOf Exercise where
 instance FileVersionOf HopefullyExerciseName where
  toFileString = \case Nothing->"_";IndeedItIs e->e 
 instance FileVersionOf Date where
- toFileString = forEach toFileString`and`intercalate "/"
+ toFileString = (toFileString`forEachIn`) >>>intercalate "/"
 instance FileVersionOf Int where
  toFileString = convertIntToString

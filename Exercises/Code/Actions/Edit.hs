@@ -3,7 +3,7 @@ import Add                 (getDate)
 import UsefulForActions    (combine,askFor,exercisesToFile,
                             getSubjects)
 import Renaming            (printString,wrap,unwrapAnd,
-                            andThen,and,append)
+                            andThen,(>>>),append)
 import ExercisesFromFile   (getToDo,getDone,getMissed)
 import Prelude             ((.),not,filter,(-),(!!),(==), getLine)
 import Data.Function       ((&))
@@ -12,7 +12,7 @@ import Types               (Exercise(..),HopefullySome(..))
 import UsefulFunctions     (printStrings)
 import ShowExercises       (getChosen,subIs)
 import Control.Monad       ((>=>))
-import Choices             (putNumbers)
+import Choices             (numbered)
 
 -- edit list of actions
 editActions = [edit "todo",edit "done",edit "missed"]
@@ -30,7 +30,7 @@ getAndEditChosen = getChosen>=>editChosen
 editChosen = \(exs,subNum,exNum)->
  let sub=getSubjects exs!!(subNum-1)
      ex=filter (subIs sub) exs!!(exNum-1)
- in modify ex`unwrapAnd`((:filter (not.(==ex)) exs)`and`wrap)
+ in modify ex`unwrapAnd`((:filter (not.(==ex)) exs)>>>wrap)
 
 modify = \case
  ToDo   (s,eNum,eName) d ->
@@ -68,9 +68,8 @@ chooseAttribute         = printBasic`andThen`getLine
 chooseAttributeWithDate = printBasicAndDate`andThen` getLine
 
 exData =["Subject","Exercise Number","Exercise Name"]
-printBasic = exData&putNumbers&printStrings
-printBasicAndDate = exData`append`["Date"]&putNumbers
-                                          &printStrings
+printBasic = exData&numbered&printStrings
+printBasicAndDate = exData`append`["Date"]&numbered &printStrings
 
 getSubject = askFor "New Subject?"
 getENum    = askFor "New Exercise Number?"

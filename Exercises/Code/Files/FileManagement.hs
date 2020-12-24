@@ -1,7 +1,7 @@
 module FileManagement where
 import Renaming         (checkThat,fileExists,printString,
                          readFromFile,writeToFile,
-                         unwrapAnd,andThen,wrap,and,append)
+                         unwrapAnd,andThen,wrap,(>>>),append)
 import UsefulFunctions  (addOneToString,subOneFromString)
 import Prelude          (Bool(..),flip)
 import System.Directory (renameFile)
@@ -23,20 +23,20 @@ getVersion =
   True-> readFromFile versionKeeper                    
   _   -> writeToFile versionKeeper "0"`andThen`wrap "0"
 updateVersion =
- getVersion`unwrapAnd`(addOneToString`and`writeToTemp)`andThen`
+ getVersion`unwrapAnd`(addOneToString>>>writeToTemp)`andThen`
  renameTemp
 downdateVersion =
  getVersion`unwrapAnd`\case
   "0"-> printString "Who you kidding brother?"
-  s  -> (subOneFromString`and`writeToTemp) s`andThen`renameTemp
+  s  -> (subOneFromString>>>writeToTemp) s`andThen`renameTemp
 writeToTemp = writeToFile tempVersionKeeper
 renameTemp = renameFile tempVersionKeeper versionKeeper
 
 -- Get Current and Next Data Keeper + Write to Next
 getCurrentDataKeeper =
- getVersion`unwrapAnd`(addDKPrefix`and`wrap)
+ getVersion`unwrapAnd`(addDKPrefix>>>wrap)
 getNextDataKeeper =
- getVersion`unwrapAnd`(addOneToString`and`addDKPrefix`and`wrap)
+ getVersion`unwrapAnd`(addOneToString>>>addDKPrefix>>>wrap)
 writeToNextDataKeeper = \s->
  getNextDataKeeper`unwrapAnd`flip writeToFile s
 addDKPrefix = (dataKeeperPrefix`append`)

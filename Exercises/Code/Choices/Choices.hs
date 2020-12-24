@@ -1,40 +1,55 @@
 module Choices where
-import Renaming (forEach, glue, and, convertIntToString)
-import UsefulFunctions (tabBefore, tabsBefore)
-import Types (Strings)
-import Prelude (zipWith, take, ($), String, (+), (++))
-import Data.Function ((&))
+import Renaming
+  (forEachIn, glue, convertIntToString)
+import UsefulFunctions
+  (tabBefore, tabsBefore)
+import Types
+  (Strings)
+import Prelude
+  (zipWith, take, ($), String, (+), (++))
+import Data.Function
+  ((&))
 
-[initialChoices, addChoices, showChoices, editChoices, deleteChoices, moveChoices] = 
-  zipWith mergeTitleAndChoices titles optionsList
+type ChoicesWithTitle = String
+-- WT = With Title
+allChoicesWT :: [ChoicesWithTitle]
+allChoicesWT =
+  [initialChoicesWT, addChoicesWT, showChoicesWT, editChoicesWT, deleteChoicesWT
+  ,moveChoicesWT]
+[initialChoicesWT, addChoicesWT, showChoicesWT, editChoicesWT, deleteChoicesWT,
+ moveChoicesWT] = 
+  zipWith mergeTitleAndChoices titles allChoices
 
 type Title = String
 type Choices = [String]
-type TitleChoicesMerged = String
-mergeTitleAndChoices :: Title -> Choices -> TitleChoicesMerged
-mergeTitleAndChoices = \t os-> 
-  [tabBefore t] ++ (forEach (2 & tabsBefore) os) & forEach (++ "\n") & glue
+mergeTitleAndChoices :: Title -> Choices -> ChoicesWithTitle
+mergeTitleAndChoices = \title choices-> 
+  [tabBefore title] ++ ((2 & tabsBefore)`forEachIn`choices) & ( (++ "\n")`forEachIn` ) & glue
 
+titles :: [Title]
 titles = ["Command me master", "Add to", "Show", "Edit", "Delete From", "Move From"]
 
-optionsList =
-  [initialOptions, exceptAllOptions, showOptions, exceptAllOptions, exceptAllOptions
-  ,exceptAllOptions]
+allChoices :: [Choices]
+allChoices =
+  [initialChoices, exceptAllChoices, showChoices, exceptAllChoices, exceptAllChoices
+  ,exceptAllChoices]
 
--- Options
-putNumbers = putNumber 1
-putNumber = \i -> \case 
-  [] -> 
-    []
-  s:ss ->
-    glue [convertIntToString i,": ", s]:putNumber (i+1) ss
+numbered :: [String] -> Choices
+numbered =
+  zipWith (\int string -> convertIntToString int ++ ": " ++ string) [1..]
 
-exerciseTypes = ["To Do","Done","Missed"]
+exerciseTypes :: [String]
+exerciseTypes = ["To Do", "Done", "Missed"]
 
-exceptAllOptions = putNumbers exerciseTypes++[exitOption]
+exceptAllChoices :: Choices
+exceptAllChoices = (exerciseTypes & numbered) ++ [exitOption]
 
-initialOptions = putNumbers ["Add","Show","Edit","Delete", "Move","Undo"]++[exitOption]
+initialChoices :: Choices
+initialChoices = (["Add", "Show", "Edit", "Delete", "Move", "Undo"] & numbered) ++ [exitOption]
 
-showOptions = putNumbers (exerciseTypes++["All"])++[exitOption]
+showChoices :: Choices
+showChoices = (( exerciseTypes ++ ["All"] ) & numbered) ++ [exitOption]
 
+type Choice = String
+exitOption :: Choice
 exitOption = "enter: Exit"

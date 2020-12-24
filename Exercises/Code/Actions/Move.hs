@@ -1,6 +1,5 @@
 module Move where
-import Renaming            (printString,wrap,unwrapAnd,andThen,
-                            and)
+import Renaming            (printString,wrap,unwrapAnd,andThen,(>>>))
 import ExercisesFromFile   (getToDo,getDone,getMissed)
 import Prelude             ((.),not,filter,(-),(!!),(+),elem,Bool(..),(==))
 import Prelude             (sequence,getLine,IO,Int)
@@ -39,8 +38,8 @@ moveOld = \ex->
 
 moveToToDo = \case 
  ToDo   a b -> ToDo a b&wrap
- Done   a   -> getDate`unwrapAnd`(ToDo a`and`wrap)
- Missed a   -> getDate`unwrapAnd`(ToDo a`and`wrap)
+ Done   a   -> getDate`unwrapAnd`(ToDo a>>>wrap)
+ Missed a   -> getDate`unwrapAnd`(ToDo a>>>wrap)
  
 moveTo = \x-> \case
  ToDo   a b -> x a&wrap
