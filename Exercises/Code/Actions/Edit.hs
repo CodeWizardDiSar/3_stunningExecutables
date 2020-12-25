@@ -2,7 +2,7 @@ module Edit where
 import Add
   (getDate)
 import UsefulForActions
-  (combine, askFor, exercisesToFile, getSubjects)
+  (combine, askAndGetAnswer, writeExercisesToFile, getSubjects)
 import Renaming 
   (printString, wrap, unwrapAnd, andThen, (>>>), append)
 import ExercisesFromFile
@@ -27,15 +27,15 @@ import Choices
 -- edit list of actions
 editActions = [edit "todo", edit "done", edit "missed"]
 
-edit = getAllExs >=> exercisesToFile >=> \_ -> updateVersion
+edit = getAllExs >=> writeExercisesToFile >=> \_ -> updateVersion
 
 getAllExs = \case
  "todo" ->
-   combine [getToDo&getAndEditChosen,getDone, getMissed]
+   combine [getToDo & getAndEditChosen, getDone, getMissed]
  "done" ->
-   combine [getToDo,getDone&getAndEditChosen, getMissed]
+   combine [getToDo, getDone & getAndEditChosen, getMissed]
  "missed" ->
-   combine [getToDo,getDone, getMissed&getAndEditChosen]
+   combine [getToDo, getDone, getMissed & getAndEditChosen]
 
 getAndEditChosen = getChosen >=> editChosen
 
@@ -84,6 +84,6 @@ exData =["Subject","Exercise Number","Exercise Name"]
 printBasic = exData&numbered&printStrings
 printBasicAndDate = exData++["Date"]&numbered &printStrings
 
-getSubject = askFor "New Subject?"
-getENum    = askFor "New Exercise Number?"
-getEName   = askFor "New Exercise Name?"
+getSubject = askAndGetAnswer "New Subject?"
+getENum    = askAndGetAnswer "New Exercise Number?"
+getEName   = askAndGetAnswer "New Exercise Name?"

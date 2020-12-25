@@ -4,6 +4,7 @@ import Prelude
   ,putStrLn, map, mapM_, return, id, (>>=), (>>), (++), flip, (.))
 import System.Directory (doesFileExist)
 
+infixl 9 >>>
 (>>>) :: (a->b)->(b->c)->(a->c)
 (>>>) = flip (.)
 

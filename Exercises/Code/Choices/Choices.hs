@@ -35,8 +35,7 @@ allChoices =
   ,exceptAllChoices]
 
 numbered :: [String] -> Choices
-numbered =
-  zipWith (\int string -> convertIntToString int ++ ": " ++ string) [1..]
+numbered = zipWith (\int string -> convertIntToString int ++ ": " ++ string) [1..]
 
 exerciseTypes :: [String]
 exerciseTypes = ["To Do", "Done", "Missed"]

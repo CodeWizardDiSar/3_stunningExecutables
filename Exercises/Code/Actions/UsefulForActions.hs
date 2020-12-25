@@ -21,7 +21,7 @@ putTogether = ( ( (++ repeat ' ') >>> take 20 ) `forEachIn` ) >>> glue
 
 printBeutified = beautify >>> printString
 
-exercisesToFile = exercisesToString >>> writeToNextDataKeeper
+writeExercisesToFile = exercisesToString >>> writeToNextDataKeeper
 
 getChoice = getLine `unwrapAnd` (convertIntFromString >>> wrap)
 
@@ -58,9 +58,9 @@ sortChrono = \case []    -> []
 before   = \e1 e2->getTDate e2`isBefore`getTDate e1
 isBefore = \[d,m,y] [d',m',y']->y<y'||(y==y'&&m<m')|| (y==y'&&m==m'&&d<d')
 
-askFor = \s->printString s>>getLine`unwrapAnd`\a->
+askAndGetAnswer = \s->printString s>>getLine`unwrapAnd`\a->
  case length a>20 of True->printString annoyingMessage>>
-                           askFor s
+                           askAndGetAnswer s
                      _   ->wrap a
 
 annoyingMessage = "More than 20 chars is not pretty"

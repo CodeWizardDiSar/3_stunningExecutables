@@ -5,17 +5,16 @@ import Prelude             ((.),not,filter,(-),(!!),(+),elem,Bool(..),(==))
 import Prelude             (sequence,getLine,IO,Int)
 import Data.Function       ((&),($))
 import Show                (printEx)
-import StringFromExercises (exercisesToString)
 import FileManagement      (writeToNextDataKeeper,updateVersion)
 import Types               (Strings,Exercises,Exercise(..))
 import Add                 (getDate)
 import UsefulFunctions     (printStrings)
-import UsefulForActions    (combine,showSubjects,getChoice,getSubjects,exercisesToFile)
+import UsefulForActions    (combine,showSubjects,getChoice,getSubjects,writeExercisesToFile)
 import ShowExercises       (showExercises,subIs,getChosen)
 
 -- moveFrom list of actions
 moveActions = [moveFrom "todo",moveFrom "done",moveFrom "missed"]
-moveFrom = \exType -> getAllExs exType`unwrapAnd`exercisesToFile`andThen`updateVersion
+moveFrom = \exType -> getAllExs exType`unwrapAnd`writeExercisesToFile`andThen`updateVersion
 getAllExs = \case
  "todo"  -> combine [move getToDo,getDone,getMissed]
  "done"  -> combine [getToDo,move getDone,getMissed]

@@ -12,7 +12,7 @@ import Data.List.Split (splitOn)
 import Data.Function   ((&))
 
 -- exercises from file
-getExercises =
+getExercisesFromFile =
  getVersion`unwrapAnd`\case
  "0"-> wrap []
  _  ->
@@ -21,7 +21,7 @@ getExercises =
 
 -- get To Do, Done, Missed
 [getToDo,getDone,getMissed] = [get toDo,get done,get missed]
-get = \x->getExercises`unwrapAnd`(filter x>>>wrap)
+get = \x->getExercisesFromFile`unwrapAnd`(filter x>>>wrap)
 toDo   = \case ToDo _ _->True;_->False 
 done   = \case Done _  ->True;_->False
 missed = \case Missed _->True;_->False

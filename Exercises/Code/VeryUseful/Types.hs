@@ -17,9 +17,7 @@ type SubjectName           = String
 type ExerciseNumber        = String
 type HopefullyExerciseName = HopefullySome String
 type Exercises             = [Exercise]
-type ExerciseData          = (SubjectName          ,
-                              ExerciseNumber       ,
-                              HopefullyExerciseName)
+type ExerciseData          = (SubjectName, ExerciseNumber, HopefullyExerciseName)
 
 -- Even more of a pleasure, type classes
 class FromStringTo  a where toType         :: String->a
