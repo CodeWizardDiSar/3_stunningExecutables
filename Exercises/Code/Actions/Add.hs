@@ -2,7 +2,7 @@ module Add where
 import Prelude
   (read, (>>=), (>>), IO, Int, String, uncurry, Monad, sequence)
 import Renaming
-  ((>>>), wrap, forEachIn)
+  ((>>>), wrap, forEach)
 import Types
   (Exercise(..), HopefullySome(..), ExerciseData, HopefullyExerciseName)
 import ExercisesFromFile
@@ -66,8 +66,8 @@ getExerciseDataStrings =
 getDate :: IO [Int]
 getDate =
   askAndGetAnswers [ "Day Of The Month? (number)" , "Month? (number)" , "Year?" ] >>=
-    (read `forEachIn`) >>> wrap
+    (read `forEach`) >>> wrap
 
 askAndGetAnswers :: [String] -> IO [String] 
-askAndGetAnswers = (askAndGetAnswer `forEachIn`) >>> sequence
+askAndGetAnswers = (askAndGetAnswer `forEach`) >>> sequence
 

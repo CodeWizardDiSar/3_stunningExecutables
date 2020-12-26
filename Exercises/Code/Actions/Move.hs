@@ -1,8 +1,8 @@
 module Move where
 import Renaming            (printString,wrap,unwrapAnd,andThen,(>>>))
-import ExercisesFromFile   (getToDo,getDone,getMissed)
+import ExercisesFromFile   (getToDoExercises,getDoneExercises,getMissedExercises)
 import Prelude             ((.),not,filter,(-),(!!),(+),elem,Bool(..),(==))
-import Prelude             (sequence,getLine,IO,Int)
+import Prelude             (sequence,getLine,IO,Int,(>>=))
 import Data.Function       ((&),($))
 import Show                (printEx)
 import FileManagement      (writeToNextDataKeeper,updateVersion)
@@ -11,15 +11,19 @@ import Add                 (getDate)
 import UsefulFunctions     (printStrings)
 import UsefulForActions    (combine,showSubjects,getChoice,getSubjects,writeExercisesToFile)
 import ShowExercises       (showExercises,subIs,getChosen)
+import Control.Monad       ((>=>))
 
 -- moveFrom list of actions
 moveActions = [moveFrom "todo",moveFrom "done",moveFrom "missed"]
+
 moveFrom = \exType -> getAllExs exType`unwrapAnd`writeExercisesToFile`andThen`updateVersion
+
 getAllExs = \case
- "todo"  -> combine [move getToDo,getDone,getMissed]
- "done"  -> combine [getToDo,move getDone,getMissed]
- "missed"-> combine [getToDo,getDone,move getMissed]
-move = \getExs-> getChosen getExs`unwrapAnd`moveChosen
+ "todo"  -> combine [getToDoExercises>>=move,getDoneExercises,getMissedExercises]
+ "done"  -> combine [getToDoExercises,getDoneExercises>>=move,getMissedExercises]
+ "missed"-> combine [getToDoExercises,getDoneExercises,getMissedExercises>>=move]
+
+move = getChosen >=> moveChosen
 
 -- Move Chosen
 moveChosen = \(exs,subNum,exNum)->
@@ -28,19 +32,19 @@ moveChosen = \(exs,subNum,exNum)->
  in moveOld ex`unwrapAnd`\newEx-> newEx:(filter (not.(==ex)) exs)&wrap
 
 moveOld = \ex->
- printStrings ["Move To?","\t1: To Do","\t2: Done","\t3: Missed"]`andThen`
- getLine`unwrapAnd` \case
- "1"->moveToToDo    ex
- "2"->moveTo Done   ex
- "3"->moveTo Missed ex
- _  ->printString "what?"`andThen`moveOld ex
+  printStrings ["Move To?","\t1: To Do","\t2: Done","\t3: Missed"]`andThen`
+  getLine`unwrapAnd` \case
+  "1"->moveToToDo    ex
+  "2"->moveTo Done   ex
+  "3"->moveTo Missed ex
+  _  ->printString "what?"`andThen`moveOld ex
 
 moveToToDo = \case 
- ToDo   a b -> ToDo a b&wrap
- Done   a   -> getDate`unwrapAnd`(ToDo a>>>wrap)
- Missed a   -> getDate`unwrapAnd`(ToDo a>>>wrap)
+  ToDo   a b -> ToDo a b&wrap
+  Done   a   -> getDate`unwrapAnd`(ToDo a>>>wrap)
+  Missed a   -> getDate`unwrapAnd`(ToDo a>>>wrap)
  
 moveTo = \x-> \case
- ToDo   a b -> x a&wrap
- Done   a   -> x a&wrap
- Missed a   -> x a&wrap
+  ToDo   a b -> x a&wrap
+  Done   a   -> x a&wrap
+  Missed a   -> x a&wrap

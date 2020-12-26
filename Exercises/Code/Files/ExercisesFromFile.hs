@@ -1,5 +1,5 @@
 module ExercisesFromFile where
-import Renaming        (unwrapAnd,wrap,forEachIn,
+import Renaming        (unwrapAnd,wrap,forEach,
                         andThen,readFromFile,printErrorMessage,
                         printString,convertIntFromString,(>>>),
                         splitInLines)
@@ -17,13 +17,17 @@ getExercisesFromFile =
  "0"-> wrap []
  _  ->
   getCurrentDataKeeper`unwrapAnd`readFromFile`unwrapAnd`
-  (splitInLines>>>(toType`forEachIn`)>>>wrap)
+  (splitInLines>>>(toType`forEach`)>>>wrap)
 
 -- get To Do, Done, Missed
-[getToDo,getDone,getMissed] = [get toDo,get done,get missed]
+[getToDoExercises, getDoneExercises, getMissedExercises] = [get toDo,get done,get missed]
+
 get = \x->getExercisesFromFile`unwrapAnd`(filter x>>>wrap)
+
 toDo   = \case ToDo _ _->True;_->False 
+
 done   = \case Done _  ->True;_->False
+
 missed = \case Missed _->True;_->False
 
 -- toType for Exercise,HopefullyExerciseName,Date,Int
@@ -40,6 +44,6 @@ instance FromStringTo HopefullyExerciseName where
  toType = \case "_"->Nothing;exName->IndeedItIs exName
 instance FromStringTo Date where
  toType = splitOn "/">>> \case
-  [d,m,y]->toType `forEachIn` [d,m,y]
+  [d,m,y]->toType `forEach` [d,m,y]
   _      ->printErrorMessage "Date"
 instance FromStringTo Int where toType = convertIntFromString

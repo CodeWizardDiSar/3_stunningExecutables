@@ -25,7 +25,7 @@ forEachDo :: Monad m=>(a->m b)->[a]->m ()
 forEachDo = mapM_
 
 -- Very General Fuctions
-(forEachIn,glue,splitInLines,convertIntToString, convertIntFromString,printString,printErrorMessage,
+(forEach,glue,splitInLines,convertIntToString, convertIntFromString,printString,printErrorMessage,
  fileExists,readFromFile,writeToFile,repeatNTimes) =
  (map,concat::[[a]]->[a],lines,show::Int->String,
   read::String->Int,putStrLn,error::String->a,doesFileExist,

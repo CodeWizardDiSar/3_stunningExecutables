@@ -46,7 +46,6 @@ getSubjects = \case
 
 getExsSubjects getExs = concurrently (getExs >>= showSubjects) getChoice
 
-getChosen = \getExs->
-  getExs >>= \exs -> (exs & showSubjects) >>
+getChosen = \exs -> (exs & showSubjects) >>
   getChoice >>= \subNum-> ( (exs, subNum) & showExercises) >>
   getChoice >>= \exNum -> (exs, subNum, exNum) & wrap

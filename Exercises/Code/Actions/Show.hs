@@ -2,7 +2,7 @@ module Show where
 import Prelude 
   (Int, String, ($), IO, (>>), (>>=))
 import Renaming
-  (convertIntToString, glue, forEachIn, (>>>), printString, unwrapAnd, andThen)
+  (convertIntToString, glue, forEach, (>>>), printString, unwrapAnd, andThen)
 import Types
   (Exercise(..), Exercises, Date, HopefullySome(..), HopefullyExerciseName, Show, show)
 import UsefulFunctions
@@ -10,25 +10,25 @@ import UsefulFunctions
 import Data.List 
   (intercalate)
 import ExercisesFromFile
-  (getToDo, getDone, getMissed)
+  (getToDoExercises, getDoneExercises, getMissedExercises)
 import UsefulForActions
   (beautify, putTogether, printBeutified, sortChrono)
 
 -- Show list of actions
 showActions :: [IO ()]
-showActions = (printHeader >>)`forEachIn`[showToDo, showDone, showMissed, showAll]
+showActions = (printHeader >>)`forEach`[showToDo, showDone, showMissed, showAll]
 
 printHeader :: IO ()
 printHeader = printBeutified header
 
 showToDo :: IO ()
-showToDo = showTitleGetDo "ToDo" getToDo (sortChrono >>> print)
+showToDo = showTitleGetDo "ToDo" getToDoExercises (sortChrono >>> print)
 
 showDone :: IO ()
-showDone = showTitleGetDo "Done" getDone print
+showDone = showTitleGetDo "Done" getDoneExercises print
 
 showMissed :: IO ()
-showMissed = showTitleGetDo "Missed" getMissed print
+showMissed = showTitleGetDo "Missed" getMissedExercises print
 
 showAll :: IO ()
 showAll = doSequentially [showToDo,showDone,showMissed]
@@ -54,7 +54,7 @@ headerList = ["Subject", "Number", "Name", "Date"]
 
 -- show for Exercises,Exercise,HopefullyExerciseName,Date,Int
 instance Show Exercises where
-  show = forEachIn (show >>> beautify) >>> glue 
+  show = forEach (show >>> beautify) >>> glue 
 
 instance Show Exercise where
   show = \case
@@ -73,7 +73,7 @@ instance Show HopefullyExerciseName where
       n 
 
 instance Show Date where
-  show = forEachIn show >>> intercalate "/"
+  show = forEach show >>> intercalate "/"
 
 instance Show Int  where
   show = convertIntToString

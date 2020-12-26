@@ -1,7 +1,7 @@
 module UsefulForActions where
 import Types 
 import Renaming
-  (append, wrap, (>>>), unwrapAnd, glue, forEachIn, printString, convertIntToString
+  (append, wrap, (>>>), unwrapAnd, glue, forEach, printString, convertIntToString
   ,convertIntFromString)
 import Prelude
   (sequence, not, (<), (.), filter, (&&), (>), (||), (==), repeat, take, length, Bool(..)
@@ -17,7 +17,7 @@ import Control.Monad
 
 beautify = ("\t" ++) >>> (++ "\n")
 
-putTogether = ( ( (++ repeat ' ') >>> take 20 ) `forEachIn` ) >>> glue
+putTogether = ( ( (++ repeat ' ') >>> take 20 ) `forEach` ) >>> glue
 
 printBeutified = beautify >>> printString
 

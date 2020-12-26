@@ -1,10 +1,10 @@
 module Delete where
+import Prelude   
+  ((.), not, filter, (-), (!!), (==), IO, String, Int, (>>=), (>>))
 import Renaming
   (wrap)
 import ExercisesFromFile
-  (getToDo, getDone, getMissed)
-import Prelude   
-  ((.), not, filter, (-), (!!), (==))
+  (getToDoExercises, getDoneExercises, getMissedExercises)
 import Data.Function
   ((&))
 import StringFromExercises
@@ -21,21 +21,27 @@ import Control.Monad
   ((>=>))
 
 -- deleteFrom list of actions
-deleteActions = [deleteFrom "todo",deleteFrom "done",deleteFrom "missed"]
+deleteActions :: [ IO () ]
+deleteActions = [ deleteFrom "todo", deleteFrom "done", deleteFrom "missed" ]
 
-deleteFrom = getAllExs >=> writeExercisesToFile >=> \_ -> updateVersion
+deleteFrom :: String -> IO ()
+deleteFrom exerciseType =
+  deleteAndGetNewExercises exerciseType >>= writeExercisesToFile >> updateVersion
 
-getAllExs = \case
- "todo"  ->
-   combine [ getToDo & getDeleteChosen, getDone, getMissed ]
- "done"  ->
-   combine [ getToDo, getDone & getDeleteChosen, getMissed ]
- "missed"->
-   combine [ getToDo, getDone, getMissed & getDeleteChosen ]
+deleteAndGetNewExercises :: String -> IO Exercises
+deleteAndGetNewExercises = \case
+ "todo" ->
+   combine [ getToDoExercises >>= deleteChosen, getDoneExercises, getMissedExercises ]
+ "done" ->
+   combine [ getToDoExercises, getDoneExercises >>= deleteChosen, getMissedExercises ]
+ "missed" ->
+   combine [ getToDoExercises, getDoneExercises, getMissedExercises >>= deleteChosen ]
 
-getDeleteChosen = getChosen >=> deleteChosen
+deleteChosen :: Exercises -> IO Exercises
+deleteChosen = getChosen >=> delete
 
-deleteChosen = \(exs,subNum,exNum)->
- let sub = getSubjects exs!!(subNum-1)
-     ex = filter (subIs sub) exs!!(exNum-1)
+delete :: (Exercises, Int, Int) -> IO Exercises
+delete = \(exs, subNum, exNum)->
+ let sub = getSubjects exs !! (subNum - 1)
+     ex = filter (subIs sub) exs !! (exNum - 1)
  in filter ( not . (== ex) ) exs & wrap

@@ -1,6 +1,6 @@
 module Choices where
 import Renaming
-  (forEachIn, glue, convertIntToString)
+  (forEach, glue, convertIntToString)
 import UsefulFunctions
   (tabBefore, tabsBefore)
 import Types
@@ -24,7 +24,7 @@ type Title = String
 type Choices = [String]
 mergeTitleAndChoices :: Title -> Choices -> ChoicesWithTitle
 mergeTitleAndChoices = \title choices-> 
-  [tabBefore title] ++ ((2 & tabsBefore)`forEachIn`choices) & ( (++ "\n")`forEachIn` ) & glue
+  [tabBefore title] ++ ((2 & tabsBefore)`forEach`choices) & ( (++ "\n")`forEach` ) & glue
 
 titles :: [Title]
 titles = ["Command me master", "Add to", "Show", "Edit", "Delete From", "Move From"]
