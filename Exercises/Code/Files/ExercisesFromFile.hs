@@ -1,49 +1,66 @@
 module ExercisesFromFile where
-import Renaming        (unwrapAnd,wrap,forEach,
-                        andThen,readFromFile,printErrorMessage,
-                        printString,convertIntFromString,(>>>),
-                        splitInLines)
-import Types           (FromStringTo,toType,Date,
-                        HopefullyExerciseName,
-                        Exercise(..),HopefullySome(..))
-import Prelude         (Int,filter,Bool(..))
-import FileManagement  (getCurrentDataKeeper,getVersion)
-import Data.List.Split (splitOn)
-import Data.Function   ((&))
+import Prelude
+  (Int, filter, Bool(..), IO, (>>=) )
+import Renaming
+  ( unwrapAnd, wrap, forEach, andThen, readFromFile, printErrorMessage, printString
+  , convertIntFromString, (>>>), splitInLines )
+import Types 
+  ( FromStringTo, toType, Date, HopefullyExerciseName, Exercise(..), HopefullySome(..)
+  , Exercises)
+import FileManagement
+  (getCurrentDataKeeper, getVersion)
+import Data.List.Split
+  (splitOn)
+import Data.Function 
+  ((&))
 
--- exercises from file
+getExercisesFromFile :: IO Exercises
 getExercisesFromFile =
- getVersion`unwrapAnd`\case
- "0"-> wrap []
- _  ->
-  getCurrentDataKeeper`unwrapAnd`readFromFile`unwrapAnd`
-  (splitInLines>>>(toType`forEach`)>>>wrap)
+  getVersion >>= \case
+  "0"->
+    wrap []
+  _  ->
+    getCurrentDataKeeper >>= readFromFile >>= ( splitInLines >>> (toType `forEach`) >>> wrap )
 
--- get To Do, Done, Missed
-[getToDoExercises, getDoneExercises, getMissedExercises] = [get toDo,get done,get missed]
+getExercises :: [ IO Exercises ]
+getExercises = [ getToDoExercises, getDoneExercises, getMissedExercises ]
+[ getToDoExercises, getDoneExercises, getMissedExercises ] = [ get toDo, get done, get missed ]
 
-get = \x->getExercisesFromFile`unwrapAnd`(filter x>>>wrap)
+get :: ( Exercise -> Bool ) -> IO Exercises
+get = \x -> getExercisesFromFile >>= (filter x >>> wrap)
 
-toDo   = \case ToDo _ _->True;_->False 
+toDo :: Exercise -> Bool
+toDo = \case
+  ToDo _ _ -> True
+  _ -> False 
 
-done   = \case Done _  ->True;_->False
+done :: Exercise -> Bool
+done = \case
+  Done _ -> True
+  _ -> False
 
-missed = \case Missed _->True;_->False
+missed :: Exercise -> Bool
+missed = \case
+  Missed _ -> True
+  _ -> False
 
--- toType for Exercise,HopefullyExerciseName,Date,Int
 instance FromStringTo Exercise where
- toType = 
-  splitOn ",">>> \case
-   ["d",s,exNum,exName]     -> Done   (s,exNum,exName&toType)
-   ["m",s,exNum,exName]     -> Missed (s,exNum,exName&toType)
-   ["t",s,exNum,exName,date]-> ToDo   (s,exNum,exName&toType)
-                                      (date&toType)
-   _                        -> printErrorMessage
-                                "Line To Exercise"
+  toType = 
+    splitOn "," >>> \case
+      [ "d", s, exNum, exName] -> Done (s, exNum, exName & toType)
+      [ "m", s, exNum, exName] -> Missed (s, exNum, exName & toType)
+      [ "t", s, exNum, exName, date] -> ToDo (s, exNum, exName & toType) ( date & toType)
+      _ -> printErrorMessage "Line To Exercise"
+
 instance FromStringTo HopefullyExerciseName where
- toType = \case "_"->Nothing;exName->IndeedItIs exName
+  toType = \case
+    "_" -> Nothing
+    exName -> IndeedItIs exName
+
 instance FromStringTo Date where
- toType = splitOn "/">>> \case
-  [d,m,y]->toType `forEach` [d,m,y]
-  _      ->printErrorMessage "Date"
-instance FromStringTo Int where toType = convertIntFromString
+  toType = splitOn "/" >>> \case
+    [d,m,y] -> toType `forEach` [d,m,y]
+    _ -> printErrorMessage "Date"
+
+instance FromStringTo Int where
+  toType = convertIntFromString

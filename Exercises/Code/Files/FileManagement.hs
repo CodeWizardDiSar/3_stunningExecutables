@@ -1,42 +1,63 @@
 module FileManagement where
-import Renaming         (checkThat,fileExists,printString,
-                         readFromFile,writeToFile,
-                         unwrapAnd,andThen,wrap,(>>>),append)
+import Prelude
+  (Bool(..), flip, (++), (>>=), (>>), String, IO )
+import Renaming
+  (fileExists,printString, readFromFile,writeToFile, unwrapAnd,andThen,wrap,(>>>),append)
 import UsefulFunctions  (addOneToString,subOneFromString)
-import Prelude          (Bool(..), flip, (++))
 import System.Directory (renameFile)
 import Data.Function    ((&))
+import Types ( Path )
 
--- Paths
-homeDir           = "/home/gnostis"
-desktopDir        = homeDir     ++"/Desktop"
-exercisesDir      = desktopDir  ++
-                    "/StunningExecutables/Exercises"
-dataDir           = exercisesDir++"/Data"
-versionKeeper     = dataDir     ++"/ver"   
-tempVersionKeeper = dataDir     ++"/verTmp"
-dataKeeperPrefix  = dataDir     ++"/data"  
+homeDir :: Path
+homeDir = "/home/gnostis"
 
--- Get, Update and Downdate Verion
+desktopDir :: Path
+desktopDir = homeDir ++ "/Desktop"
+
+exercisesDir :: Path
+exercisesDir = desktopDir ++ "/StunningExecutables/Exercises"
+
+dataDir :: Path
+dataDir = exercisesDir ++ "/Data"
+
+versionKeeper :: Path
+versionKeeper = dataDir ++ "/ver"   
+
+tempVersionKeeper :: Path
+tempVersionKeeper = dataDir ++ "/verTmp"
+
+dataKeeperPrefix :: Path
+dataKeeperPrefix = dataDir ++ "/data"  
+
+getVersion :: IO String
 getVersion =
- checkThat (versionKeeper&fileExists)`unwrapAnd`\case
-  True-> readFromFile versionKeeper                    
-  _   -> writeToFile versionKeeper "0"`andThen`wrap "0"
-updateVersion =
- getVersion`unwrapAnd`(addOneToString>>>writeToTemp)`andThen`
- renameTemp
+  versionKeeper & fileExists >>= \case
+    True -> readFromFile versionKeeper                    
+    _ -> writeToFile versionKeeper "0" >> wrap "0"
+
+updateVersion :: IO ()
+updateVersion = getVersion >>= addOneToString >>> writeToTemp >> renameTemp
+
+downdateVersion :: IO ()
 downdateVersion =
- getVersion`unwrapAnd`\case
-  "0"-> printString "Who you kidding brother?"
-  s  -> (subOneFromString>>>writeToTemp) s`andThen`renameTemp
+  getVersion >>= \case
+    "0"-> printString "Who you kidding brother?"
+    s  -> (subOneFromString >>> writeToTemp) s >> renameTemp
+
+writeToTemp :: String -> IO ()
 writeToTemp = writeToFile tempVersionKeeper
+
+renameTemp :: IO ()
 renameTemp = renameFile tempVersionKeeper versionKeeper
 
--- Get Current and Next Data Keeper + Write to Next
-getCurrentDataKeeper =
- getVersion`unwrapAnd`(addDKPrefix>>>wrap)
-getNextDataKeeper =
- getVersion`unwrapAnd`(addOneToString>>>addDKPrefix>>>wrap)
-writeToNextDataKeeper = \s->
- getNextDataKeeper`unwrapAnd`flip writeToFile s
-addDKPrefix = (dataKeeperPrefix++)
+getCurrentDataKeeper :: IO String
+getCurrentDataKeeper = getVersion >>= addDKPrefix >>> wrap
+
+getNextDataKeeper :: IO Path
+getNextDataKeeper = getVersion >>= addOneToString >>> addDKPrefix >>> wrap
+
+writeToNextDataKeeper :: String -> IO ()
+writeToNextDataKeeper = \s-> getNextDataKeeper >>= flip writeToFile s
+
+addDKPrefix :: String -> Path
+addDKPrefix = ( dataKeeperPrefix ++ )

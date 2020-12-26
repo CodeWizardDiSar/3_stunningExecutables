@@ -8,13 +8,8 @@ infixl 9 >>>
 (>>>) :: (a->b)->(b->c)->(a->c)
 (>>>) = flip (.)
 
--- Jokers
-checkThat = id
-
--- Normal Operators
 append = (++)
 
--- Monad operators And Functions
 andThen   :: Monad m=>m a->m b->m b
 andThen   = (>>)
 unwrapAnd :: Monad m=>m a->(a->m b)->m b
@@ -24,9 +19,7 @@ wrap      = return
 forEachDo :: Monad m=>(a->m b)->[a]->m ()
 forEachDo = mapM_
 
--- Very General Fuctions
-(forEach,glue,splitInLines,convertIntToString, convertIntFromString,printString,printErrorMessage,
- fileExists,readFromFile,writeToFile,repeatNTimes) =
- (map,concat::[[a]]->[a],lines,show::Int->String,
-  read::String->Int,putStrLn,error::String->a,doesFileExist,
-  readFile,writeFile,replicate)
+( forEach, glue, splitInLines, convertIntToString, convertIntFromString, printString
+ ,printErrorMessage, fileExists, readFromFile, writeToFile, repeatNTimes) =
+  ( map, concat :: [ [ a ] ] -> [ a ], lines, show :: Int -> String, read :: String -> Int
+  , putStrLn, error :: String -> a, doesFileExist, readFile, writeFile, replicate )

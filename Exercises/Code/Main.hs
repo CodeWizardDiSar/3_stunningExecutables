@@ -48,15 +48,11 @@ printChoicesAndDoChosenAction ( choices, actions ) =
 doChosenFrom :: [ IO () ] -> String -> IO ()
 doChosenFrom actions input =
   case readMaybe input :: Maybe Int of
-    Just i ->
-      actions!!(i-1)
+    Just i -> actions !! ( i - 1 )
     Nothing ->
       case input of
-        ""->
-          waveAndExit
-        _->
-          showConfusion >>
-          initialMenu
+        "" -> waveAndExit
+        _ -> showConfusion >> initialMenu
 
 actionsWIMAE :: [ [ IO () ] ]
 actionsWIMAE = 

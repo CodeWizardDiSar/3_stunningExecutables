@@ -4,7 +4,7 @@ import Prelude
 import Add
   (getDate)
 import UsefulForActions
-  (combine, askAndGetAnswer, writeExercisesToFile, getSubjects)
+  (combine, printAndGetAnswer, writeExercisesToFile, getSubjects)
 import Renaming 
   (printString, wrap, andThen, (>>>), append)
 import ExercisesFromFile
@@ -96,10 +96,10 @@ printBasicAndDate :: IO ()
 printBasicAndDate = exData ++ [ "Date" ] & numbered & printStrings
 
 getSubject :: IO String
-getSubject = askAndGetAnswer "New Subject?"
+getSubject = printAndGetAnswer "New Subject?"
 
 getENum :: IO String
-getENum = askAndGetAnswer "New Exercise Number?"
+getENum = printAndGetAnswer "New Exercise Number?"
 
 getEName :: IO String
-getEName = askAndGetAnswer "New Exercise Name?"
+getEName = printAndGetAnswer "New Exercise Name?"

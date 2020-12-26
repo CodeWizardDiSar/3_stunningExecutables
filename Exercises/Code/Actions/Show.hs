@@ -52,7 +52,6 @@ header = putTogether headerList
 headerList :: [String]
 headerList = ["Subject", "Number", "Name", "Date"]
 
--- show for Exercises,Exercise,HopefullyExerciseName,Date,Int
 instance Show Exercises where
   show = forEach (show >>> beautify) >>> glue 
 

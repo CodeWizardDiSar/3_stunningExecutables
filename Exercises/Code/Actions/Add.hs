@@ -1,27 +1,25 @@
 module Add where
 import Prelude
-  (read, (>>=), (>>), IO, Int, String, uncurry, Monad, sequence)
+  ( read, (>>=), (>>), IO, Int, String, uncurry, Monad, sequence )
 import Renaming
-  ((>>>), wrap, forEach)
+  ( (>>>), wrap, forEach )
 import Types
-  (Exercise(..), HopefullySome(..), ExerciseData, HopefullyExerciseName)
+  ( Exercise ( ToDo, Done, Missed ), HopefullySome ( IndeedItIs, Nothing ), ExerciseData
+  , HopefullyExerciseName )
 import ExercisesFromFile
-  (getExercisesFromFile)
+  ( getExercisesFromFile )
 import FileManagement
-  (updateVersion)
+  ( updateVersion )
 import UsefulForActions
-  (askAndGetAnswer, writeExercisesToFile)
+  ( printAndGetAnswer, writeExercisesToFile )
 import Data.Function
-  ((&))
+  ( (&) )
 import Control.Monad.Zip
-  (mzipWith, mzip, MonadZip)
+  ( mzipWith, mzip, MonadZip )
 import Control.Invertible.Monoidal
-  (pairADefault)
-import Language.Fixpoint.Misc
-  (fM)
+  ( pairADefault )
 
--- Add List Of Actions
-addActions :: [IO ()]
+addActions :: [ IO () ]
 addActions =
   [ getToDoExerciseFromUser >>= add, getExerciseFromUser Done >>= add
   , getExerciseFromUser Missed >>= add ]
@@ -31,8 +29,7 @@ instance MonadZip IO where
 
 add :: Exercise -> IO ()
 add exerciseFromUser =
-  getExercisesFromFile >>= (exerciseFromUser:) >>> writeExercisesToFile >>
-  updateVersion
+  getExercisesFromFile >>= ( exerciseFromUser : ) >>> writeExercisesToFile >> updateVersion
 
 getExerciseFromUser :: (ExerciseData -> Exercise) -> IO Exercise
 getExerciseFromUser exerciseType =
@@ -49,25 +46,22 @@ getExerciseData = getExerciseDataStrings >>= stringsToExerciseData >>> wrap
 
 stringsToExerciseData :: [String] -> ExerciseData
 stringsToExerciseData = \case
-  [subjectName, exerciseNumber, exerciseNameString] ->
-    (subjectName, exerciseNumber, exerciseNameString & stringToHopefullyExerciseName)
+  [ subjectName, exerciseNumber, exerciseNameString ] ->
+    ( subjectName, exerciseNumber, exerciseNameString & stringToHopefullyExerciseName )
 
 stringToHopefullyExerciseName :: String -> HopefullyExerciseName
 stringToHopefullyExerciseName = \case
-  "" ->
-    Nothing
-  exerciseName ->
-    IndeedItIs exerciseName
+  "" -> Nothing
+  exerciseName -> IndeedItIs exerciseName
 
-getExerciseDataStrings :: IO [String]
+getExerciseDataStrings :: IO [ String ]
 getExerciseDataStrings =
-  askAndGetAnswers [ "Subject Name?", "Exercise Number?", "Exercise Name?" ]
+  printAndGetAnswers [ "Subject Name?", "Exercise Number?", "Exercise Name?" ]
 
-getDate :: IO [Int]
+getDate :: IO [ Int ]
 getDate =
-  askAndGetAnswers [ "Day Of The Month? (number)" , "Month? (number)" , "Year?" ] >>=
+  printAndGetAnswers [ "Day Of The Month? (number)" , "Month? (number)" , "Year?" ] >>=
     (read `forEach`) >>> wrap
 
-askAndGetAnswers :: [String] -> IO [String] 
-askAndGetAnswers = (askAndGetAnswer `forEach`) >>> sequence
-
+printAndGetAnswers :: [ String ] -> IO [ String ] 
+printAndGetAnswers = ( printAndGetAnswer `forEach` ) >>> sequence

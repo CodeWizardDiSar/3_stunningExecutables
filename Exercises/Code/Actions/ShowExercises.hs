@@ -1,6 +1,6 @@
 module ShowExercises where
 import Prelude 
-  (Bool(..), elem, (!!), filter, (>>=), (==), (-), (+), (>>))
+  (Bool(..), elem, (!!), filter, (>>=), (==), (-), (+), (>>), Int, IO, String)
 import Data.Function
   ((&))
 import Renaming 
@@ -8,19 +8,22 @@ import Renaming
 import Show 
   (printEx)
 import Types
-  (Exercise(..))
+  (Exercise(..), Exercises)
 import UsefulForActions
   (getChoice, showSubjects)
-import Control.Concurrent.Async
-  (concurrently)
 
+showExercises :: (Exercises, Int) -> IO ()
 showExercises = \(exs,subNum)->
   let sub = getSubjects exs !! (subNum-1)
   in filter (subIs sub) exs & printExercises
 
+subIs :: String -> Exercise -> Bool
 subIs = \subName ex -> ex & getData & \(s,_,_) -> s == subName
 
+printExercises :: Exercises -> IO ()
 printExercises = printExercise 1
+
+printExercise :: Int -> Exercises -> IO ()
 printExercise = \i -> \case
   [] ->
     wrap ()
@@ -29,9 +32,7 @@ printExercise = \i -> \case
     printEx ex >>
     printExercise (i+1) exs
 
-inputOutputPair :: (a -> b) -> a -> (a, b)
-inputOutputPair f a = (a, f a)
-
+getSubjects :: Exercises -> [String]
 getSubjects = \case
   [] ->
     []
@@ -44,8 +45,10 @@ getSubjects = \case
       _ ->
         sub:subs
 
-getExsSubjects getExs = concurrently (getExs >>= showSubjects) getChoice
+getExsSubjects :: IO Exercises -> IO Int
+getExsSubjects getExs = getExs >>= showSubjects >> getChoice
 
+getChosen :: Exercises -> IO (Exercises, Int, Int)
 getChosen = \exs -> (exs & showSubjects) >>
   getChoice >>= \subNum-> ( (exs, subNum) & showExercises) >>
   getChoice >>= \exNum -> (exs, subNum, exNum) & wrap
