@@ -1,55 +1,54 @@
 module Main where
 import Prelude
-  (String, IO, getLine, Maybe(..), Int(..), (-), (!!), (>>), (>>=))
+  ( String, IO, getLine, Maybe( Just, Nothing ), Int, (-), (!!), (>>), (>>=) )
 import Renaming
-  (forEach, printString)
+  ( forEach, printString )
 import UsefulFunctions
-  (doSequentially, printEmptyLine)
+  ( doSequentially, printEmptyLine )
 import FileManagement
-  (getCurrentDataKeeper, downdateVersion)
+  ( getCurrentDataKeeper, downdateVersion )
 import Choices
-  (initialChoicesWT, addChoicesWT, showChoicesWT, editChoicesWT, deleteChoicesWT
-  ,moveChoicesWT)
+  ( initialChoicesWT, addChoicesWT, showChoicesWT, editChoicesWT, deleteChoicesWT
+  , moveChoicesWT )
 import Show
-  (showActions)
+  ( showActions )
 import Add
-  (addActions)
+  ( addActions )
 import Edit
-  (editActions)
+  ( editActions )
 import Delete
-  (deleteActions)
+  ( deleteActions )
 import Move
-  (moveActions)
+  ( moveActions )
 import System.Directory
-  (removeFile)
+  ( removeFile )
 import Text.Read
-  (readMaybe)
+  ( readMaybe )
 
 main :: IO ()
-main = doSequentially [printEmptyLine, printWelcomingMessage, initialMenu] 
+main = doSequentially [ printEmptyLine, printWelcomingMessage, initialMenu ] 
 
--- TIM = Then Initial Menu
-menus :: [IO ()]
-menus = [initialMenu, addMenu, showMenu, editMenu, deleteMenu, moveMenu] 
-[initialMenu, addMenu, showMenu, editMenu, deleteMenu, moveMenu] =
+-- WIMAE = With Initial Menu After Each
+menus :: [ IO () ]
+menus = [ initialMenu, addMenu, showMenu, editMenu, deleteMenu, moveMenu ] 
+[ initialMenu, addMenu, showMenu, editMenu, deleteMenu, moveMenu ] =
   printChoicesAndDoChosenAction `forEach`
-    [(initialChoicesWT, initialActions), (addChoicesWT, addActionsTIM)
-    ,(showChoicesWT, showActionsTIM), (editChoicesWT, editActionsTIM)
-    ,(deleteChoicesWT, deleteActionsTIM), (moveChoicesWT, moveActionsTIM)
+    [ ( initialChoicesWT, initialActions ), ( addChoicesWT, addActionsWIMAE )
+    , ( showChoicesWT, showActionsWIMAE ), ( editChoicesWT, editActionsWIMAE )
+    , ( deleteChoicesWT, deleteActionsWIMAE ), ( moveChoicesWT, moveActionsWIMAE )
     ]
 
-initialActions :: [IO ()]
-initialActions = [addMenu, showMenu, editMenu, deleteMenu, moveMenu, undo]
+initialActions :: [ IO () ]
+initialActions = [ addMenu, showMenu, editMenu, deleteMenu, moveMenu, undo ]
 
-printChoicesAndDoChosenAction :: (String, [IO ()]) ->  IO ()
-printChoicesAndDoChosenAction (choices,actions) =
-  printString choices >>
-  getLine >>= doChosenFrom actions
+printChoicesAndDoChosenAction :: ( String, [ IO () ] ) ->  IO ()
+printChoicesAndDoChosenAction ( choices, actions ) =
+  printString choices >> getLine >>= doChosenFrom actions
 
-doChosenFrom :: [IO ()] -> String -> IO ()
+doChosenFrom :: [ IO () ] -> String -> IO ()
 doChosenFrom actions input =
   case readMaybe input :: Maybe Int of
-    Just i  ->
+    Just i ->
       actions!!(i-1)
     Nothing ->
       case input of
@@ -59,20 +58,17 @@ doChosenFrom actions input =
           showConfusion >>
           initialMenu
 
-actionsTIM :: [[IO ()]]
-actionsTIM = 
-  [addActionsTIM, showActionsTIM, editActionsTIM, deleteActionsTIM, moveActionsTIM] 
-[addActionsTIM, showActionsTIM, editActionsTIM, deleteActionsTIM, moveActionsTIM] =
-  ((>>initialMenu)`forEach`)`forEach`
-    [addActions, showActions, editActions, deleteActions, moveActions]
+actionsWIMAE :: [ [ IO () ] ]
+actionsWIMAE = 
+  [ addActionsWIMAE, showActionsWIMAE, editActionsWIMAE, deleteActionsWIMAE, moveActionsWIMAE ]
+[ addActionsWIMAE, showActionsWIMAE, editActionsWIMAE, deleteActionsWIMAE, moveActionsWIMAE ] =
+  ( ( >> initialMenu ) `forEach` ) `forEach`
+    [ addActions, showActions, editActions, deleteActions, moveActions ]
 
 undo :: IO ()
-undo =
-  getCurrentDataKeeper >>= removeFile >>
-  downdateVersion >>
-  initialMenu
+undo = getCurrentDataKeeper >>= removeFile >> downdateVersion >> initialMenu
 
-printingStuff :: [IO ()]
-printingStuff = [printWelcomingMessage, waveAndExit, showConfusion]
-[printWelcomingMessage,waveAndExit,showConfusion] =
-  printString`forEach`["\tWelcome to the exercises manager", "bye!", "Ehhh what?"]
+printingStuff :: [ IO () ]
+printingStuff = [ printWelcomingMessage, waveAndExit, showConfusion ]
+[ printWelcomingMessage, waveAndExit, showConfusion ] =
+  printString `forEach` [ "\tWelcome to the exercises manager", "bye!", "Ehhh what?" ]

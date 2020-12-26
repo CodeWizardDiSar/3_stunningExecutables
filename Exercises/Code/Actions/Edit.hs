@@ -1,6 +1,6 @@
 module Edit where
 import Prelude
-  ((.), not, filter, (-), (!!), (==), getLine, (++), (>>=), IO, String, Int)
+  ((.), not, filter, (-), (!!), (==), getLine, (++), (>>=), IO, String, Int, (>>))
 import Add
   (getDate)
 import UsefulForActions
@@ -26,13 +26,15 @@ import Choices
 
 -- edit list of actions
 editActions :: [ IO () ]
-editActions = [edit "todo", edit "done", edit "missed"]
+editActions = [ edit "todo", edit "done", edit "missed" ]
 
 edit :: String -> IO ()
-edit = getAllExs >=> writeExercisesToFile >=> \_ -> updateVersion
+edit exerciseType =
+  editExercises exerciseType >>= writeExercisesToFile >>
+  updateVersion
 
-getAllExs :: String -> IO Exercises
-getAllExs = \case
+editExercises :: String -> IO Exercises
+editExercises = \case
  "todo" ->
    combine [getToDoExercises >>= getAndEditChosen, getDoneExercises, getMissedExercises]
  "done" ->
@@ -45,10 +47,11 @@ getAndEditChosen = getChosen >=> editChosen
 
 editChosen :: (Exercises,Int,Int) -> IO Exercises
 editChosen = \(exs,subNum,exNum)->
- let sub=getSubjects exs!!(subNum-1)
-     ex=filter (subIs sub) exs!!(exNum-1)
- in modify ex>>=((:filter (not.(==ex)) exs)>>>wrap)
+ let sub = getSubjects exs !! (subNum - 1)
+     ex = filter (subIs sub) exs !! (exNum - 1)
+ in modify ex >>= ( (:filter ( not . (==ex) ) exs ) >>> wrap )
 
+modify :: Exercise -> IO Exercise
 modify = \case
   ToDo (s, eNum, eName) d ->
     chooseAttributeWithDate >>= \case
@@ -62,30 +65,41 @@ modify = \case
         ToDo (s, eNum, eName) newDate & wrap
   Done (s,eNum,eName) ->
     chooseAttribute >>= \case
-      "1"->getSubject >>= \newSub ->
+      "1"-> getSubject >>= \newSub ->
         Done (newSub, eNum, eName) & wrap
-      "2"->getENum >>= \newENum ->
+      "2"-> getENum >>= \newENum ->
         Done (s, newENum, eName) & wrap
-      "3"->getEName >>= \newEName->Done (s,eNum,
-                                                IndeedItIs
-                                                newEName)&wrap
+      "3"-> getEName >>= \newEName ->
+        Done (s, eNum, IndeedItIs newEName) & wrap
   Missed (s,eNum,eName)   ->
     chooseAttribute>>= \case
-      "1"->getSubject>>= \newSub  ->Missed (newSub,eNum,
-                                                    eName)&wrap
-      "2"->getENum   >>= \newENum ->Missed (s,newENum,
-                                                    eName)&wrap
-      "3"->getEName  >>= \newEName->Missed (s,eNum,
-                                                 IndeedItIs
-                                                 newEName)&wrap
+      "1"-> getSubject >>= \newSub ->
+        Missed (newSub, eNum, eName) & wrap
+      "2"-> getENum >>= \newENum ->
+        Missed (s, newENum, eName) & wrap
+      "3"-> getEName >>= \newEName->
+        Missed (s, eNum, IndeedItIs newEName) & wrap
 
-chooseAttribute         = printBasic`andThen`getLine
-chooseAttributeWithDate = printBasicAndDate`andThen` getLine
+chooseAttribute :: IO String
+chooseAttribute = printBasic >> getLine
 
+chooseAttributeWithDate :: IO String
+chooseAttributeWithDate = printBasicAndDate >> getLine
+
+exData :: [ String ] 
 exData = [ "Subject", "Exercise Number", "Exercise Name" ]
-printBasic = exData&numbered&printStrings
-printBasicAndDate = exData++["Date"]&numbered &printStrings
 
+printBasic :: IO ()
+printBasic = exData & numbered & printStrings
+
+printBasicAndDate :: IO ()
+printBasicAndDate = exData ++ [ "Date" ] & numbered & printStrings
+
+getSubject :: IO String
 getSubject = askAndGetAnswer "New Subject?"
-getENum    = askAndGetAnswer "New Exercise Number?"
-getEName   = askAndGetAnswer "New Exercise Name?"
+
+getENum :: IO String
+getENum = askAndGetAnswer "New Exercise Number?"
+
+getEName :: IO String
+getEName = askAndGetAnswer "New Exercise Name?"

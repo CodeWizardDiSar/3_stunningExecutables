@@ -1,19 +1,20 @@
 module UsefulForActions where
-import Types 
+import Types
+  ( Exercises, getData, getTDate)
 import Renaming
-  (append, wrap, (>>>), unwrapAnd, glue, forEach, printString, convertIntToString
-  ,convertIntFromString)
+  ( append, wrap, (>>>), unwrapAnd, glue, forEach, printString, convertIntToString
+  , convertIntFromString )
 import Prelude
-  (sequence, not, (<), (.), filter, (&&), (>), (||), (==), repeat, take, length, Bool(..)
-  ,getLine, Int, IO, (+), ($), elem, (-), (!!), (>>), (++))
+  ( sequence, not, (<), (.), filter, (&&), (>), (||), (==), repeat, take, length, Bool(..)
+  , getLine, Int, IO, (+), ($), elem, (-), (!!), (>>), (++), (>>=) )
 import StringFromExercises
-  (exercisesToString)
+  ( exercisesToString )
 import FileManagement
-  (writeToNextDataKeeper)
+  ( writeToNextDataKeeper )
 import Data.Function
-  ((&))
+  ( (&) )
 import Control.Monad
-  ((>=>))
+  ( (>=>) )
 
 beautify = ("\t" ++) >>> (++ "\n")
 
@@ -23,12 +24,12 @@ printBeutified = beautify >>> printString
 
 writeExercisesToFile = exercisesToString >>> writeToNextDataKeeper
 
-getChoice = getLine `unwrapAnd` (convertIntFromString >>> wrap)
+getChoice = getLine  >>=  (convertIntFromString >>> wrap)
 
 combine   = sequence >=> ( glue >>> wrap ) :: [IO Exercises]->IO Exercises
 
--- Show Subjects
 showSubjects = getSubjects>>>printSubjects 1
+
 getSubjects = \case
   [] ->
     []
@@ -40,11 +41,12 @@ getSubjects = \case
          subs
        _ ->
          sub:subs
+
 printSubjects = \i -> \case
   [] ->
     wrap ()
   sub:subs ->
-    ([i & convertIntToString, ": ",sub] & glue & printString)>>
+    ( [ i & convertIntToString, ": ", sub ] & glue & printString ) >>
     printSubjects (i+1) subs
 
 getSub = getData >>> \(s,_,_) -> s
@@ -56,11 +58,16 @@ sortChrono = \case []    -> []
                             sortChrono (filter (not.before ex)
                                         exs)
 before   = \e1 e2->getTDate e2`isBefore`getTDate e1
-isBefore = \[d,m,y] [d',m',y']->y<y'||(y==y'&&m<m')|| (y==y'&&m==m'&&d<d')
+isBefore = \[ d, m, y ] [ d', m', y' ] ->
+  y < y' || ( y == y' && m < m' ) || (y == y' && m == m' && d < d' )
 
-askAndGetAnswer = \s->printString s>>getLine`unwrapAnd`\a->
- case length a>20 of True->printString annoyingMessage>>
-                           askAndGetAnswer s
-                     _   ->wrap a
+askAndGetAnswer = \s->
+  printString s >>
+  getLine >>= \a->
+  case length a > 20 of
+    True ->
+      printString annoyingMessage>>
+      askAndGetAnswer s
+    _ -> wrap a
 
 annoyingMessage = "More than 20 chars is not pretty"
