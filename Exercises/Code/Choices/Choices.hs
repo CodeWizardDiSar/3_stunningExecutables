@@ -1,53 +1,54 @@
 module Choices where
 import Renaming
-  (forEach, glue, convertIntToString)
+  ( forEach, glue, convertIntToString )
 import UsefulFunctions
-  (tabBefore, tabsBefore)
+  ( tabBefore, tabsBefore )
 import Types
-  (Strings)
+  ( Strings )
 import Prelude
-  (zipWith, take, ($), String, (+), (++))
+  ( zipWith, take, ($), String, (+), (++) )
 import Data.Function
-  ((&))
+  ( (&) )
 
 type ChoicesWithTitle = String
 -- WT = With Title
 allChoicesWT :: [ChoicesWithTitle]
 allChoicesWT =
-  [initialChoicesWT, addChoicesWT, showChoicesWT, editChoicesWT, deleteChoicesWT
-  ,moveChoicesWT]
-[initialChoicesWT, addChoicesWT, showChoicesWT, editChoicesWT, deleteChoicesWT,
- moveChoicesWT] = 
-  zipWith mergeTitleAndChoices titles allChoices
+  [ initialChoicesWT, addChoicesWT, showChoicesWT, editChoicesWT, deleteChoicesWT
+  , moveChoicesWT ]
+[ initialChoicesWT, addChoicesWT, showChoicesWT, editChoicesWT, deleteChoicesWT
+ ,moveChoicesWT] = zipWith mergeTitleAndChoices titles allChoices
 
 type Title = String
-type Choices = [String]
+type Choices = [ String ]
 mergeTitleAndChoices :: Title -> Choices -> ChoicesWithTitle
 mergeTitleAndChoices = \title choices-> 
-  [tabBefore title] ++ ((2 & tabsBefore)`forEach`choices) & ( (++ "\n")`forEach` ) & glue
+  [ tabBefore title ] ++ ( ( 2 & tabsBefore ) `forEach` choices ) & ( (++ "\n")`forEach` ) &
+  glue
 
-titles :: [Title]
-titles = ["Command me master", "Add to", "Show", "Edit", "Delete From", "Move From"]
+titles :: [ Title ]
+titles = [ "Command me master", "Add to", "Show", "Edit", "Delete From", "Move From" ]
 
 allChoices :: [Choices]
 allChoices =
-  [initialChoices, exceptAllChoices, showChoices, exceptAllChoices, exceptAllChoices
-  ,exceptAllChoices]
+  [ initialChoices, exceptAllChoices, showChoices, exceptAllChoices, exceptAllChoices
+  , exceptAllChoices ]
 
-numbered :: [String] -> Choices
-numbered = zipWith (\int string -> convertIntToString int ++ ": " ++ string) [1..]
+numbered :: [ String ] -> Choices
+numbered = zipWith ( \int string -> convertIntToString int ++ ": " ++ string ) [ 1.. ]
 
-exerciseTypes :: [String]
-exerciseTypes = ["To Do", "Done", "Missed"]
+exerciseTypes :: [ String ]
+exerciseTypes = [ "To Do", "Done", "Missed" ]
 
 exceptAllChoices :: Choices
-exceptAllChoices = (exerciseTypes & numbered) ++ [exitOption]
+exceptAllChoices = ( exerciseTypes & numbered ) ++ [ exitOption ]
 
 initialChoices :: Choices
-initialChoices = (["Add", "Show", "Edit", "Delete", "Move", "Undo"] & numbered) ++ [exitOption]
+initialChoices =
+  ( [ "Add", "Show", "Edit", "Delete", "Move", "Undo" ] & numbered) ++ [exitOption]
 
 showChoices :: Choices
-showChoices = (( exerciseTypes ++ ["All"] ) & numbered) ++ [exitOption]
+showChoices = ( ( exerciseTypes ++ [ "All" ] ) & numbered ) ++ [ exitOption ]
 
 type Choice = String
 exitOption :: Choice

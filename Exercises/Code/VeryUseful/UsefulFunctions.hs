@@ -1,22 +1,22 @@
 module UsefulFunctions where
 import Prelude 
-  (IO, (+), (-), sequence_, (++), (>>), String, Int )
+  ( IO, (+), (-), sequence_, (++), (>>), String, Int )
 import Data.Function
-  ((&))
+  ( (&) )
 import Types
-  (Strings)
+  ( Strings )
 import Renaming
-  ((>>>), andThen, wrap, printString, forEachDo, append, repeatNTimes, printErrorMessage
-  ,glue, convertIntFromString, convertIntToString)
+  ( (>>>), andThen, wrap, printString, forEachDo, repeatNTimes, printErrorMessage , glue
+  , convertIntFromString, convertIntToString )
 
-doSequentially :: [IO ()] -> IO ()
+doSequentially :: [ IO () ] -> IO ()
 doSequentially = sequence_
 
 tabBefore :: String -> String
 tabBefore = 1 & tabsBefore
 
 tabsBefore :: Int -> String -> String
-tabsBefore = \i s-> (repeatNTimes i '\t') ++ s
+tabsBefore = \i s-> ( repeatNTimes i '\t' ) ++ s
 
 printStrings :: Strings -> IO ()
 printStrings = forEachDo printString
@@ -27,10 +27,10 @@ printEmptyLine = printString ""
 printEmptyLines :: Int -> IO ()
 printEmptyLines = \case
   0 -> wrap ()
-  i -> printEmptyLine >> (i-1&printEmptyLines)
+  i -> printEmptyLine >> ( i - 1 & printEmptyLines )
 
 addNToString :: Int -> String -> String
-addNToString = \n-> convertIntFromString >>> (+n) >>> convertIntToString
+addNToString = \n -> convertIntFromString >>> ( + n ) >>> convertIntToString
 
 addOneToString :: String -> String
 addOneToString = addNToString 1

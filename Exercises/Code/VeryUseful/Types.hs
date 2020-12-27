@@ -1,8 +1,8 @@
 module Types where
-import Prelude (Eq,String,Int,Bool)
+import Prelude ( Eq, String, Int, Bool )
 
 -- Always a pleasure to have types (sorry python)
-data HopefullySome a = IndeedItIs { getA :: a} | Nothing
+data HopefullySome a = IndeedItIs { getA :: a } | Nothing
   deriving ( Eq )
 
 data Exercise =
@@ -13,6 +13,8 @@ data Exercise =
 
 type Path = String
 type Strings = [ String ]
+type Subject = String
+type Subjects = Strings
 type Date = [ Int ]
 type SubjectName = String
 type ExerciseNumber = String

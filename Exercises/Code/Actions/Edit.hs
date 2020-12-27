@@ -1,55 +1,53 @@
 module Edit where
 import Prelude
-  ((.), not, filter, (-), (!!), (==), getLine, (++), (>>=), IO, String, Int, (>>))
+  ( (.), not, filter, (-), (!!), (==), getLine, (++), (>>=), IO, String, Int, (>>) )
 import Add
-  (getDate)
+  ( getDate )
 import UsefulForActions
-  (combine, printAndGetAnswer, writeExercisesToFile, getSubjects)
+  ( combine, printAndGetAnswer, writeExercisesToFile, exercisesToSubjects )
 import Renaming 
-  (printString, wrap, andThen, (>>>), append)
+  ( printString, wrap, andThen, (>>>) )
 import ExercisesFromFile
-  (getToDoExercises, getDoneExercises, getMissedExercises)
+  ( getToDoExercises, getDoneExercises, getMissedExercises )
 import Data.Function
-  ((&))
+  ( (&) )
 import FileManagement
-  (updateVersion)
+  ( updateVersion )
 import Types
-  (Exercise(..), HopefullySome(..), Exercises)
+  ( Exercise( ToDo, Done, Missed ), HopefullySome( IndeedItIs ), Exercises )
 import UsefulFunctions
-  (printStrings)
+  ( printStrings )
 import ShowExercises
-  (getChosen, subIs)
+  ( getChosen, subIs )
 import Control.Monad
-  ((>=>))
+  ( (>=>) )
 import Choices
-  (numbered)
+  ( numbered )
 
 -- edit list of actions
 editActions :: [ IO () ]
 editActions = [ edit "todo", edit "done", edit "missed" ]
 
 edit :: String -> IO ()
-edit exerciseType =
-  editExercises exerciseType >>= writeExercisesToFile >>
-  updateVersion
+edit exerciseType = editExercises exerciseType >>= writeExercisesToFile >> updateVersion
 
 editExercises :: String -> IO Exercises
 editExercises = \case
  "todo" ->
-   combine [getToDoExercises >>= getAndEditChosen, getDoneExercises, getMissedExercises]
+   combine [ getToDoExercises >>= getAndEditChosen, getDoneExercises, getMissedExercises ]
  "done" ->
-   combine [getToDoExercises, getDoneExercises >>= getAndEditChosen, getMissedExercises]
+   combine [ getToDoExercises, getDoneExercises >>= getAndEditChosen, getMissedExercises ]
  "missed" ->
-   combine [getToDoExercises, getDoneExercises, getMissedExercises >>= getAndEditChosen]
+   combine [ getToDoExercises, getDoneExercises, getMissedExercises >>= getAndEditChosen ]
 
 getAndEditChosen :: Exercises -> IO Exercises
 getAndEditChosen = getChosen >=> editChosen
 
-editChosen :: (Exercises,Int,Int) -> IO Exercises
-editChosen = \(exs,subNum,exNum)->
- let sub = getSubjects exs !! (subNum - 1)
-     ex = filter (subIs sub) exs !! (exNum - 1)
- in modify ex >>= ( (:filter ( not . (==ex) ) exs ) >>> wrap )
+editChosen :: ( Exercises, Int, Int ) -> IO Exercises
+editChosen = \( exs, subNum, exNum ) ->
+ let sub = exercisesToSubjects exs !! ( subNum - 1 )
+     ex = filter (subIs sub) exs !! ( exNum - 1 )
+ in modify ex >>= ( ( : filter ( not . (==ex) ) exs ) >>> wrap )
 
 modify :: Exercise -> IO Exercise
 modify = \case

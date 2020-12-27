@@ -1,14 +1,13 @@
 module Renaming where
 import Prelude 
-  (String, Int, Monad, readFile, writeFile, replicate, lines, error, read, show, concat
-  ,putStrLn, map, mapM_, return, id, (>>=), (>>), (++), flip, (.))
-import System.Directory (doesFileExist)
+  ( String, Int, Monad, readFile, writeFile, replicate, lines, error, read, show, concat
+  , putStrLn, map, mapM_, return, id, (>>=), (>>), (++), flip, (.) )
+import System.Directory
+  ( doesFileExist )
 
 infixl 9 >>>
 (>>>) :: (a->b)->(b->c)->(a->c)
 (>>>) = flip (.)
-
-append = (++)
 
 andThen   :: Monad m=>m a->m b->m b
 andThen   = (>>)

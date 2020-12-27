@@ -4,7 +4,7 @@ import Prelude
 import Renaming
   ( (>>>), wrap, forEach )
 import Types
-  ( Exercise ( ToDo, Done, Missed ), HopefullySome ( IndeedItIs, Nothing ), ExerciseData
+  ( Exercise( ToDo, Done, Missed ), HopefullySome( IndeedItIs, Nothing ), ExerciseData
   , HopefullyExerciseName )
 import ExercisesFromFile
   ( getExercisesFromFile )
@@ -31,11 +31,11 @@ add :: Exercise -> IO ()
 add exerciseFromUser =
   getExercisesFromFile >>= ( exerciseFromUser : ) >>> writeExercisesToFile >> updateVersion
 
-getExerciseFromUser :: (ExerciseData -> Exercise) -> IO Exercise
+getExerciseFromUser :: ( ExerciseData -> Exercise ) -> IO Exercise
 getExerciseFromUser exerciseType =
   getExerciseDataStrings >>= stringsToExercise exerciseType >>> wrap
 
-stringsToExercise :: (ExerciseData -> Exercise) -> [String] -> Exercise
+stringsToExercise :: ( ExerciseData -> Exercise ) -> [ String ] -> Exercise
 stringsToExercise exerciseType = stringsToExerciseData >>> exerciseType
 
 getToDoExerciseFromUser :: IO Exercise
@@ -44,7 +44,7 @@ getToDoExerciseFromUser = mzipWith ToDo getExerciseData getDate
 getExerciseData :: IO ExerciseData
 getExerciseData = getExerciseDataStrings >>= stringsToExerciseData >>> wrap
 
-stringsToExerciseData :: [String] -> ExerciseData
+stringsToExerciseData :: [ String ] -> ExerciseData
 stringsToExerciseData = \case
   [ subjectName, exerciseNumber, exerciseNameString ] ->
     ( subjectName, exerciseNumber, exerciseNameString & stringToHopefullyExerciseName )

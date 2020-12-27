@@ -24,6 +24,8 @@ import System.Directory
   ( removeFile )
 import Text.Read
   ( readMaybe )
+import UsefulForActions
+  ( printAndGetAnswer )
 
 main :: IO ()
 main = doSequentially [ printEmptyLine, printWelcomingMessage, initialMenu ] 
@@ -43,7 +45,7 @@ initialActions = [ addMenu, showMenu, editMenu, deleteMenu, moveMenu, undo ]
 
 printChoicesAndDoChosenAction :: ( String, [ IO () ] ) ->  IO ()
 printChoicesAndDoChosenAction ( choices, actions ) =
-  printString choices >> getLine >>= doChosenFrom actions
+  printAndGetAnswer choices >>= doChosenFrom actions
 
 doChosenFrom :: [ IO () ] -> String -> IO ()
 doChosenFrom actions input =

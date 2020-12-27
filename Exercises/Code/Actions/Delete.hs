@@ -1,26 +1,25 @@
 module Delete where
 import Prelude   
-  ((.), not, filter, (-), (!!), (==), IO, String, Int, (>>=), (>>))
+  ( (.), not, filter, (-), (!!), (==), IO, String, Int, (>>=), (>>) )
 import Renaming
-  (wrap)
+  ( wrap )
 import ExercisesFromFile
-  (getToDoExercises, getDoneExercises, getMissedExercises)
+  ( getToDoExercises, getDoneExercises, getMissedExercises )
 import Data.Function
-  ((&))
+  ( (&) )
 import StringFromExercises
-  (exercisesToString)
+  ( exercisesToString )
 import FileManagement
-  (updateVersion)
+  ( updateVersion )
 import Types
-  (Strings, Exercises, Exercise(..))
+  ( Strings, Exercise, Exercises, Subject, Subjects )
 import UsefulForActions
-  (combine, writeExercisesToFile, getSubjects)
+  ( combine, writeExercisesToFile, exercisesToSubjects )
 import ShowExercises
-  (getChosen, subIs)
+  ( getChosen, subIs )
 import Control.Monad
-  ((>=>))
+  ( (>=>) )
 
--- deleteFrom list of actions
 deleteActions :: [ IO () ]
 deleteActions = [ deleteFrom "todo", deleteFrom "done", deleteFrom "missed" ]
 
@@ -40,8 +39,17 @@ deleteAndGetNewExercises = \case
 deleteChosen :: Exercises -> IO Exercises
 deleteChosen = getChosen >=> delete
 
-delete :: (Exercises, Int, Int) -> IO Exercises
-delete = \(exs, subNum, exNum)->
- let sub = getSubjects exs !! (subNum - 1)
-     ex = filter (subIs sub) exs !! (exNum - 1)
- in filter ( not . (== ex) ) exs & wrap
+delete :: ( Exercises, Int, Int ) -> IO Exercises
+delete = \( exercises, subjectNumber, exerciseNumber ) ->
+ let sub = exercises & exercisesToSubjects & chosenSubject subjectNumber
+     ex = chosenSubjectExercises exercises sub !! ( exerciseNumber - 1 )
+ in removeExercise ex exercises & wrap
+
+chosenSubject :: Int -> Subjects -> Subject
+chosenSubject subjectNumber subjects = subjects !! ( subjectNumber - 1 )
+
+chosenSubjectExercises :: Exercises -> Subject -> Exercises
+chosenSubjectExercises exercises subject = filter ( subIs subject ) exercises
+
+removeExercise :: Exercise -> Exercises -> Exercises
+removeExercise exercise = filter ( not . ( == exercise ) )

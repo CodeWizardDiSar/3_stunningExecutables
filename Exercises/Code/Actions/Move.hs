@@ -1,7 +1,7 @@
 module Move where
 import Prelude
-  ( (.), not, filter, (-), (!!), (+), elem, Bool(..), (==), sequence, getLine, IO, Int, (>>=)
-  , String, (>>) )
+  ( (.), not, filter, (-), (!!), (+), elem, Bool( True, False ), (==), sequence, getLine, IO
+  , Int, (>>=) , String, (>>) )
 import Renaming
   ( printString, wrap, unwrapAnd, andThen, (>>>) )
 import ExercisesFromFile
@@ -13,13 +13,13 @@ import Show
 import FileManagement     
   ( writeToNextDataKeeper, updateVersion )
 import Types
-  ( Strings, Exercises, Exercise(..), ExerciseData )
+  ( Strings, Exercises, Exercise( ToDo, Done, Missed ), ExerciseData )
 import Add
   ( getDate )
 import UsefulFunctions   
   ( printStrings )
 import UsefulForActions
-  ( combine, showSubjects, getChoice, getSubjects, writeExercisesToFile )
+  ( combine, showSubjects, getChoice, exercisesToSubjects, writeExercisesToFile )
 import ShowExercises
   ( showExercises, subIs, getChosen )
 import Control.Monad
@@ -42,13 +42,13 @@ move :: Exercises -> IO Exercises
 move = getChosen >=> moveChosen
 
 moveChosen :: ( Exercises, Int, Int ) -> IO Exercises
-moveChosen = \( exs, subNum, exNum )->
- let sub = getSubjects exs !! (subNum - 1)
-     ex = filter (subIs sub) exs !! (exNum - 1)
+moveChosen = \( exs, subNum, exNum ) ->
+ let sub = exercisesToSubjects exs !! ( subNum - 1 )
+     ex = filter (subIs sub) exs !! ( exNum - 1 )
  in moveOld ex >>= \newEx -> newEx : ( filter (not . (== ex) ) exs ) & wrap
 
 moveOld :: Exercise -> IO Exercise
-moveOld = \ex->
+moveOld = \ex ->
   printStrings [ "Move To?", "\t1: To Do", "\t2: Done", "\t3: Missed" ] >>
   getLine >>= \case
   "1" -> moveToToDo ex
@@ -58,12 +58,12 @@ moveOld = \ex->
 
 moveToToDo :: Exercise -> IO Exercise
 moveToToDo = \case 
-  ToDo   a b -> ToDo a b & wrap
-  Done   a -> getDate >>= (ToDo a >>> wrap)
+  ToDo a b -> ToDo a b & wrap
+  Done a -> getDate >>= (ToDo a >>> wrap)
   Missed a -> getDate >>= (ToDo a >>> wrap)
  
 moveTo :: ( ExerciseData -> Exercise ) -> Exercise -> IO Exercise
-moveTo = \x-> \case
-  ToDo   a b -> x a & wrap
-  Done   a -> x a & wrap
+moveTo = \x -> \case
+  ToDo a b -> x a & wrap
+  Done a -> x a & wrap
   Missed a -> x a & wrap
