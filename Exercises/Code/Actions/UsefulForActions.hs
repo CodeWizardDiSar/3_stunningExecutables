@@ -1,9 +1,11 @@
 module UsefulForActions where
 import Prelude
   ( sequence, not, (<), (.), filter, (&&), (>), (||), (==), repeat, take, length, Bool(..)
-  , getLine, Int, IO, (+), ($), elem, (-), (!!), (>>), (++), (>>=), String )
+  , getLine, Int, IO, (+), ($), elem, (-), (!!), (>>), (++), (>>=), String, foldl, otherwise )
 import Types
   ( Exercise, Exercises, exerciseData, getTDate, subjectName, Subject, Subjects, Date ( D ) )
+import TypeClasses
+  ( toSubject )
 import Renaming
   ( wrap, (>>>), unwrapAnd, glue, forEach, printString, convertIntToString
   , convertIntFromString )
@@ -36,6 +38,14 @@ combine = sequence >=> ( glue >>> wrap )
 
 showSubjects :: Exercises -> IO ()
 showSubjects = exercisesToSubjects >>> printSubjects 1
+
+toSubjects :: Exercises -> Subjects
+toSubjects = foldl ( \subs ex -> addToSubjects ( toSubject ex ) subs ) [] 
+
+addToSubjects :: Subject -> Subjects -> Subjects
+addToSubjects subject subjects
+  | elem subject subjects = subjects
+  | otherwise = subjects ++ [ subject ]
 
 exercisesToSubjects :: Exercises -> Subjects
 exercisesToSubjects = \case

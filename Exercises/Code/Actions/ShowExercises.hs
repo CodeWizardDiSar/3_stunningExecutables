@@ -1,18 +1,18 @@
 module ShowExercises where
 import Prelude 
-  ( Bool, elem, (!!), filter, (>>=), (==), (-), (>>), Int, IO, String, foldl , otherwise
-  , (++) )
+  ( Bool, (!!), filter, (>>=), (==), (-), (>>), Int, IO, String, (++) )
 import Types
-  ( Exercise( exerciseData ), ExerciseData ( subjectName ), Exercises, Subject, Subjects
-  , toStringForUser, toSubject )
+  ( Exercise, Exercises )
+import TypeClasses
+  ( toStringForUser, toSubject )
 import Data.Function
   ( (&) )
 import Renaming 
-  ( forEach, glue, wrap, convertIntToString, printString, (>>>) )
+  ( forEach, wrap, printString, (>>>) )
 import Show 
   ( printEx )
 import UsefulForActions
-  ( getChoice, showSubjects )
+  ( getChoice, showSubjects, toSubjects )
 import Choices
   ( numbered )
 import UsefulFunctions
@@ -30,14 +30,6 @@ printExercises :: Exercises -> IO ()
 printExercises =
   forEach toStringForUser >>> numbered >>> forEach ( tabBefore >>> printString ) >>>
   doSequentially
-
-toSubjects :: Exercises -> Subjects
-toSubjects = foldl ( \subs ex -> addToSubjects ( toSubject ex ) subs ) [] 
-
-addToSubjects :: Subject -> Subjects -> Subjects
-addToSubjects subject subjects
-  | elem subject subjects = subjects
-  | otherwise = subjects ++ [ subject ]
 
 getExsSubjects :: IO Exercises -> IO Int
 getExsSubjects getExs = getExs >>= showSubjects >> getChoice

@@ -3,7 +3,9 @@ import Prelude
   ( read, (>>=), (>>), IO, Int, String, uncurry, Monad, sequence )
 import Types
   ( Exercise( ToDo, Done, Missed ), HopefullySome( IndeedItIs, Nothing ), HopefullyExerciseName
-  , ExerciseData( ED ), Date ( D ), FromStrings, fromStrings, fromString, Strings )
+  , ExerciseData( ED ), Date ( D ), Strings )
+import TypeClasses
+  ( FromStrings, fromStrings, fromString )
 import Renaming
   ( (>>>), wrap, forEach, printErrorMessage )
 import ExercisesFromFile

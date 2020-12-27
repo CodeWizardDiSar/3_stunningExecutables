@@ -2,8 +2,10 @@ module ExercisesFromFile where
 import Prelude
   ( Int, filter, Bool( True, False ), IO, (>>=), ($) )
 import Types 
-  ( FromString, fromString, Date( D ), HopefullyExerciseName, Exercise( ToDo, Done, Missed )
+  ( Date( D ), HopefullyExerciseName, Exercise( ToDo, Done, Missed )
   , Strings , HopefullySome( IndeedItIs, Nothing ), Exercises, ExerciseData( ED ))
+import TypeClasses
+  ( fromString, FromString )
 import Renaming
   ( unwrapAnd, wrap, forEach, andThen, readFromFile, printErrorMessage, printString
   , convertIntFromString, (>>>), splitInLines )

@@ -2,9 +2,11 @@ module StringFromExercises where
 import Prelude
   ( String, Int, (++), ($) )
 import Types 
-  ( ToStringForFile, Date( day, month, year ), toStringForFile, HopefullyExerciseName
+  ( Date( day, month, year ), HopefullyExerciseName
   , Exercises , HopefullySome( IndeedItIs, Nothing ), Strings , Exercise( ToDo, Done, Missed )
   , ExerciseData( subjectName, exerciseNumber, exerciseName ) )
+import TypeClasses
+  ( ToStringForFile, toStringForFile )
 import Renaming 
   ( forEach, (>>>), glue, convertIntToString )
 import Data.List
