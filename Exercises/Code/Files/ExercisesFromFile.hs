@@ -1,12 +1,12 @@
 module ExercisesFromFile where
 import Prelude
-  ( Int, filter, Bool( True, False ), IO, (>>=) )
+  ( Int, filter, Bool( True, False ), IO, (>>=), ($) )
+import Types 
+  ( FromString, fromString, Date( D ), HopefullyExerciseName, Exercise( ToDo, Done, Missed )
+  , Strings , HopefullySome( IndeedItIs, Nothing ), Exercises, ExerciseData( ED ))
 import Renaming
   ( unwrapAnd, wrap, forEach, andThen, readFromFile, printErrorMessage, printString
   , convertIntFromString, (>>>), splitInLines )
-import Types 
-  ( FromStringTo, toType, Date, HopefullyExerciseName, Exercise( ToDo, Done, Missed )
-  , HopefullySome( IndeedItIs, Nothing ), Exercises)
 import FileManagement
   ( getCurrentDataKeeper, getVersion )
 import Data.List.Split
@@ -18,8 +18,8 @@ getExercisesFromFile :: IO Exercises
 getExercisesFromFile =
   getVersion >>= \case
     "0"-> wrap []
-    _  -> getCurrentDataKeeper >>= readFromFile >>= ( splitInLines >>> (toType `forEach`) >>>
-      wrap )
+    _  -> getCurrentDataKeeper >>= readFromFile >>= ( splitInLines >>> ( fromString `forEach` )
+            >>> wrap )
 
 getExercises :: [ IO Exercises ]
 getExercises = [ getToDoExercises, getDoneExercises, getMissedExercises ]
@@ -43,23 +43,25 @@ missed = \case
   Missed _ -> True
   _ -> False
 
-instance FromStringTo Exercise where
-  toType = 
-    splitOn "," >>> \case
-      [ "d", s, exNum, exName ] -> Done ( s, exNum, exName & toType )
-      [ "m", s, exNum, exName ] -> Missed ( s, exNum, exName & toType )
-      [ "t", s, exNum, exName, date ] -> ToDo ( s, exNum, exName & toType ) ( date & toType )
-      _ -> printErrorMessage "Line To Exercise"
+instance FromString Exercise where
+  fromString = splitOn "," >>> stringsToExericise
 
-instance FromStringTo HopefullyExerciseName where
-  toType = \case
+stringsToExericise :: Strings -> Exercise
+stringsToExericise = \case
+  [ "d", s, exNum, exName ] -> Done $ ED s exNum (exName & fromString)
+  [ "m", s, exNum, exName ] -> Missed $ ED s exNum (exName & fromString)
+  [ "t", s, exNum, exName, date ] -> ToDo ( ED s exNum (exName & fromString) ) ( date & fromString )
+  _ -> printErrorMessage "Line To Exercise"
+
+instance FromString HopefullyExerciseName where
+  fromString = \case
     "_" -> Nothing
     exName -> IndeedItIs exName
 
-instance FromStringTo Date where
-  toType = splitOn "/" >>> \case
-    [ d, m, y ] -> toType `forEach` [ d, m, y]
+instance FromString Date where
+  fromString = splitOn "/" >>> \case
+    [ d, m, y ] -> D ( fromString d ) ( fromString m ) ( fromString y )
     _ -> printErrorMessage "Date"
 
-instance FromStringTo Int where
-  toType = convertIntFromString
+instance FromString Int where
+  fromString = convertIntFromString

@@ -1,6 +1,9 @@
 module Edit where
 import Prelude
   ( (.), not, filter, (-), (!!), (==), getLine, (++), (>>=), IO, String, Int, (>>) )
+import Types
+  ( Exercise( ToDo, Done, Missed ), HopefullySome( IndeedItIs ), Exercises, Date
+  , ExerciseData ( subjectName, exerciseNumber, exerciseName ) )
 import Add
   ( getDate )
 import UsefulForActions
@@ -13,8 +16,6 @@ import Data.Function
   ( (&) )
 import FileManagement
   ( updateVersion )
-import Types
-  ( Exercise( ToDo, Done, Missed ), HopefullySome( IndeedItIs ), Exercises )
 import UsefulFunctions
   ( printStrings )
 import ShowExercises
@@ -24,7 +25,6 @@ import Control.Monad
 import Choices
   ( numbered )
 
--- edit list of actions
 editActions :: [ IO () ]
 editActions = [ edit "todo", edit "done", edit "missed" ]
 
@@ -49,34 +49,44 @@ editChosen = \( exs, subNum, exNum ) ->
      ex = filter (subIs sub) exs !! ( exNum - 1 )
  in modify ex >>= ( ( : filter ( not . (==ex) ) exs ) >>> wrap )
 
+changeSubjectName :: ExerciseData -> IO ExerciseData
+changeSubjectName exerciseData =
+  getSubject >>= \newSubjectName -> exerciseData { subjectName = newSubjectName } & wrap
+
+changeExerciseNumber :: ExerciseData -> IO ExerciseData
+changeExerciseNumber exerciseData =
+  getENum >>= \newExerciseNumber -> exerciseData { exerciseNumber = newExerciseNumber } & wrap
+
+changeExerciseName :: ExerciseData -> IO ExerciseData
+changeExerciseName exerciseData =
+  getEName >>= \newExerciseName ->
+    exerciseData { exerciseName = IndeedItIs newExerciseName } & wrap
+
+getToDoExerciseWithNewData :: Date -> ExerciseData -> IO Exercise
+getToDoExerciseWithNewData date newExerciseData = ToDo newExerciseData date & wrap
+
+getExerciseWithNewData :: ( ExerciseData -> Exercise ) -> ExerciseData -> IO Exercise
+getExerciseWithNewData exerciseConstructor newExerciseData = 
+  exerciseConstructor newExerciseData & wrap
+
 modify :: Exercise -> IO Exercise
 modify = \case
-  ToDo (s, eNum, eName) d ->
+  ToDo exerciseData date ->
     chooseAttributeWithDate >>= \case
-      "1"-> getSubject >>= \newSub ->
-        ToDo (newSub, eNum, eName) d & wrap
-      "2"-> getENum >>= \newENum ->
-        ToDo (s, newENum, eName) d & wrap
-      "3"-> getEName >>= \newEName->
-        ToDo (s, eNum, IndeedItIs newEName) d & wrap
-      "4"-> getDate >>= \newDate ->
-        ToDo (s, eNum, eName) newDate & wrap
-  Done (s,eNum,eName) ->
+      "1"-> changeSubjectName exerciseData >>= getToDoExerciseWithNewData date
+      "2"-> changeExerciseNumber exerciseData >>= getToDoExerciseWithNewData date
+      "3"-> changeExerciseName exerciseData >>= getToDoExerciseWithNewData date
+      "4"-> getDate >>= \newDate -> ToDo exerciseData newDate & wrap
+  Done exerciseData ->
     chooseAttribute >>= \case
-      "1"-> getSubject >>= \newSub ->
-        Done (newSub, eNum, eName) & wrap
-      "2"-> getENum >>= \newENum ->
-        Done (s, newENum, eName) & wrap
-      "3"-> getEName >>= \newEName ->
-        Done (s, eNum, IndeedItIs newEName) & wrap
-  Missed (s,eNum,eName)   ->
+      "1"-> changeSubjectName exerciseData >>= getExerciseWithNewData Done
+      "2"-> changeExerciseNumber exerciseData >>= getExerciseWithNewData Done
+      "3"-> changeExerciseName exerciseData >>= getExerciseWithNewData Done
+  Missed exerciseData ->
     chooseAttribute>>= \case
-      "1"-> getSubject >>= \newSub ->
-        Missed (newSub, eNum, eName) & wrap
-      "2"-> getENum >>= \newENum ->
-        Missed (s, newENum, eName) & wrap
-      "3"-> getEName >>= \newEName->
-        Missed (s, eNum, IndeedItIs newEName) & wrap
+      "1"-> changeSubjectName exerciseData >>= getExerciseWithNewData Missed
+      "2"-> changeExerciseNumber exerciseData >>= getExerciseWithNewData Missed
+      "3"-> changeExerciseName exerciseData >>= getExerciseWithNewData Missed
 
 chooseAttribute :: IO String
 chooseAttribute = printBasic >> getLine
@@ -85,7 +95,7 @@ chooseAttributeWithDate :: IO String
 chooseAttributeWithDate = printBasicAndDate >> getLine
 
 exData :: [ String ] 
-exData = [ "Subject", "Exercise Number", "Exercise Name" ]
+exData = [ "Subject", "Number", "Name" ]
 
 printBasic :: IO ()
 printBasic = exData & numbered & printStrings

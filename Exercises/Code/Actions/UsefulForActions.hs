@@ -3,7 +3,7 @@ import Prelude
   ( sequence, not, (<), (.), filter, (&&), (>), (||), (==), repeat, take, length, Bool(..)
   , getLine, Int, IO, (+), ($), elem, (-), (!!), (>>), (++), (>>=), String )
 import Types
-  ( Exercise, Exercises, getData, getTDate )
+  ( Exercise, Exercises, exerciseData, getTDate, subjectName, Subject, Subjects, Date ( D ) )
 import Renaming
   ( wrap, (>>>), unwrapAnd, glue, forEach, printString, convertIntToString
   , convertIntFromString )
@@ -37,7 +37,7 @@ combine = sequence >=> ( glue >>> wrap )
 showSubjects :: Exercises -> IO ()
 showSubjects = exercisesToSubjects >>> printSubjects 1
 
-exercisesToSubjects :: Exercises -> [ String ]
+exercisesToSubjects :: Exercises -> Subjects
 exercisesToSubjects = \case
   [] -> []
   ex:exs ->
@@ -47,14 +47,14 @@ exercisesToSubjects = \case
        True -> subs
        _ -> sub:subs
 
-printSubjects :: Int -> [ String ] -> IO ()
+printSubjects :: Int -> Subjects -> IO ()
 printSubjects = \i -> \case
   [] -> wrap ()
-  sub:subs -> ( [ i & convertIntToString, ": ", sub ] & glue & printString ) >>
+  sub:subs -> ( [ "\t", i & convertIntToString, ": ", sub ] & glue & printString ) >>
     printSubjects (i+1) subs
 
-getSub :: Exercise -> String
-getSub = getData >>> \( s, _, _ ) -> s
+getSub :: Exercise -> Subject
+getSub = exerciseData >>> subjectName
 
 sortChrono :: Exercises -> Exercises
 sortChrono = \case
@@ -65,8 +65,8 @@ sortChrono = \case
 before :: Exercise -> Exercise -> Bool
 before = \e1 e2 -> getTDate e2 `isBefore` getTDate e1
 
-isBefore :: [ Int ] -> [ Int ] -> Bool
-isBefore = \[ d, m, y ] [ d', m', y' ] ->
+isBefore :: Date -> Date -> Bool
+isBefore ( D d m y )  ( D d' m' y' ) =
   y < y' || ( y == y' && m < m' ) || ( y == y' && m == m' && d < d' )
 
 printAndGetAnswer :: String -> IO String

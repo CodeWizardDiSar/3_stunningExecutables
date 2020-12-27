@@ -1,11 +1,11 @@
 module Add where
 import Prelude
   ( read, (>>=), (>>), IO, Int, String, uncurry, Monad, sequence )
-import Renaming
-  ( (>>>), wrap, forEach )
 import Types
-  ( Exercise( ToDo, Done, Missed ), HopefullySome( IndeedItIs, Nothing ), ExerciseData
-  , HopefullyExerciseName )
+  ( Exercise( ToDo, Done, Missed ), HopefullySome( IndeedItIs, Nothing ), HopefullyExerciseName
+  , ExerciseData( ED ), Date ( D ), FromStrings, fromStrings, fromString, Strings )
+import Renaming
+  ( (>>>), wrap, forEach, printErrorMessage )
 import ExercisesFromFile
   ( getExercisesFromFile )
 import FileManagement
@@ -19,13 +19,13 @@ import Control.Monad.Zip
 import Control.Invertible.Monoidal
   ( pairADefault )
 
+instance MonadZip IO where
+  mzip = pairADefault
+
 addActions :: [ IO () ]
 addActions =
   [ getToDoExerciseFromUser >>= add, getExerciseFromUser Done >>= add
   , getExerciseFromUser Missed >>= add ]
-
-instance MonadZip IO where
-  mzip = pairADefault
 
 add :: Exercise -> IO ()
 add exerciseFromUser =
@@ -33,35 +33,41 @@ add exerciseFromUser =
 
 getExerciseFromUser :: ( ExerciseData -> Exercise ) -> IO Exercise
 getExerciseFromUser exerciseType =
-  getExerciseDataStrings >>= stringsToExercise exerciseType >>> wrap
+  getExerciseDataStringsFromUser >>= stringsToExercise exerciseType >>> wrap
 
 stringsToExercise :: ( ExerciseData -> Exercise ) -> [ String ] -> Exercise
-stringsToExercise exerciseType = stringsToExerciseData >>> exerciseType
+stringsToExercise exerciseType = fromStrings >>> exerciseType
 
 getToDoExerciseFromUser :: IO Exercise
 getToDoExerciseFromUser = mzipWith ToDo getExerciseData getDate
 
 getExerciseData :: IO ExerciseData
-getExerciseData = getExerciseDataStrings >>= stringsToExerciseData >>> wrap
-
-stringsToExerciseData :: [ String ] -> ExerciseData
-stringsToExerciseData = \case
-  [ subjectName, exerciseNumber, exerciseNameString ] ->
-    ( subjectName, exerciseNumber, exerciseNameString & stringToHopefullyExerciseName )
+getExerciseData = getExerciseDataStringsFromUser >>= fromStrings >>> wrap
 
 stringToHopefullyExerciseName :: String -> HopefullyExerciseName
 stringToHopefullyExerciseName = \case
   "" -> Nothing
   exerciseName -> IndeedItIs exerciseName
 
-getExerciseDataStrings :: IO [ String ]
-getExerciseDataStrings =
-  printAndGetAnswers [ "Subject Name?", "Exercise Number?", "Exercise Name?" ]
+getExerciseDataStringsFromUser :: IO Strings
+getExerciseDataStringsFromUser = printAndGetAnswers [ "Subject?", "Number?", "Name?" ]
 
-getDate :: IO [ Int ]
-getDate =
-  printAndGetAnswers [ "Day Of The Month? (number)" , "Month? (number)" , "Year?" ] >>=
-    (read `forEach`) >>> wrap
+getDate :: IO Date
+getDate = printAndGetAnswers dateQuestions >>= fromStrings >>> wrap
 
-printAndGetAnswers :: [ String ] -> IO [ String ] 
-printAndGetAnswers = ( printAndGetAnswer `forEach` ) >>> sequence
+dateQuestions :: Strings
+dateQuestions = [ "Day Of The Month? (number)" , "Month? (number)" , "Year?" ]
+
+printAndGetAnswers :: Strings -> IO Strings 
+printAndGetAnswers = forEach printAndGetAnswer >>> sequence
+
+instance FromStrings ExerciseData where
+  fromStrings = \case
+    [ subjectName, exerciseNumber, exerciseNameString ] ->
+      ED subjectName exerciseNumber ( exerciseNameString & stringToHopefullyExerciseName )
+    _ -> printErrorMessage "Programmer messed up in collecting exercise info from user"
+
+instance FromStrings Date where
+  fromStrings = \case 
+    [ d, m, y ] -> D ( fromString d ) ( fromString m ) ( fromString y )
+    _ -> printErrorMessage "Programmer messed up in collecting date info from user"

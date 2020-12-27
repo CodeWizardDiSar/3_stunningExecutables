@@ -1,30 +1,41 @@
 module StringFromExercises where
+import Prelude
+  ( String, Int, (++), ($) )
+import Types 
+  ( ToStringForFile, Date( day, month, year ), toStringForFile, HopefullyExerciseName
+  , Exercises , HopefullySome( IndeedItIs, Nothing ), Strings , Exercise( ToDo, Done, Missed )
+  , ExerciseData( subjectName, exerciseNumber, exerciseName ) )
 import Renaming 
   ( forEach, (>>>), glue, convertIntToString )
-import Types 
-  ( FileVersionOf, Date, toFileString, HopefullySome( IndeedItIs, Nothing )
-  , Exercise( ToDo, Done, Missed ) , HopefullyExerciseName, Exercises )
-import Prelude
-  ( String, Int, (++) )
 import Data.List
   ( intercalate )
+import Data.Function
+  ( (&) )
 
 exercisesToString :: Exercises -> String
-exercisesToString = ( ( toFileString >>> ( ++ "\n" ) ) `forEach` ) >>> glue
+exercisesToString = ( ( toStringForFile >>> ( ++ "\n" ) ) `forEach` ) >>> glue
 
-instance FileVersionOf Exercise where
-  toFileString = \case
-    Done ( n, nu, e) -> intercalate "," [ "d", n, nu, toFileString e ]
-    Missed ( n, nu, e) -> intercalate "," [ "m", n, nu, toFileString e ]
-    ToDo ( n, nu, e) da -> intercalate "," [ "t", n, nu, toFileString e, toFileString da ]
+instance ToStringForFile Exercise where
+  toStringForFile = \case
+    Done exerciseData -> intercalate "," $ exerciseDataToStrings "d" exerciseData
+    Missed exerciseData -> intercalate "," $ exerciseDataToStrings "m" exerciseData
+    ToDo exerciseData date -> intercalate "," $ exerciseDataToStrings "t" exerciseData ++
+      [ toStringForFile date ]
 
-instance FileVersionOf HopefullyExerciseName where
- toFileString = \case
-   Nothing -> "_"
-   IndeedItIs e -> e 
+type ExerciseType = String
+exerciseDataToStrings :: ExerciseType -> ExerciseData -> Strings
+exerciseDataToStrings exerciseType exerciseData =
+  [ exerciseType, subjectName exerciseData, exerciseNumber exerciseData
+  , toStringForFile $ exerciseName exerciseData ]
 
-instance FileVersionOf Date where
- toFileString = ( toFileString `forEach` ) >>> intercalate "/"
+instance ToStringForFile HopefullyExerciseName where
+  toStringForFile = \case
+    Nothing -> "_"
+    IndeedItIs e -> e 
 
-instance FileVersionOf Int where
- toFileString = convertIntToString
+instance ToStringForFile Date where
+  toStringForFile date =
+    forEach toStringForFile [ day date, month date, year date ] & intercalate "/"
+
+instance ToStringForFile Int where
+  toStringForFile = convertIntToString

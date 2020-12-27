@@ -1,10 +1,11 @@
 module Main where
 import Prelude
-  ( String, IO, getLine, Maybe( Just, Nothing ), Int, (-), (!!), (>>), (>>=) )
+  ( String, IO, getLine, Maybe( Just, Nothing ), Int, (-), (!!), (>>), (>>=), Bool ( True )
+  , (>), (<=), (&&), length )
 import Renaming
   ( forEach, printString )
 import UsefulFunctions
-  ( doSequentially, printEmptyLine )
+  ( doSequentially, printEmptyLine, showConfusion )
 import FileManagement
   ( getCurrentDataKeeper, downdateVersion )
 import Choices
@@ -50,7 +51,10 @@ printChoicesAndDoChosenAction ( choices, actions ) =
 doChosenFrom :: [ IO () ] -> String -> IO ()
 doChosenFrom actions input =
   case readMaybe input :: Maybe Int of
-    Just i -> actions !! ( i - 1 )
+    Just i ->
+      case i > 0 && i <= length actions of
+        True -> actions !! ( i - 1 )
+        _ -> showConfusion >> initialMenu
     Nothing ->
       case input of
         "" -> waveAndExit
@@ -68,5 +72,5 @@ undo = getCurrentDataKeeper >>= removeFile >> downdateVersion >> initialMenu
 
 printingStuff :: [ IO () ]
 printingStuff = [ printWelcomingMessage, waveAndExit, showConfusion ]
-[ printWelcomingMessage, waveAndExit, showConfusion ] =
-  printString `forEach` [ "\tWelcome to the exercises manager", "bye!", "Ehhh what?" ]
+[ printWelcomingMessage, waveAndExit ] =
+  printString `forEach` [ "Welcome to the exercises manager!\n", "bye!" ]

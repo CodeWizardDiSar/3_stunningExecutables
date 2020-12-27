@@ -1,14 +1,16 @@
 module ShowExercises where
 import Prelude 
-  ( Bool(..), elem, (!!), filter, (>>=), (==), (-), (+), (>>), Int, IO, String )
+  ( Bool( True ), elem, (!!), filter, (>>=), (==), (-), (+), (>>), Int, IO, String, foldl
+  , otherwise )
+import Types
+  ( Exercise( exerciseData ), ExerciseData ( subjectName ), Exercises, Subject, Subjects
+  , toStringForUser )
 import Data.Function
   ( (&) )
 import Renaming 
-  ( glue, wrap, convertIntToString, printString )
+  ( glue, wrap, convertIntToString, printString, (>>>) )
 import Show 
   ( printEx )
-import Types
-  ( Exercise(..), Exercises )
 import UsefulForActions
   ( getChoice, showSubjects )
 
@@ -18,7 +20,10 @@ showExercises = \( exs, subNum )->
   in filter (subIs sub) exs & printExercises
 
 subIs :: String -> Exercise -> Bool
-subIs = \subName ex -> ex & getData & \( s, _, _ ) -> s == subName
+subIs = \subName -> getExerciseSubjectName >>> ( == subName )
+
+getExerciseSubjectName :: Exercise -> Subject
+getExerciseSubjectName = exerciseData >>> subjectName 
 
 printExercises :: Exercises -> IO ()
 printExercises = printExercise 1
@@ -26,18 +31,26 @@ printExercises = printExercise 1
 printExercise :: Int -> Exercises -> IO ()
 printExercise = \i -> \case
   [] -> wrap ()
-  ex:exs -> ( glue [ convertIntToString i, ": " ] & printString ) >> printEx ex >>
+  ex:exs -> ( glue [ "\t", convertIntToString i, ": ", toStringForUser ex ] & printString ) >> 
     printExercise ( i + 1 ) exs
 
-getSubjects :: Exercises -> [ String ]
+getSubjects :: Exercises -> Subjects
 getSubjects = \case
   [] -> []
   ex:exs ->
-    let sub = ex & getData & \( s, _, _ ) -> s
+    let sub = getExerciseSubjectName ex
         subs = getSubjects exs
     in elem sub subs & \case
       True -> subs
       _ -> sub:subs
+
+getSubjects2 :: Exercises -> Subjects
+getSubjects2 = foldl ( \subs ex -> getSubjects2h ( getExerciseSubjectName ex ) subs ) [] 
+
+getSubjects2h :: Subject -> Subjects -> Subjects
+getSubjects2h subject subjects
+  | elem subject subjects = subjects
+  | otherwise = subject : subjects
 
 getExsSubjects :: IO Exercises -> IO Int
 getExsSubjects getExs = getExs >>= showSubjects >> getChoice

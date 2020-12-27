@@ -24,6 +24,9 @@ printStrings = forEachDo printString
 printEmptyLine :: IO ()
 printEmptyLine = printString ""
 
+showConfusion :: IO ()
+showConfusion = printString "I'm not sure I understand :/\n"
+
 printEmptyLines :: Int -> IO ()
 printEmptyLines = \case
   0 -> wrap ()
