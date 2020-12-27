@@ -1,7 +1,7 @@
 module ShowExercises where
 import Prelude 
-  ( Bool( True ), elem, (!!), filter, (>>=), (==), (-), (+), (>>), Int, IO, String, foldl
-  , otherwise, (++) )
+  ( Bool, elem, (!!), filter, (>>=), (==), (-), (>>), Int, IO, String, foldl , otherwise
+  , (++) )
 import Types
   ( Exercise( exerciseData ), ExerciseData ( subjectName ), Exercises, Subject, Subjects
   , toStringForUser, toSubject )
@@ -16,7 +16,7 @@ import UsefulForActions
 import Choices
   ( numbered )
 import UsefulFunctions
-  ( doSequentially )
+  ( doSequentially, tabBefore )
 
 showExercises :: ( Exercises, Int ) -> IO ()
 showExercises = \( exs, subNum )->
@@ -28,7 +28,8 @@ subIs = \subName -> toSubject >>> ( == subName )
 
 printExercises :: Exercises -> IO ()
 printExercises =
-  forEach toStringForUser >>> numbered >>> forEach printString >>> doSequentially
+  forEach toStringForUser >>> numbered >>> forEach ( tabBefore >>> printString ) >>>
+  doSequentially
 
 toSubjects :: Exercises -> Subjects
 toSubjects = foldl ( \subs ex -> addToSubjects ( toSubject ex ) subs ) [] 
