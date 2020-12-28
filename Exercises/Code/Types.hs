@@ -11,6 +11,8 @@ data Exercise =
   Missed { missed :: MissedExercise }
   deriving ( Eq )
 
+data ExerciseType = ToDoEx | DoneEx | MissedEx
+
 data ToDoExercise = ToDoExercise { toDoData :: ExerciseData , date :: Date }
   deriving ( Eq )
 
@@ -20,19 +22,12 @@ data DoneExercise = DoneExercise { doneData :: ExerciseData  }
 data MissedExercise = MissedExercise { missedData :: ExerciseData  }
   deriving ( Eq )
 
-data ExerciseData = ED
-  { subject :: Subject
-  , number :: ExerciseNumber
-  , name :: HopefullyExerciseName
-  }
+data ExerciseData =
+  ED { subject :: Subject, number :: ExerciseNumber, name :: HopefullyExerciseName }
   deriving ( Eq )
    
 
-data Date = D
-  { day :: Day 
-  , month :: Month
-  , year :: Year 
-  }
+data Date = D { day :: Day, month :: Month, year :: Year }
   deriving ( Eq )
 
 type Day = Int

@@ -4,7 +4,8 @@ import Prelude
 import Types
   ( Exercise( ToDo, Done, Missed ), HopefullySome( IndeedItIs ), Exercises, Date
   , ExerciseData ( subject, number, name ), ToDoExercise( ToDoExercise )
-  , DoneExercise( DoneExercise ), MissedExercise( MissedExercise ) )
+  , DoneExercise( DoneExercise ), MissedExercise( MissedExercise )
+  , ExerciseType ( ToDoEx, DoneEx, MissedEx ) )
 import Add
   ( dateFromUser )
 import UsefulForActions
@@ -12,7 +13,7 @@ import UsefulForActions
 import Renaming 
   ( printString, wrap, (>>>) )
 import ExercisesFromFile
-  ( getToDoExercises, getDoneExercises, getMissedExercises )
+  ( toDoExercises, doneExercises, missedExercises )
 import Data.Function
   ( (&) )
 import FileManagement
@@ -27,19 +28,16 @@ import Choices
   ( putNumbers )
 
 editActions :: [ IO () ]
-editActions = [ edit "todo", edit "done", edit "missed" ]
+editActions = [ edit ToDoEx, edit DoneEx, edit MissedEx ]
 
-edit :: String -> IO ()
+edit :: ExerciseType -> IO ()
 edit exerciseType = editExercises exerciseType >>= writeExercisesToFile >> updateVersion
 
-editExercises :: String -> IO Exercises
+editExercises :: ExerciseType -> IO Exercises
 editExercises = \case
- "todo" ->
-   combine [ getToDoExercises >>= getAndEditChosen, getDoneExercises, getMissedExercises ]
- "done" ->
-   combine [ getToDoExercises, getDoneExercises >>= getAndEditChosen, getMissedExercises ]
- "missed" ->
-   combine [ getToDoExercises, getDoneExercises, getMissedExercises >>= getAndEditChosen ]
+  ToDoEx -> combine [ toDoExercises >>= getAndEditChosen, doneExercises, missedExercises ]
+  DoneEx -> combine [ toDoExercises, doneExercises >>= getAndEditChosen, missedExercises ]
+  MissedEx -> combine [ toDoExercises, doneExercises, missedExercises >>= getAndEditChosen ]
 
 getAndEditChosen :: Exercises -> IO Exercises
 getAndEditChosen = getChosen >=> editChosen

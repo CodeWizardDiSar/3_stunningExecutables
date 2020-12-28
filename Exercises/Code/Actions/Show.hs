@@ -13,7 +13,7 @@ import UsefulFunctions
 import Data.List 
   ( intercalate )
 import ExercisesFromFile
-  ( getToDoExercises, getDoneExercises, getMissedExercises )
+  ( toDoExercises, doneExercises, missedExercises )
 import UsefulForActions
   ( printBeutified, sortChrono )
 import Data.Function
@@ -28,13 +28,13 @@ printHeaderRow :: IO ()
 printHeaderRow = printBeutified headerRow
 
 showToDo :: IO ()
-showToDo = showTitleGetDo "ToDo" getToDoExercises ( sortChrono >>> print )
+showToDo = showTitleGetDo "ToDo" toDoExercises ( sortChrono >>> print )
 
 showDone :: IO ()
-showDone = showTitleGetDo "Done" getDoneExercises print
+showDone = showTitleGetDo "Done" doneExercises print
 
 showMissed :: IO ()
-showMissed = showTitleGetDo "Missed" getMissedExercises print
+showMissed = showTitleGetDo "Missed" missedExercises print
 
 showAll :: IO ()
 showAll = doSequentially [ showToDo, showDone, showMissed ]

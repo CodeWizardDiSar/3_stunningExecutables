@@ -1,16 +1,16 @@
 module Delete where
 import Prelude   
   ( (.), not, filter, (-), (!!), (==), IO, String, Int, (>>=), (>>) )
+import Types
+  ( Exercise, Exercises, Subject, Subjects, ExerciseType( ToDoEx, DoneEx, MissedEx ) )
 import Renaming
   ( wrap )
 import ExercisesFromFile
-  ( getToDoExercises, getDoneExercises, getMissedExercises )
+  ( toDoExercises, doneExercises, missedExercises )
 import Data.Function
   ( (&) )
 import FileManagement
   ( updateVersion )
-import Types
-  ( Exercise, Exercises, Subject, Subjects )
 import UsefulForActions
   ( combine, writeExercisesToFile, exercisesToSubjects )
 import ShowExercises
@@ -19,35 +19,32 @@ import Control.Monad
   ( (>=>) )
 
 deleteActions :: [ IO () ]
-deleteActions = [ deleteFrom "todo", deleteFrom "done", deleteFrom "missed" ]
+deleteActions = [ delete ToDoEx, delete DoneEx, delete MissedEx ]
 
-deleteFrom :: String -> IO ()
-deleteFrom exerciseType =
-  deleteAndGetNewExercises exerciseType >>= writeExercisesToFile >> updateVersion
+delete :: ExerciseType -> IO ()
+delete exerciseType =
+  exercisesAfterDeletion exerciseType >>= writeExercisesToFile >> updateVersion
 
-deleteAndGetNewExercises :: String -> IO Exercises
-deleteAndGetNewExercises = \case
- "todo" ->
-   combine [ getToDoExercises >>= deleteChosen, getDoneExercises, getMissedExercises ]
- "done" ->
-   combine [ getToDoExercises, getDoneExercises >>= deleteChosen, getMissedExercises ]
- "missed" ->
-   combine [ getToDoExercises, getDoneExercises, getMissedExercises >>= deleteChosen ]
+exercisesAfterDeletion :: ExerciseType -> IO Exercises
+exercisesAfterDeletion = \case
+  ToDoEx -> combine [ toDoExercises >>= deleteChosen, doneExercises, missedExercises ]
+  DoneEx -> combine [ toDoExercises, doneExercises >>= deleteChosen, missedExercises ]
+  MissedEx -> combine [ toDoExercises, doneExercises, missedExercises >>= deleteChosen ]
 
 deleteChosen :: Exercises -> IO Exercises
-deleteChosen = getChosen >=> delete
+deleteChosen = getChosen >=> delete'
 
-delete :: ( Exercises, Int, Int ) -> IO Exercises
-delete = \( exercises, subjectNumber, exerciseNumber ) ->
+delete' :: ( Exercises, Int, Int ) -> IO Exercises
+delete' = \( exercises, subjectNumber, exerciseNumber ) ->
  let sub = exercises & exercisesToSubjects & chosenSubject subjectNumber
-     ex = chosenSubjectExercises exercises sub !! ( exerciseNumber - 1 )
+     ex = subjectExercises sub exercises !! ( exerciseNumber - 1 )
  in removeExercise ex exercises & wrap
 
 chosenSubject :: Int -> Subjects -> Subject
 chosenSubject subjectNumber subjects = subjects !! ( subjectNumber - 1 )
 
-chosenSubjectExercises :: Exercises -> Subject -> Exercises
-chosenSubjectExercises exercises subject = filter ( subIs subject ) exercises
+subjectExercises :: Subject -> Exercises -> Exercises
+subjectExercises subject exercises = filter ( subIs subject ) exercises
 
 removeExercise :: Exercise -> Exercises -> Exercises
 removeExercise exercise = filter ( not . ( == exercise ) )

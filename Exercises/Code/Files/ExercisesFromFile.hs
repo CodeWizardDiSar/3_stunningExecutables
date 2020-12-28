@@ -18,8 +18,8 @@ getExercisesFromFile =
           splitInLines >>> ( forEach fromFileString ) >>> wrap
 
 getExercises :: [ IO Exercises ]
-getExercises = [ getToDoExercises, getDoneExercises, getMissedExercises ]
-[ getToDoExercises, getDoneExercises, getMissedExercises ] = [ get toDo, get done, get missed ]
+getExercises = [ toDoExercises, doneExercises, missedExercises ]
+[ toDoExercises, doneExercises, missedExercises ] = [ get toDo, get done, get missed ]
 
 get :: ( Exercise -> Bool ) -> IO Exercises
 get = \x -> getExercisesFromFile >>= ( filter x >>> wrap )

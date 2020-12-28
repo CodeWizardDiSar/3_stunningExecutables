@@ -5,7 +5,7 @@ import Prelude
 import Renaming
   ( printString, wrap, (>>>) )
 import ExercisesFromFile
-  ( getToDoExercises, getDoneExercises, getMissedExercises )
+  ( toDoExercises, doneExercises, missedExercises )
 import Data.Function
   ( (&), ($) )
 import Show
@@ -36,9 +36,9 @@ moveFrom = \exType -> getAllExs exType >>= writeExercisesToFile >> updateVersion
 
 getAllExs :: String -> IO Exercises
 getAllExs = \case
- "todo"  -> combine [ getToDoExercises >>= move, getDoneExercises, getMissedExercises ]
- "done"  -> combine [ getToDoExercises, getDoneExercises >>= move, getMissedExercises ]
- "missed"-> combine [ getToDoExercises, getDoneExercises, getMissedExercises >>= move ]
+ "todo"  -> combine [ toDoExercises >>= move, doneExercises, missedExercises ]
+ "done"  -> combine [ toDoExercises, doneExercises >>= move, missedExercises ]
+ "missed"-> combine [ toDoExercises, doneExercises, missedExercises >>= move ]
 
 move :: Exercises -> IO Exercises
 move = getChosen >=> moveChosen
