@@ -10,7 +10,7 @@ import Data.Function
 import FileManagement
   ( updateVersion )
 import Types
-  ( Strings, Exercise, Exercises, Subject, Subjects )
+  ( Exercise, Exercises, Subject, Subjects )
 import UsefulForActions
   ( combine, writeExercisesToFile, exercisesToSubjects )
 import ShowExercises

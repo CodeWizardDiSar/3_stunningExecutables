@@ -1,7 +1,7 @@
 module Main where
 import Prelude
-  ( String, IO, getLine, Maybe( Just, Nothing ), Int, (-), (!!), (>>), (>>=), Bool ( True )
-  , (>), (<=), (&&), length )
+  ( String, IO, Maybe( Just, Nothing ), Int, (-), (!!), (>>), (>>=), Bool ( True ) , (>), (<=)
+  , (&&), length )
 import Renaming
   ( forEach, printString )
 import UsefulFunctions

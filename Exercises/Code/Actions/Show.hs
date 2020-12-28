@@ -3,8 +3,7 @@ import Prelude
   ( Int, String, ($), IO, (>>), (>>=), (++) )
 import Types
   ( Exercise ( ToDo, Done, Missed ), Exercises, Date( D ), HopefullySome( IndeedItIs, Nothing )
-  , HopefullyExerciseName , Strings, HeaderRow, Headers
-  , ExerciseData( subjectName, exerciseNumber, exerciseName) )
+  , HopefullyExerciseName , Strings, HeaderRow, Headers, ExerciseData( subject, number, name) )
 import ToStringForUser
   ( toStringForUser )
 import Renaming

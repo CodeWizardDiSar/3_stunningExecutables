@@ -13,9 +13,11 @@ import Show
 import FileManagement     
   ( writeToNextDataKeeper, updateVersion )
 import Types
-  ( Strings, Exercises, Exercise( ToDo, Done, Missed ), ExerciseData )
+  ( Strings, Exercises, Exercise( ToDo, Done, Missed ), ExerciseData
+  , ToDoExercise( ToDoExercise ) , DoneExercise( DoneExercise )
+  , MissedExercise( MissedExercise ) )
 import Add
-  ( getDate )
+  ( dateFromUser )
 import UsefulFunctions   
   ( printStrings )
 import UsefulForActions
@@ -51,19 +53,19 @@ moveOld :: Exercise -> IO Exercise
 moveOld = \ex ->
   printStrings [ "Move To?", "\t1: To Do", "\t2: Done", "\t3: Missed" ] >>
   getLine >>= \case
-  "1" -> moveToToDo ex
-  "2" -> moveTo Done ex
-  "3" -> moveTo Missed ex
-  _ -> printString "what?" >> moveOld ex
+    "1" -> moveToToDo ex
+    "2" -> moveTo ( DoneExercise >>> Done ) ex
+    "3" -> moveTo ( MissedExercise >>> Missed ) ex
+    _ -> printString "what?" >> moveOld ex
 
 moveToToDo :: Exercise -> IO Exercise
 moveToToDo = \case 
-  ToDo a b -> ToDo a b & wrap
-  Done a -> getDate >>= (ToDo a >>> wrap)
-  Missed a -> getDate >>= (ToDo a >>> wrap)
+  ToDo a -> ToDo a & wrap
+  Done ( DoneExercise a ) -> dateFromUser >>= ( ToDoExercise a >>> ToDo >>> wrap )
+  Missed ( MissedExercise a ) -> dateFromUser >>= ( ToDoExercise a >>> ToDo >>> wrap )
  
 moveTo :: ( ExerciseData -> Exercise ) -> Exercise -> IO Exercise
 moveTo = \x -> \case
-  ToDo a b -> x a & wrap
-  Done a -> x a & wrap
-  Missed a -> x a & wrap
+  ToDo ( ToDoExercise a b ) -> x a & wrap
+  Done ( DoneExercise a ) -> x a & wrap
+  Missed ( MissedExercise a ) -> x a & wrap

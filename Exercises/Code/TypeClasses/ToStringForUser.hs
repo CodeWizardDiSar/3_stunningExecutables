@@ -3,11 +3,11 @@ import Prelude
   ( String, Int, ($), (++) )
 import Types
   ( Exercises, Exercise( ToDo, Done, Missed ), Strings, HopefullyExerciseName
-  , HopefullySome( IndeedItIs, Nothing ), Date( D ), exerciseNumber, exerciseName )
+  , HopefullySome( IndeedItIs, Nothing ), Date( D ), ToDoExercise( ToDoExercise )
+  , DoneExercise( DoneExercise ), MissedExercise( MissedExercise )
+  , Subject, ExerciseData( subject, number, name ) )
 import Renaming
   ( (>>>), forEach, glue, convertIntToString )
-import Types
-  ( Subject, ExerciseData( subjectName ), Exercise( exerciseData ) )
 import UsefulForActions
   ( beautify, putTogether, printBeutified, sortChrono )
 import Data.Function
@@ -23,15 +23,14 @@ instance ToStringForUser Exercises where
 
 instance ToStringForUser Exercise where
   toStringForUser = \case
-    Done exerciseData -> putTogether $ exerciseDataToStrings exerciseData
-    Missed exerciseData -> putTogether $ exerciseDataToStrings exerciseData
-    ToDo exerciseData date -> putTogether $ exerciseDataToStrings exerciseData ++
+    ToDo ( ToDoExercise toDoData date ) -> putTogether $ exerciseDataToStrings toDoData ++
       [ toStringForUser date ]
+    Done ( DoneExercise doneData ) -> putTogether $ exerciseDataToStrings doneData
+    Missed ( MissedExercise missedData ) -> putTogether $ exerciseDataToStrings missedData
 
 exerciseDataToStrings :: ExerciseData -> Strings
 exerciseDataToStrings exerciseData =
-  [ subjectName exerciseData, exerciseNumber exerciseData
-  , toStringForUser $ exerciseName exerciseData ]
+  [ subject exerciseData, number exerciseData, toStringForUser $ name exerciseData ]
 
 instance ToStringForUser HopefullyExerciseName where
   toStringForUser = \case

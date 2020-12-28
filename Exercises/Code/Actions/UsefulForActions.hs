@@ -3,14 +3,14 @@ import Prelude
   ( sequence, not, (<), (.), filter, (&&), (>), (||), (==), repeat, take, length, Bool(..)
   , getLine, Int, IO, (+), ($), elem, (-), (!!), (>>), (++), (>>=), String, foldl, otherwise )
 import Types
-  ( Exercise, Exercises, exerciseData, getTDate, subjectName, Subject, Subjects, Date ( D ) )
+  ( Exercise( ToDo ), Exercises, ToDoExercise( date ), subject, Subject, Subjects, Date ( D ) )
 import ToSubject
   ( toSubject )
 import ToStringForFile
   ( toStringForFile )
 import Renaming
-  ( wrap, (>>>), glue, forEach, printString, convertIntToString
-  , convertIntFromString )
+  ( wrap, (>>>), glue, forEach, printString, convertIntToString, convertIntFromString
+  , printErrorMessage )
 import FileManagement
   ( writeToNextDataKeeper )
 import Data.Function
@@ -51,7 +51,7 @@ exercisesToSubjects :: Exercises -> Subjects
 exercisesToSubjects = \case
   [] -> []
   ex:exs ->
-    let sub = ex & getSub
+    let sub = ex & toSubject
         subs = exs & exercisesToSubjects
     in elem sub subs & \case
        True -> subs
@@ -63,9 +63,6 @@ printSubjects = \i -> \case
   sub:subs -> ( [ "\t", i & convertIntToString, ": ", sub ] & glue & printString ) >>
     printSubjects (i+1) subs
 
-getSub :: Exercise -> Subject
-getSub = exerciseData >>> subjectName
-
 sortChrono :: Exercises -> Exercises
 sortChrono = \case
   [] -> [] 
@@ -73,7 +70,9 @@ sortChrono = \case
     sortChrono ( filter ( not . before ex) exs)
 
 before :: Exercise -> Exercise -> Bool
-before = \e1 e2 -> getTDate e2 `isBefore` getTDate e1
+before ( ToDo e1 ) ( ToDo e2 ) = date e2 `isBefore` date e1
+before _ _ =
+  printErrorMessage "Programmer messed up: trying to sort chronologically non-ToDo exercise"
 
 isBefore :: Date -> Date -> Bool
 isBefore ( D d m y )  ( D d' m' y' ) =

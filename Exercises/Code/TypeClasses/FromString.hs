@@ -1,12 +1,12 @@
 module FromString where
 import Prelude
-  ( String, Int, ($), (++) )
+  ( String, Int, ($), (++), undefined )
 import Renaming
   ( (>>>), printErrorMessage, convertIntFromString, convertIntToString, forEach, glue )
 import Types
-  ( Strings, Subject, ExerciseData( ED, subjectName, exerciseNumber, exerciseName )
-  , Date( D, day, month, year )
-  , HopefullyExerciseName , Exercise( exerciseData, ToDo, Done, Missed ), Exercises
+  ( Strings, Subject, ExerciseData( ED, subject, number, name ), ToDoExercise( ToDoExercise )
+  , DoneExercise( DoneExercise ), MissedExercise( MissedExercise ), Date( D, day, month, year )
+  , HopefullyExerciseName , Exercise( ToDo, Done, Missed ), Exercises
   , HopefullySome( IndeedItIs, Nothing ) )
 import Data.Function
   ( (&) )
@@ -16,44 +16,75 @@ import Data.List
   ( intercalate )
 
 class FromString a where fromString :: String -> a
+
+class FromFileString a where fromFileString :: String -> a
+
+class FromUserString a where fromUserString :: String -> a
+
 class FromStrings a where fromStrings :: Strings -> a
 
-instance FromString Exercise where
-  fromString = splitOn "," >>> fromStrings
+class FromFileStrings a where fromFileStrings :: Strings -> a
 
-instance FromString HopefullyExerciseName where
-  fromString = \case
-    "_" -> Nothing
-    exName -> IndeedItIs exName
-
-instance FromString Date where
-  fromString = splitOn "/" >>> \case
-    [ d, m, y ] -> D ( fromString d ) ( fromString m ) ( fromString y )
-    _ -> printErrorMessage "Date"
+class FromUserStrings a where fromUserStrings :: Strings -> a
 
 instance FromString Int where
   fromString = convertIntFromString
 
-instance FromStrings ExerciseData where
-  fromStrings = \case
-    [ subjectName, exerciseNumber, exerciseNameString ] ->
-      ED subjectName exerciseNumber ( exerciseNameString & stringToHopefullyExerciseName )
-    _ -> printErrorMessage "Programmer messed up in collecting exercise info from user"
+instance FromFileString Exercise where
+  fromFileString = splitOn "," >>> fromFileStrings
 
-stringToHopefullyExerciseName :: String -> HopefullyExerciseName
-stringToHopefullyExerciseName = \case
-  "" -> Nothing
-  exerciseName -> IndeedItIs exerciseName
+instance FromFileString HopefullyExerciseName where
+  fromFileString = \case
+    "_" -> Nothing
+    exName -> IndeedItIs exName
+
+instance FromFileString Date where
+  fromFileString = splitOn "/" >>> fromStrings
+
+instance FromUserString HopefullyExerciseName where
+  fromUserString = \case
+    "" -> Nothing
+    name -> IndeedItIs name
 
 instance FromStrings Date where
   fromStrings = \case 
     [ d, m, y ] -> D ( fromString d ) ( fromString m ) ( fromString y )
-    _ -> printErrorMessage "Programmer messed up in collecting date info from user"
+    _ -> printErrorMessage "Programmer messed up in collecting date info"
 
-instance FromStrings Exercise where
-  fromStrings = \case
-    [ "d", s, exNum, exName ] -> Done $ ED s exNum (exName & fromString)
-    [ "m", s, exNum, exName ] -> Missed $ ED s exNum (exName & fromString)
-    [ "t", s, exNum, exName, date ] ->
-      ToDo ( ED s exNum (exName & fromString) ) ( date & fromString )
+instance FromFileStrings Exercise where
+  fromFileStrings = \case
+    [ "t", s, exNum, exName, date ] -> ToDo $ fromFileStrings [ "t", s, exNum, exName, date ]
+    [ "d", s, exNum, exName ] -> Done $ fromFileStrings [ "d", s, exNum, exName ]
+    [ "m", s, exNum, exName ] -> Missed $ fromFileStrings [ "m", s, exNum, exName ]
     _ -> printErrorMessage "Line To Exercise" 
+
+instance FromFileStrings ToDoExercise where
+  fromFileStrings = \case
+    [ "t", s, exNum, exName, date ] ->
+      ToDoExercise ( ED s exNum (exName & fromFileString) ) ( date & fromFileString )
+    _ -> printErrorMessage "Bad"
+
+instance FromFileStrings DoneExercise where
+  fromFileStrings = \case
+    [ "d", s, exNum, exName ] -> DoneExercise $ ED s exNum (exName & fromFileString)
+    _ -> printErrorMessage "Bad"
+
+instance FromFileStrings MissedExercise where
+  fromFileStrings = \case
+    [ "m", s, exNum, exName ] -> MissedExercise $ ED s exNum (exName & fromFileString)
+    _ -> printErrorMessage "Bad"
+
+instance FromUserStrings ToDoExercise where
+  fromUserStrings = undefined
+
+instance FromUserStrings DoneExercise where
+  fromUserStrings = fromUserStrings >>> DoneExercise
+
+instance FromUserStrings MissedExercise where
+  fromUserStrings = fromUserStrings >>> MissedExercise
+
+instance FromUserStrings ExerciseData where
+  fromUserStrings = \case
+    [ subject, number, nameString ] -> ED subject number ( nameString & fromUserString )
+    _ -> printErrorMessage "Programmer messed up in collecting exercise data from user"
+

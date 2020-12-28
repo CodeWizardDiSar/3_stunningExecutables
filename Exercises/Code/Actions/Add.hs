@@ -1,21 +1,18 @@
 module Add where
 import Prelude
-  ( read, (>>=), (>>), IO, Int, String, uncurry, Monad, sequence )
+  ( (>>=), (>>), IO, sequence )
 import Types
-  ( Exercise( ToDo, Done, Missed ), HopefullySome( IndeedItIs, Nothing ), HopefullyExerciseName
-  , ExerciseData( ED ), Date ( D ), Strings )
+  ( Exercise( ToDo, Done, Missed ), ExerciseData, Date, Strings, ToDoExercise( ToDoExercise ) )
 import FromString
-  ( fromStrings, fromString )
+  ( fromStrings, FromUserStrings, fromUserStrings )
 import Renaming
-  ( (>>>), wrap, forEach, printErrorMessage )
+  ( (>>>), wrap, forEach )
 import ExercisesFromFile
   ( getExercisesFromFile )
 import FileManagement
   ( updateVersion )
 import UsefulForActions
   ( printAndGetAnswer, writeExercisesToFile )
-import Data.Function
-  ( (&) )
 import Control.Monad.Zip
   ( mzipWith, mzip, MonadZip )
 import Control.Invertible.Monoidal
@@ -26,34 +23,31 @@ instance MonadZip IO where
 
 addActions :: [ IO () ]
 addActions =
-  [ getToDoExerciseFromUser >>= add, getExerciseFromUser Done >>= add
+  [ getToDoExerciseFromUser >>= ToDo >>> add, getExerciseFromUser Done >>= add
   , getExerciseFromUser Missed >>= add ]
 
 add :: Exercise -> IO ()
 add exerciseFromUser =
   getExercisesFromFile >>= ( exerciseFromUser : ) >>> writeExercisesToFile >> updateVersion
 
-getExerciseFromUser :: ( ExerciseData -> Exercise ) -> IO Exercise
-getExerciseFromUser exerciseType =
-  getExerciseDataStringsFromUser >>= stringsToExercise exerciseType >>> wrap
+getExerciseFromUser :: FromUserStrings a => ( a -> Exercise ) -> IO Exercise
+getExerciseFromUser exerciseConstructor =
+  dataStringsFromUser >>= fromUserStrings >>> exerciseConstructor >>> wrap
 
-stringsToExercise :: ( ExerciseData -> Exercise ) -> [ String ] -> Exercise
-stringsToExercise exerciseType = fromStrings >>> exerciseType
+getToDoExerciseFromUser :: IO ToDoExercise
+getToDoExerciseFromUser = mzipWith ToDoExercise exerciseDataFromUser dateFromUser
 
-getToDoExerciseFromUser :: IO Exercise
-getToDoExerciseFromUser = mzipWith ToDo getExerciseData getDate
+exerciseDataFromUser :: IO ExerciseData
+exerciseDataFromUser = dataStringsFromUser >>= fromUserStrings >>> wrap
 
-getExerciseData :: IO ExerciseData
-getExerciseData = getExerciseDataStringsFromUser >>= fromStrings >>> wrap
+dataStringsFromUser :: IO Strings
+dataStringsFromUser = printAndGetAnswers [ "Subject?", "Number?", "Name?" ]
 
-getExerciseDataStringsFromUser :: IO Strings
-getExerciseDataStringsFromUser = printAndGetAnswers [ "Subject?", "Number?", "Name?" ]
-
-getDate :: IO Date
-getDate = printAndGetAnswers dateQuestions >>= fromStrings >>> wrap
+dateFromUser :: IO Date
+dateFromUser = printAndGetAnswers dateQuestions >>= fromStrings >>> wrap
 
 dateQuestions :: Strings
-dateQuestions = [ "Day Of The Month? (number)" , "Month? (number)" , "Year?" ]
+dateQuestions = [ "Day? (number)", "Month? (number)", "Year?" ]
 
 printAndGetAnswers :: Strings -> IO Strings 
 printAndGetAnswers = forEach printAndGetAnswer >>> sequence

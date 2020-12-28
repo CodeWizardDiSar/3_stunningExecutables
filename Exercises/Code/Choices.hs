@@ -1,16 +1,15 @@
 module Choices where
 import Renaming
   ( forEach, glue, convertIntToString )
+import Types
+  ( ChoicesWithTitle, Choices, Title, Strings )
 import UsefulFunctions
   ( tabBefore, tabsBefore )
-import Types
-  ( Strings )
 import Prelude
-  ( zipWith, take, ($), String, (+), (++) )
+  ( zipWith, String, (+), (++) )
 import Data.Function
   ( (&) )
 
-type ChoicesWithTitle = String
 -- WT = With Title
 allChoicesWT :: [ChoicesWithTitle]
 allChoicesWT =
@@ -19,8 +18,6 @@ allChoicesWT =
 [ initialChoicesWT, addChoicesWT, showChoicesWT, editChoicesWT, deleteChoicesWT
  ,moveChoicesWT] = zipWith mergeTitleAndChoices titles allChoices
 
-type Title = String
-type Choices = [ String ]
 mergeTitleAndChoices :: Title -> Choices -> ChoicesWithTitle
 mergeTitleAndChoices = \title choices-> 
   [ tabBefore title ] ++ ( ( 2 & tabsBefore ) `forEach` choices ) & ( (++ "\n")`forEach` ) &
@@ -29,15 +26,15 @@ mergeTitleAndChoices = \title choices->
 titles :: [ Title ]
 titles = [ "Command me master", "Add to", "Show", "Edit", "Delete From", "Move From" ]
 
-allChoices :: [Choices]
+allChoices :: [ Choices ]
 allChoices =
   [ initialChoices, exceptAllChoices, showChoices, exceptAllChoices, exceptAllChoices
   , exceptAllChoices ]
 
-numbered :: [ String ] -> Choices
+numbered :: Strings -> Choices
 numbered = zipWith ( \int string -> convertIntToString int ++ ": " ++ string ) [ 1.. ]
 
-exerciseTypes :: [ String ]
+exerciseTypes :: Strings
 exerciseTypes = [ "To Do", "Done", "Missed" ]
 
 exceptAllChoices :: Choices

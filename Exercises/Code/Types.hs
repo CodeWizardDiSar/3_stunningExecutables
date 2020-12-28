@@ -1,25 +1,29 @@
 module Types where
-import Prelude ( Eq, String, Int, Bool )
-import Renaming ( (>>>) )
+import Prelude ( Eq, String, Int )
 
 -- Always a pleasure to have types (sorry python)
 data HopefullySome a = IndeedItIs { getA :: a } | Nothing
   deriving ( Eq )
 
-data Exercise = Done
-  { exerciseData :: ExerciseData
-  } | Missed
-  { exerciseData :: ExerciseData 
-  } | ToDo
-  { exerciseData :: ExerciseData
-  , getTDate :: Date
-  }
+data Exercise =
+  ToDo { toDo :: ToDoExercise } |
+  Done { done :: DoneExercise } |
+  Missed { missed :: MissedExercise }
+  deriving ( Eq )
+
+data ToDoExercise = ToDoExercise { toDoData :: ExerciseData , date :: Date }
+  deriving ( Eq )
+
+data DoneExercise = DoneExercise { doneData :: ExerciseData  }
+  deriving ( Eq )
+
+data MissedExercise = MissedExercise { missedData :: ExerciseData  }
   deriving ( Eq )
 
 data ExerciseData = ED
-  { subjectName :: Subject
-  , exerciseNumber :: ExerciseNumber
-  , exerciseName :: HopefullyExerciseName
+  { subject :: Subject
+  , number :: ExerciseNumber
+  , name :: HopefullyExerciseName
   }
   deriving ( Eq )
    
@@ -39,10 +43,13 @@ type Path = String
 type Subject = String
 type ExerciseNumber = String
 type HeaderRow = String
+type ChoicesWithTitle = String
+type Title = String
 
 type Strings = [ String ]
 
 type Subjects = Strings
 type Headers = Strings
+type Choices = Strings
 type HopefullyExerciseName = HopefullySome String
 type Exercises = [ Exercise ]

@@ -3,9 +3,10 @@ import Prelude
   ( (.), not, filter, (-), (!!), (==), getLine, (++), (>>=), IO, String, Int, (>>) )
 import Types
   ( Exercise( ToDo, Done, Missed ), HopefullySome( IndeedItIs ), Exercises, Date
-  , ExerciseData ( subjectName, exerciseNumber, exerciseName ) )
+  , ExerciseData ( subject, number, name ), ToDoExercise( ToDoExercise )
+  , DoneExercise( DoneExercise ), MissedExercise( MissedExercise ) )
 import Add
-  ( getDate )
+  ( dateFromUser )
 import UsefulForActions
   ( combine, printAndGetAnswer, writeExercisesToFile, exercisesToSubjects )
 import Renaming 
@@ -51,19 +52,19 @@ editChosen = \( exs, subNum, exNum ) ->
 
 changeSubjectName :: ExerciseData -> IO ExerciseData
 changeSubjectName exerciseData =
-  getSubject >>= \newSubjectName -> exerciseData { subjectName = newSubjectName } & wrap
+  getSubject >>= \newSubject -> exerciseData { subject = newSubject } & wrap
 
 changeExerciseNumber :: ExerciseData -> IO ExerciseData
 changeExerciseNumber exerciseData =
-  getENum >>= \newExerciseNumber -> exerciseData { exerciseNumber = newExerciseNumber } & wrap
+  getENum >>= \newNumber -> exerciseData { number = newNumber } & wrap
 
 changeExerciseName :: ExerciseData -> IO ExerciseData
 changeExerciseName exerciseData =
-  getEName >>= \newExerciseName ->
-    exerciseData { exerciseName = IndeedItIs newExerciseName } & wrap
+  getEName >>= \newName -> exerciseData { name = IndeedItIs newName } & wrap
 
 getToDoExerciseWithNewData :: Date -> ExerciseData -> IO Exercise
-getToDoExerciseWithNewData date newExerciseData = ToDo newExerciseData date & wrap
+getToDoExerciseWithNewData date newExerciseData =
+  ToDo ( ToDoExercise newExerciseData date ) & wrap
 
 getExerciseWithNewData :: ( ExerciseData -> Exercise ) -> ExerciseData -> IO Exercise
 getExerciseWithNewData exerciseConstructor newExerciseData = 
@@ -71,22 +72,27 @@ getExerciseWithNewData exerciseConstructor newExerciseData =
 
 modify :: Exercise -> IO Exercise
 modify = \case
-  ToDo exerciseData date ->
+  ToDo ( ToDoExercise exerciseData date ) ->
     chooseAttributeWithDate >>= \case
       "1"-> changeSubjectName exerciseData >>= getToDoExerciseWithNewData date
       "2"-> changeExerciseNumber exerciseData >>= getToDoExerciseWithNewData date
       "3"-> changeExerciseName exerciseData >>= getToDoExerciseWithNewData date
-      "4"-> getDate >>= \newDate -> ToDo exerciseData newDate & wrap
-  Done exerciseData ->
+      "4"-> dateFromUser >>= \newDate -> ToDo ( ToDoExercise exerciseData newDate ) & wrap
+  Done ( DoneExercise exerciseData ) ->
     chooseAttribute >>= \case
-      "1"-> changeSubjectName exerciseData >>= getExerciseWithNewData Done
-      "2"-> changeExerciseNumber exerciseData >>= getExerciseWithNewData Done
-      "3"-> changeExerciseName exerciseData >>= getExerciseWithNewData Done
-  Missed exerciseData ->
-    chooseAttribute>>= \case
-      "1"-> changeSubjectName exerciseData >>= getExerciseWithNewData Missed
-      "2"-> changeExerciseNumber exerciseData >>= getExerciseWithNewData Missed
-      "3"-> changeExerciseName exerciseData >>= getExerciseWithNewData Missed
+      "1"-> changeSubjectName exerciseData >>= getExerciseWithNewData ( DoneExercise >>> Done )
+      "2"-> changeExerciseNumber exerciseData >>=
+              getExerciseWithNewData ( DoneExercise >>> Done )
+      "3"-> changeExerciseName exerciseData >>=
+              getExerciseWithNewData ( DoneExercise >>> Done )
+  Missed ( MissedExercise exerciseData ) ->
+    chooseAttribute >>= \case
+      "1"-> changeSubjectName exerciseData >>=
+              getExerciseWithNewData ( MissedExercise >>> Missed )
+      "2"-> changeExerciseNumber exerciseData >>=
+              getExerciseWithNewData ( MissedExercise >>> Missed )
+      "3"-> changeExerciseName exerciseData >>=
+              getExerciseWithNewData ( MissedExercise >>> Missed )
 
 chooseAttribute :: IO String
 chooseAttribute = printBasic >> getLine
