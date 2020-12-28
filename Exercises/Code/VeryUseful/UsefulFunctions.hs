@@ -6,7 +6,7 @@ import Data.Function
 import Types
   ( Strings )
 import Renaming
-  ( (>>>), andThen, wrap, printString, forEachDo, repeatNTimes, printErrorMessage , glue
+  ( (>>>), wrap, printString, forEachDo, repeatNTimes, printErrorMessage , glue
   , convertIntFromString, convertIntToString )
 
 doSequentially :: [ IO () ] -> IO ()

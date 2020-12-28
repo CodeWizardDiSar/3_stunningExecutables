@@ -9,7 +9,7 @@ import Add
 import UsefulForActions
   ( combine, printAndGetAnswer, writeExercisesToFile, exercisesToSubjects )
 import Renaming 
-  ( printString, wrap, andThen, (>>>) )
+  ( printString, wrap, (>>>) )
 import ExercisesFromFile
   ( getToDoExercises, getDoneExercises, getMissedExercises )
 import Data.Function

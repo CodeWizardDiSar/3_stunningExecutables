@@ -1,26 +1,21 @@
 module ExercisesFromFile where
 import Prelude
-  ( Int, filter, Bool( True, False ), IO, (>>=), ($) )
+  ( filter, Bool( True, False ), IO, (>>=) )
 import Types 
-  ( Date( D ), HopefullyExerciseName, Exercise( ToDo, Done, Missed )
-  , Strings , HopefullySome( IndeedItIs, Nothing ), Exercises, ExerciseData( ED ))
-import TypeClasses
-  ( fromString, FromString )
+  ( Exercise( ToDo, Done, Missed ) , Strings , HopefullySome( IndeedItIs, Nothing )
+  , Exercises )
+import FromString
+  ( fromString )
 import Renaming
-  ( unwrapAnd, wrap, forEach, andThen, readFromFile, printErrorMessage, printString
-  , convertIntFromString, (>>>), splitInLines )
+  ( wrap, forEach, readFromFile, (>>>), splitInLines )
 import FileManagement
   ( getCurrentDataKeeper, getVersion )
-import Data.List.Split
-  ( splitOn )
-import Data.Function 
-  ( (&) )
 
 getExercisesFromFile :: IO Exercises
 getExercisesFromFile =
   getVersion >>= \case
     "0"-> wrap []
-    _  -> getCurrentDataKeeper >>= readFromFile >>= ( splitInLines >>> ( fromString `forEach` )
+    _  -> getCurrentDataKeeper >>= readFromFile >>= ( splitInLines >>> ( forEach fromString )
             >>> wrap )
 
 getExercises :: [ IO Exercises ]
@@ -44,26 +39,3 @@ missed :: Exercise -> Bool
 missed = \case
   Missed _ -> True
   _ -> False
-
-instance FromString Exercise where
-  fromString = splitOn "," >>> stringsToExericise
-
-stringsToExericise :: Strings -> Exercise
-stringsToExericise = \case
-  [ "d", s, exNum, exName ] -> Done $ ED s exNum (exName & fromString)
-  [ "m", s, exNum, exName ] -> Missed $ ED s exNum (exName & fromString)
-  [ "t", s, exNum, exName, date ] -> ToDo ( ED s exNum (exName & fromString) ) ( date & fromString )
-  _ -> printErrorMessage "Line To Exercise"
-
-instance FromString HopefullyExerciseName where
-  fromString = \case
-    "_" -> Nothing
-    exName -> IndeedItIs exName
-
-instance FromString Date where
-  fromString = splitOn "/" >>> \case
-    [ d, m, y ] -> D ( fromString d ) ( fromString m ) ( fromString y )
-    _ -> printErrorMessage "Date"
-
-instance FromString Int where
-  fromString = convertIntFromString

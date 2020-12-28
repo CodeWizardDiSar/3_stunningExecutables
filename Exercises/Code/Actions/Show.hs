@@ -5,10 +5,10 @@ import Types
   ( Exercise ( ToDo, Done, Missed ), Exercises, Date( D ), HopefullySome( IndeedItIs, Nothing )
   , HopefullyExerciseName , Strings, HeaderRow, Headers
   , ExerciseData( subjectName, exerciseNumber, exerciseName) )
-import TypeClasses
-  ( ToStringForUser, toStringForUser )
+import ToStringForUser
+  ( toStringForUser )
 import Renaming
-  ( convertIntToString, glue, forEach, (>>>), printString, unwrapAnd, andThen )
+  ( convertIntToString, glue, forEach, (>>>), printString )
 import UsefulFunctions
   ( doSequentially )
 import Data.List 
@@ -56,29 +56,3 @@ headerRow = putTogether headerList
 
 headerList :: Headers
 headerList = [ "Subject", "Number", "Name", "Date" ]
-
-instance ToStringForUser Exercises where
-  toStringForUser = forEach ( toStringForUser >>> beautify) >>> glue 
-
-instance ToStringForUser Exercise where
-  toStringForUser = \case
-    Done exerciseData -> putTogether $ exerciseDataToStrings exerciseData
-    Missed exerciseData -> putTogether $ exerciseDataToStrings exerciseData
-    ToDo exerciseData date -> putTogether $ exerciseDataToStrings exerciseData ++
-      [ toStringForUser date ]
-
-exerciseDataToStrings :: ExerciseData -> Strings
-exerciseDataToStrings exerciseData =
-  [ subjectName exerciseData, exerciseNumber exerciseData
-  , toStringForUser $ exerciseName exerciseData ]
-
-instance ToStringForUser HopefullyExerciseName where
-  toStringForUser = \case
-    IndeedItIs n -> n 
-    Nothing -> "No Name"
-
-instance ToStringForUser Date where
-  toStringForUser ( D d m y ) = [ d, m, y ] & forEach toStringForUser & intercalate "/"
-
-instance ToStringForUser Int  where
-  toStringForUser = convertIntToString

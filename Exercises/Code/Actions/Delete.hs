@@ -7,8 +7,6 @@ import ExercisesFromFile
   ( getToDoExercises, getDoneExercises, getMissedExercises )
 import Data.Function
   ( (&) )
-import StringFromExercises
-  ( exercisesToString )
 import FileManagement
   ( updateVersion )
 import Types

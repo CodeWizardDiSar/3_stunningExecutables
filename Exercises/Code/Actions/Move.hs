@@ -3,7 +3,7 @@ import Prelude
   ( (.), not, filter, (-), (!!), (+), elem, Bool( True, False ), (==), sequence, getLine, IO
   , Int, (>>=) , String, (>>) )
 import Renaming
-  ( printString, wrap, unwrapAnd, andThen, (>>>) )
+  ( printString, wrap, (>>>) )
 import ExercisesFromFile
   ( getToDoExercises, getDoneExercises, getMissedExercises )
 import Data.Function

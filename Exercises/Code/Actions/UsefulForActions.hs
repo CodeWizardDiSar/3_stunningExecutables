@@ -4,13 +4,13 @@ import Prelude
   , getLine, Int, IO, (+), ($), elem, (-), (!!), (>>), (++), (>>=), String, foldl, otherwise )
 import Types
   ( Exercise, Exercises, exerciseData, getTDate, subjectName, Subject, Subjects, Date ( D ) )
-import TypeClasses
+import ToSubject
   ( toSubject )
+import ToStringForFile
+  ( toStringForFile )
 import Renaming
-  ( wrap, (>>>), unwrapAnd, glue, forEach, printString, convertIntToString
+  ( wrap, (>>>), glue, forEach, printString, convertIntToString
   , convertIntFromString )
-import StringFromExercises
-  ( exercisesToString )
 import FileManagement
   ( writeToNextDataKeeper )
 import Data.Function
@@ -28,7 +28,7 @@ printBeutified :: String -> IO ()
 printBeutified = beautify >>> printString
 
 writeExercisesToFile :: Exercises -> IO ()
-writeExercisesToFile = exercisesToString >>> writeToNextDataKeeper
+writeExercisesToFile = toStringForFile >>> writeToNextDataKeeper
 
 getChoice :: IO Int
 getChoice = getLine >>= ( convertIntFromString >>> wrap )

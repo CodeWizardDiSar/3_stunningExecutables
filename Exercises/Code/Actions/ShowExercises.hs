@@ -1,16 +1,16 @@
 module ShowExercises where
 import Prelude 
-  ( Bool, (!!), filter, (>>=), (==), (-), (>>), Int, IO, String, (++) )
+  ( Bool, (!!), filter, (>>=), (==), (-), (>>), Int, IO, String )
 import Types
   ( Exercise, Exercises )
-import TypeClasses
-  ( toStringForUser, toSubject )
+import ToSubject
+  ( toSubject )
+import ToStringForUser
+  ( toStringForUser )
 import Data.Function
   ( (&) )
 import Renaming 
   ( forEach, wrap, printString, (>>>) )
-import Show 
-  ( printEx )
 import UsefulForActions
   ( getChoice, showSubjects, toSubjects )
 import Choices

@@ -9,10 +9,6 @@ infixl 9 >>>
 (>>>) :: (a->b)->(b->c)->(a->c)
 (>>>) = flip (.)
 
-andThen   :: Monad m=>m a->m b->m b
-andThen   = (>>)
-unwrapAnd :: Monad m=>m a->(a->m b)->m b
-unwrapAnd = (>>=)
 wrap      :: Monad m=>a->m a
 wrap      = return
 forEachDo :: Monad m=>(a->m b)->[a]->m ()
