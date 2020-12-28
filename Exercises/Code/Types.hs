@@ -12,6 +12,7 @@ data Exercise =
   deriving ( Eq )
 
 data ExerciseType = ToDoEx | DoneEx | MissedEx
+  deriving ( Eq )
 
 data ToDoExercise = ToDoExercise { toDoData :: ExerciseData , date :: Date }
   deriving ( Eq )

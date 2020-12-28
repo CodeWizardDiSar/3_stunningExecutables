@@ -1,8 +1,8 @@
 module ExercisesFromFile where
 import Prelude
-  ( filter, Bool( True, False ), IO, (>>=) )
+  ( filter, IO, (>>=), (==) )
 import Types 
-  ( Exercise( ToDo, Done, Missed ), Exercises )
+  ( Exercise( ToDo, Done, Missed ), ExerciseType( ToDoEx, DoneEx, MissedEx ), Exercises )
 import FromString
   ( fromFileString )
 import Renaming
@@ -19,22 +19,14 @@ getExercisesFromFile =
 
 getExercises :: [ IO Exercises ]
 getExercises = [ toDoExercises, doneExercises, missedExercises ]
-[ toDoExercises, doneExercises, missedExercises ] = [ get toDo, get done, get missed ]
+[ toDoExercises, doneExercises, missedExercises ] = [ get ToDoEx, get DoneEx, get MissedEx ]
 
-get :: ( Exercise -> Bool ) -> IO Exercises
-get = \x -> getExercisesFromFile >>= ( filter x >>> wrap )
+get :: ExerciseType -> IO Exercises
+get exerciseType =
+  getExercisesFromFile >>= filter ( toExerciseType >>> ( == exerciseType ) ) >>> wrap
 
-toDo :: Exercise -> Bool
-toDo = \case
-  ToDo _ -> True
-  _ -> False 
-
-done :: Exercise -> Bool
-done = \case
-  Done _ -> True
-  _ -> False
-
-missed :: Exercise -> Bool
-missed = \case
-  Missed _ -> True
-  _ -> False
+toExerciseType :: Exercise -> ExerciseType
+toExerciseType = \case 
+  ToDo _ -> ToDoEx
+  Done _ -> DoneEx
+  Missed _ -> MissedEx

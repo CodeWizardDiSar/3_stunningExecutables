@@ -61,7 +61,7 @@ getNextDataKeeper :: IO Path
 getNextDataKeeper = getVersion >>= addOneToString >>> addDKPrefix >>> wrap
 
 writeToNextDataKeeper :: String -> IO ()
-writeToNextDataKeeper = \s-> getNextDataKeeper >>= flip writeToFile s
+writeToNextDataKeeper = \s -> getNextDataKeeper >>= flip writeToFile s
 
 addDKPrefix :: String -> Path
 addDKPrefix = ( dataKeeperPrefix ++ )
