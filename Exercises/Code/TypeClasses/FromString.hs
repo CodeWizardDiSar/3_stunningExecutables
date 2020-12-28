@@ -1,8 +1,8 @@
 module FromString where
 import Prelude
-  ( String, Int, ($), (++), undefined )
+  ( String, Int, ($), (++), undefined, read )
 import Renaming
-  ( (>>>), printErrorMessage, convertIntFromString, convertIntToString, forEach, glue )
+  ( (>>>), printErrorMessage, forEach, glue )
 import Types
   ( Strings, Subject, ExerciseData( ED, subject, number, name ), ToDoExercise( ToDoExercise )
   , DoneExercise( DoneExercise ), MissedExercise( MissedExercise ), Date( D, day, month, year )
@@ -28,7 +28,7 @@ class FromFileStrings a where fromFileStrings :: Strings -> a
 class FromUserStrings a where fromUserStrings :: Strings -> a
 
 instance FromString Int where
-  fromString = convertIntFromString
+  fromString = read
 
 instance FromFileString Exercise where
   fromFileString = splitOn "," >>> fromFileStrings

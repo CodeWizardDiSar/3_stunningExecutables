@@ -6,15 +6,15 @@ import System.Directory
   ( doesFileExist )
 
 infixl 9 >>>
-(>>>) :: (a->b)->(b->c)->(a->c)
+(>>>) :: ( a -> b ) -> ( b -> c ) -> ( a -> c )
 (>>>) = flip (.)
 
-wrap      :: Monad m=>a->m a
-wrap      = return
-forEachDo :: Monad m=>(a->m b)->[a]->m ()
+wrap :: Monad m => a -> m a
+wrap = return
+forEachDo :: Monad m => ( a -> m b ) -> [ a ] -> m ()
 forEachDo = mapM_
 
-( forEach, glue, splitInLines, convertIntToString, convertIntFromString, printString
- ,printErrorMessage, fileExists, readFromFile, writeToFile, repeatNTimes) =
-  ( map, concat :: [ [ a ] ] -> [ a ], lines, show :: Int -> String, read :: String -> Int
-  , putStrLn, error :: String -> a, doesFileExist, readFile, writeFile, replicate )
+( forEach, glue, splitInLines, printString, printErrorMessage, fileExists, readFromFile
+ ,writeToFile, repeatNTimes) =
+  ( map, concat :: [ [ a ] ] -> [ a ], lines, putStrLn , error :: String -> a, doesFileExist
+  , readFile, writeFile, replicate )

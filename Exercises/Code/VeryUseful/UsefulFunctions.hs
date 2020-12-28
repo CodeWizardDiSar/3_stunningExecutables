@@ -6,8 +6,11 @@ import Data.Function
 import Types
   ( Strings )
 import Renaming
-  ( (>>>), wrap, printString, forEachDo, repeatNTimes, printErrorMessage , glue
-  , convertIntFromString, convertIntToString )
+  ( (>>>), wrap, printString, forEachDo, repeatNTimes, printErrorMessage , glue )
+import FromString
+  ( fromString )
+import ToString
+  ( toString )
 
 doSequentially :: [ IO () ] -> IO ()
 doSequentially = sequence_
@@ -33,7 +36,7 @@ printEmptyLines = \case
   i -> printEmptyLine >> ( i - 1 & printEmptyLines )
 
 addNToString :: Int -> String -> String
-addNToString = \n -> convertIntFromString >>> ( + n ) >>> convertIntToString
+addNToString = \n -> fromString >>> ( + n ) >>> toString
 
 addOneToString :: String -> String
 addOneToString = addNToString 1

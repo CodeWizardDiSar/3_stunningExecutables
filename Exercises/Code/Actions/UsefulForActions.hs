@@ -6,23 +6,20 @@ import Types
   ( Exercise( ToDo ), Exercises, ToDoExercise( date ), subject, Subject, Subjects, Date ( D ) )
 import ToSubject
   ( toSubject )
-import ToStringForFile
-  ( toStringForFile )
+import ToString
+  ( toStringForFile, toString )
+import FromString
+  ( fromString )
 import Renaming
-  ( wrap, (>>>), glue, forEach, printString, convertIntToString, convertIntFromString
-  , printErrorMessage )
+  ( wrap, (>>>), glue, forEach, printString, printErrorMessage )
 import FileManagement
   ( writeToNextDataKeeper )
 import Data.Function
   ( (&) )
 import Control.Monad
   ( (>=>) )
-
-beautify :: String -> String
-beautify = ( "\t" ++ ) >>> ( ++ "\n" )
-
-putTogether :: [ String ] -> String
-putTogether = ( ( (++ repeat ' ') >>> take 20 ) `forEach` ) >>> glue
+import Helpers
+  ( beautify )
 
 printBeutified :: String -> IO ()
 printBeutified = beautify >>> printString
@@ -31,7 +28,7 @@ writeExercisesToFile :: Exercises -> IO ()
 writeExercisesToFile = toStringForFile >>> writeToNextDataKeeper
 
 getChoice :: IO Int
-getChoice = getLine >>= ( convertIntFromString >>> wrap )
+getChoice = getLine >>= ( fromString >>> wrap )
 
 combine :: [ IO Exercises ] -> IO Exercises
 combine = sequence >=> ( glue >>> wrap )
@@ -60,7 +57,7 @@ exercisesToSubjects = \case
 printSubjects :: Int -> Subjects -> IO ()
 printSubjects = \i -> \case
   [] -> wrap ()
-  sub:subs -> ( [ "\t", i & convertIntToString, ": ", sub ] & glue & printString ) >>
+  sub:subs -> ( [ "\t", i & toString, ": ", sub ] & glue & printString ) >>
     printSubjects (i+1) subs
 
 sortChrono :: Exercises -> Exercises

@@ -24,7 +24,7 @@ import ShowExercises
 import Control.Monad
   ( (>=>) )
 import Choices
-  ( numbered )
+  ( putNumbers )
 
 editActions :: [ IO () ]
 editActions = [ edit "todo", edit "done", edit "missed" ]
@@ -104,10 +104,10 @@ exData :: [ String ]
 exData = [ "Subject", "Number", "Name" ]
 
 printBasic :: IO ()
-printBasic = exData & numbered & printStrings
+printBasic = exData & putNumbers & printStrings
 
 printBasicAndDate :: IO ()
-printBasicAndDate = exData ++ [ "Date" ] & numbered & printStrings
+printBasicAndDate = exData ++ [ "Date" ] & putNumbers & printStrings
 
 getSubject :: IO String
 getSubject = printAndGetAnswer "New Subject?"

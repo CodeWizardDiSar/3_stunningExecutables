@@ -5,7 +5,7 @@ import Types
   ( Exercise, Exercises )
 import ToSubject
   ( toSubject )
-import ToStringForUser
+import ToString
   ( toStringForUser )
 import Data.Function
   ( (&) )
@@ -14,7 +14,7 @@ import Renaming
 import UsefulForActions
   ( getChoice, showSubjects, toSubjects )
 import Choices
-  ( numbered )
+  ( putNumbers )
 import UsefulFunctions
   ( doSequentially, tabBefore )
 
@@ -28,7 +28,7 @@ subIs = \subName -> toSubject >>> ( == subName )
 
 printExercises :: Exercises -> IO ()
 printExercises =
-  forEach toStringForUser >>> numbered >>> forEach ( tabBefore >>> printString ) >>>
+  forEach toStringForUser >>> putNumbers >>> forEach ( tabBefore >>> printString ) >>>
   doSequentially
 
 getExsSubjects :: IO Exercises -> IO Int

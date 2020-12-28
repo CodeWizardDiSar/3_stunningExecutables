@@ -4,10 +4,10 @@ import Prelude
 import Types
   ( Exercise ( ToDo, Done, Missed ), Exercises, Date( D ), HopefullySome( IndeedItIs, Nothing )
   , HopefullyExerciseName , Strings, HeaderRow, Headers, ExerciseData( subject, number, name) )
-import ToStringForUser
+import ToString
   ( toStringForUser )
 import Renaming
-  ( convertIntToString, glue, forEach, (>>>), printString )
+  ( glue, forEach, (>>>), printString )
 import UsefulFunctions
   ( doSequentially )
 import Data.List 
@@ -15,12 +15,14 @@ import Data.List
 import ExercisesFromFile
   ( getToDoExercises, getDoneExercises, getMissedExercises )
 import UsefulForActions
-  ( beautify, putTogether, printBeutified, sortChrono )
+  ( printBeutified, sortChrono )
 import Data.Function
   ( (&) )
+import Helpers
+  ( putTogether )
 
 showActions :: [IO ()]
-showActions = ( printHeaderRow >> ) `forEach` [ showToDo, showDone, showMissed, showAll ]
+showActions = forEach ( printHeaderRow >> ) [ showToDo, showDone, showMissed, showAll ]
 
 printHeaderRow :: IO ()
 printHeaderRow = printBeutified headerRow
