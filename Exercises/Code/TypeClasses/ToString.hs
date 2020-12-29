@@ -1,6 +1,6 @@
 module ToString where
 import Prelude
-  ( String, Int, ($), (++), show )
+  ( String, Int, IO, ($), (++), show, id, putStr )
 import Renaming
   ( (>>>), forEach, glue )
 import Types
@@ -68,3 +68,12 @@ instance ToStringForUser HopefullyExerciseName where
   toStringForUser = \case
     IndeedItIs n -> n 
     Nothing -> "No Name"
+
+instance ToStringForUser String where
+  toStringForUser = ( ++ "\n" )
+
+instance ToStringForUser Strings where
+  toStringForUser = forEach ( ++ "\n" ) >>> glue
+
+print :: ToStringForUser a => a -> IO ()
+print = toStringForUser >>> putStr

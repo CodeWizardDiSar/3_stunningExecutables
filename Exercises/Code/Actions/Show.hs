@@ -1,56 +1,40 @@
 module Show where
 import Prelude 
-  ( Int, String, ($), IO, (>>), (>>=), (++) )
+  ( String, IO, (>>), (>>=) )
 import Types
-  ( Exercise ( ToDo, Done, Missed ), Exercises, Date( D ), HopefullySome( IndeedItIs, Nothing )
-  , HopefullyExerciseName , Strings, HeaderRow, Headers, ExerciseData( subject, number, name) )
+  ( HeaderRow, Headers )
 import ToString
-  ( toStringForUser )
+  ( print )
 import Renaming
-  ( glue, forEach, (>>>), printString )
+  ( forEach, (>>>) )
 import UsefulFunctions
   ( doSequentially )
-import Data.List 
-  ( intercalate )
 import ExercisesFromFile
   ( toDoExercises, doneExercises, missedExercises )
 import UsefulForActions
-  ( printBeutified, sortChrono )
+  ( sortChrono )
 import Data.Function
   ( (&) )
 import Helpers
-  ( putTogether )
+  ( putTogether, beautify )
 
-showActions :: [IO ()]
+showActions :: [ IO () ]
 showActions = forEach ( printHeaderRow >> ) [ showToDo, showDone, showMissed, showAll ]
 
 printHeaderRow :: IO ()
-printHeaderRow = printBeutified headerRow
+printHeaderRow = beautify headerRow & print
 
 showToDo :: IO ()
-showToDo = showTitleGetDo "ToDo" toDoExercises ( sortChrono >>> print )
+showToDo = beautify "ToDo" & print >> toDoExercises >>= sortChrono >>> print
 
 showDone :: IO ()
-showDone = showTitleGetDo "Done" doneExercises print
+showDone = beautify "Done" & print >> doneExercises >>= print
 
 showMissed :: IO ()
-showMissed = showTitleGetDo "Missed" missedExercises print
+showMissed = beautify "Missed" & print >> missedExercises >>= print
 
 showAll :: IO ()
 showAll = doSequentially [ showToDo, showDone, showMissed ]
-
-type Title = String
-
-showTitleGetDo :: Title -> IO Exercises -> (Exercises -> IO ()) -> IO ()
-showTitleGetDo = \t g d->
-  printBeutified t >>
-  g >>= d
-
-print :: Exercises -> IO ()
-print = toStringForUser >>> printString
-
-printEx :: Exercise -> IO ()
-printEx = toStringForUser >>> printString
 
 headerRow :: HeaderRow
 headerRow = putTogether headerList

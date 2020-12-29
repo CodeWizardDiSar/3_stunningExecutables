@@ -18,11 +18,6 @@ import Data.Function
   ( (&) )
 import Control.Monad
   ( (>=>) )
-import Helpers
-  ( beautify )
-
-printBeutified :: String -> IO ()
-printBeutified = beautify >>> printString
 
 writeExercisesToFile :: Exercises -> IO ()
 writeExercisesToFile = toStringForFile >>> writeToNextDataKeeper

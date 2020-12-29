@@ -8,4 +8,4 @@ beautify :: String -> String
 beautify = ( "\t" ++ ) >>> ( ++ "\n" )
 
 putTogether :: [ String ] -> String
-putTogether = forEach ( ++ repeat ' ') >>> take 20 >>> glue
+putTogether = forEach ( ( ++ repeat ' ') >>> take 20 ) >>> glue

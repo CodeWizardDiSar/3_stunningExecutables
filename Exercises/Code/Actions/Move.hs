@@ -8,8 +8,6 @@ import ExercisesFromFile
   ( toDoExercises, doneExercises, missedExercises )
 import Data.Function
   ( (&), ($) )
-import Show
-  ( printEx )
 import FileManagement     
   ( writeToNextDataKeeper, updateVersion )
 import Types
@@ -27,7 +25,6 @@ import ShowExercises
 import Control.Monad
   ( (>=>) )
 
--- moveFrom list of actions
 moveActions :: [ IO () ]
 moveActions = [ moveFrom "todo", moveFrom "done", moveFrom "missed" ]
 

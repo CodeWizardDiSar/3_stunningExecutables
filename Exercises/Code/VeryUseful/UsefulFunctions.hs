@@ -10,7 +10,7 @@ import Renaming
 import FromString
   ( fromString )
 import ToString
-  ( toString )
+  ( toString, print )
 
 doSequentially :: [ IO () ] -> IO ()
 doSequentially = sequence_
@@ -22,13 +22,13 @@ tabsBefore :: Int -> String -> String
 tabsBefore = \i s-> ( repeatNTimes i '\t' ) ++ s
 
 printStrings :: Strings -> IO ()
-printStrings = forEachDo printString
+printStrings = forEachDo print
 
 printEmptyLine :: IO ()
-printEmptyLine = printString ""
+printEmptyLine = print ""
 
 showConfusion :: IO ()
-showConfusion = printString "I'm not sure I understand :/\n"
+showConfusion = print "I'm not sure I understand :/\n"
 
 printEmptyLines :: Int -> IO ()
 printEmptyLines = \case
