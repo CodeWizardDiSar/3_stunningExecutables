@@ -1,23 +1,25 @@
 module UsefulForActions where
 import Prelude
-  ( sequence, not, (<), (.), filter, (&&), (>), (||), (==), repeat, take, length, Bool(..)
-  , getLine, Int, IO, (+), ($), elem, (-), (!!), (>>), (++), (>>=), String, foldl, otherwise )
+  ( sequence, not, (.), filter, (>), length, Bool( True ), getLine, Int, IO, (+), elem
+  , (>>), (++), (>>=), String, foldl, otherwise )
 import Types
-  ( Exercise( ToDo ), Exercises, ToDoExercise( date ), subject, Subject, Subjects, Date ( D ) )
+  ( Exercises, Subject, Subjects )
 import ToSubject
   ( toSubject )
 import ToString
-  ( toStringForFile, toString )
+  ( toStringForFile, toString, print )
 import FromString
   ( fromString )
 import Renaming
-  ( wrap, (>>>), glue, forEach, printString, printErrorMessage )
+  ( wrap, (>>>), glue )
 import FileManagement
   ( writeToNextDataKeeper )
 import Data.Function
   ( (&) )
 import Control.Monad
   ( (>=>) )
+import IsEarlierThan
+  ( isEarlierThan )
 
 writeExercisesToFile :: Exercises -> IO ()
 writeExercisesToFile = toStringForFile >>> writeToNextDataKeeper
@@ -52,30 +54,21 @@ exercisesToSubjects = \case
 printSubjects :: Int -> Subjects -> IO ()
 printSubjects = \i -> \case
   [] -> wrap ()
-  sub:subs -> ( [ "\t", i & toString, ": ", sub ] & glue & printString ) >>
-    printSubjects (i+1) subs
+  sub:subs -> ( [ "\t", i & toString, ": ", sub ] & glue & print ) >>
+    printSubjects ( i + 1 ) subs
 
 sortChrono :: Exercises -> Exercises
 sortChrono = \case
   [] -> [] 
-  ex:exs -> sortChrono ( filter ( before ex ) exs) ++ [ ex ] ++
-    sortChrono ( filter ( not . before ex) exs)
-
-before :: Exercise -> Exercise -> Bool
-before ( ToDo e1 ) ( ToDo e2 ) = date e2 `isBefore` date e1
-before _ _ =
-  printErrorMessage "Programmer messed up: trying to sort chronologically non-ToDo exercise"
-
-isBefore :: Date -> Date -> Bool
-isBefore ( D d m y )  ( D d' m' y' ) =
-  y < y' || ( y == y' && m < m' ) || ( y == y' && m == m' && d < d' )
+  ex:exs -> sortChrono ( filter ( not . isEarlierThan ex ) exs) ++ [ ex ] ++
+    sortChrono ( filter ( isEarlierThan ex ) exs)
 
 printAndGetAnswer :: String -> IO String
 printAndGetAnswer = \s ->
-  printString s >> getLine >>= \a->
+  print s >> getLine >>= \a->
   case length a > 20 of
     True -> printAnnoyingMessage >> printAndGetAnswer s
     _ -> wrap a
 
 printAnnoyingMessage :: IO ()
-printAnnoyingMessage = printString "More than 20 chars is not pretty"
+printAnnoyingMessage = print "More than 20 chars is not pretty"

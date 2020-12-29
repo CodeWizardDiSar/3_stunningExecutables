@@ -16,7 +16,7 @@ import UsefulForActions
 import Data.Function
   ( (&) )
 import Helpers
-  ( putTogether, beautify )
+  ( glue20CharsEach, beautify )
 
 showActions :: [ IO () ]
 showActions = forEach ( printHeaderRow >> ) [ showToDo, showDone, showMissed, showAll ]
@@ -37,7 +37,7 @@ showAll :: IO ()
 showAll = doSequentially [ showToDo, showDone, showMissed ]
 
 headerRow :: HeaderRow
-headerRow = putTogether headerList
+headerRow = glue20CharsEach headerList
 
 headerList :: Headers
 headerList = [ "Subject", "Number", "Name", "Date" ]

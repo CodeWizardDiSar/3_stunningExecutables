@@ -3,7 +3,7 @@ import Prelude
   ( String, IO, Maybe( Just, Nothing ), Int, (-), (!!), (>>), (>>=), Bool ( True ) , (>), (<=)
   , (&&), length )
 import Renaming
-  ( forEach, printString )
+  ( forEach )
 import UsefulFunctions
   ( doSequentially, printEmptyLine, showConfusion )
 import FileManagement
@@ -27,6 +27,8 @@ import Text.Read
   ( readMaybe )
 import UsefulForActions
   ( printAndGetAnswer )
+import ToString
+  ( print )
 
 main :: IO ()
 main = doSequentially [ printEmptyLine, printWelcomingMessage, initialMenu ] 
@@ -64,7 +66,7 @@ actionsWIMAE :: [ [ IO () ] ]
 actionsWIMAE = 
   [ addActionsWIMAE, showActionsWIMAE, editActionsWIMAE, deleteActionsWIMAE, moveActionsWIMAE ]
 [ addActionsWIMAE, showActionsWIMAE, editActionsWIMAE, deleteActionsWIMAE, moveActionsWIMAE ] =
-  ( ( >> initialMenu ) `forEach` ) `forEach`
+  forEach ( forEach ( >> initialMenu ) )
     [ addActions, showActions, editActions, deleteActions, moveActions ]
 
 undo :: IO ()
@@ -73,4 +75,4 @@ undo = getCurrentDataKeeper >>= removeFile >> downdateVersion >> initialMenu
 printingStuff :: [ IO () ]
 printingStuff = [ printWelcomingMessage, waveAndExit, showConfusion ]
 [ printWelcomingMessage, waveAndExit ] =
-  printString `forEach` [ "Welcome to the exercises manager!\n", "bye!" ]
+  forEach print [ "Welcome to the exercises manager!\n", "bye!" ]

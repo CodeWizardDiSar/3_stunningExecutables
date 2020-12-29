@@ -14,7 +14,7 @@ wrap = return
 forEachDo :: Monad m => ( a -> m b ) -> [ a ] -> m ()
 forEachDo = mapM_
 
-( forEach, glue, splitInLines, printString, printErrorMessage, fileExists, readFromFile
+( forEach, glue, splitInLines, printErrorMessage, fileExists, readFromFile
  ,writeToFile, repeatNTimes) =
-  ( map, concat :: [ [ a ] ] -> [ a ], lines, putStrLn , error :: String -> a, doesFileExist
+  ( map, concat :: [ [ a ] ] -> [ a ], lines , error :: String -> a, doesFileExist
   , readFile, writeFile, replicate )

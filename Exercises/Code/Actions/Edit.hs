@@ -11,7 +11,7 @@ import Add
 import UsefulForActions
   ( combine, printAndGetAnswer, writeExercisesToFile, exercisesToSubjects )
 import Renaming 
-  ( printString, wrap, (>>>) )
+  ( wrap, (>>>) )
 import ExercisesFromFile
   ( toDoExercises, doneExercises, missedExercises )
 import Data.Function

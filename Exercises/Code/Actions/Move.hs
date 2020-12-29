@@ -3,7 +3,7 @@ import Prelude
   ( (.), not, filter, (-), (!!), (+), elem, Bool( True, False ), (==), sequence, getLine, IO
   , Int, (>>=) , String, (>>) )
 import Renaming
-  ( printString, wrap, (>>>) )
+  ( wrap, (>>>) )
 import ExercisesFromFile
   ( toDoExercises, doneExercises, missedExercises )
 import Data.Function
@@ -24,6 +24,8 @@ import ShowExercises
   ( showExercises, subIs, getChosen )
 import Control.Monad
   ( (>=>) )
+import ToString
+  ( print )
 
 moveActions :: [ IO () ]
 moveActions = [ moveFrom "todo", moveFrom "done", moveFrom "missed" ]
@@ -53,7 +55,7 @@ moveOld = \ex ->
     "1" -> moveToToDo ex
     "2" -> moveTo ( DoneExercise >>> Done ) ex
     "3" -> moveTo ( MissedExercise >>> Missed ) ex
-    _ -> printString "what?" >> moveOld ex
+    _ -> print "what?" >> moveOld ex
 
 moveToToDo :: Exercise -> IO Exercise
 moveToToDo = \case 

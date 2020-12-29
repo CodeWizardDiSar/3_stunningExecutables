@@ -28,12 +28,15 @@ data ExerciseData =
   deriving ( Eq )
    
 
-data Date = D { day :: Day, month :: Month, year :: Year }
+data Date = Date { day :: Day, month :: Month, year :: Year }
   deriving ( Eq )
 
-type Day = Int
-type Month = Int
-type Year = Int
+data Day = Day Int
+  deriving ( Eq )
+data Month = Month Int
+  deriving ( Eq )
+data Year = Year Int
+  deriving ( Eq )
 
 type Path = String
 type Subject = String

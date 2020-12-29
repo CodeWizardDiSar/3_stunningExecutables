@@ -2,7 +2,7 @@ module FileManagement where
 import Prelude
   ( Bool( True ), flip, (++), (>>=), (>>), String, IO )
 import Renaming
-  ( fileExists, printString, readFromFile, writeToFile, wrap, (>>>) )
+  ( fileExists, readFromFile, writeToFile, wrap, (>>>) )
 import UsefulFunctions
   ( addOneToString, subOneFromString )
 import System.Directory
@@ -11,6 +11,8 @@ import Data.Function
   ( (&) )
 import Types
   ( Path )
+import ToString
+  ( print )
 
 homeDir :: Path
 homeDir = "/home/gnostis"
@@ -45,7 +47,7 @@ updateVersion = getVersion >>= addOneToString >>> writeToTemp >> renameTemp
 downdateVersion :: IO ()
 downdateVersion =
   getVersion >>= \case
-    "0" -> printString "Who you kidding brother?"
+    "0" -> print "Who you kidding brother?"
     version -> subOneFromString version & writeToTemp >> renameTemp
 
 writeToTemp :: String -> IO ()

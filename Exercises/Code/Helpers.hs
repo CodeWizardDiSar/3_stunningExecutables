@@ -7,5 +7,5 @@ import Renaming
 beautify :: String -> String
 beautify = ( "\t" ++ ) >>> ( ++ "\n" )
 
-putTogether :: [ String ] -> String
-putTogether = forEach ( ( ++ repeat ' ') >>> take 20 ) >>> glue
+glue20CharsEach :: [ String ] -> String
+glue20CharsEach = forEach ( ( ++ repeat ' ') >>> take 20 ) >>> glue

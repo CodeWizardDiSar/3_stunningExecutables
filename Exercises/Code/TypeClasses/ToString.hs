@@ -6,11 +6,12 @@ import Renaming
 import Types
   ( Strings, ExerciseData( ED ), ToDoExercise( toDoData, date )
   , DoneExercise( doneData ), MissedExercise( missedData )
-  , Date( D, day, month, year ), HopefullyExerciseName
+  , Date( Date, day, month, year ), HopefullyExerciseName
   , Exercise( ToDo, Done, Missed ), Exercises
   , HopefullySome( IndeedItIs, Nothing )
   , ToDoExercise( ToDoExercise )
-  , DoneExercise( DoneExercise ), MissedExercise( MissedExercise ) )
+  , DoneExercise( DoneExercise ), MissedExercise( MissedExercise )
+  , Day( Day ), Month( Month ), Year( Year ) )
 import Data.Function
   ( (&) )
 import Data.List.Split
@@ -18,12 +19,13 @@ import Data.List.Split
 import Data.List
   ( intercalate )
 import Helpers
-  ( beautify, putTogether )
+  ( beautify, glue20CharsEach )
 
 class ToString a where toString :: a -> String
 
 instance ToString Date where
-  toString ( D day month year ) = [ day, month, year ] & forEach toString & intercalate "/"
+  toString ( Date ( Day day ) ( Month month) ( Year year ) ) =
+    [ day, month, year ] & forEach toString & intercalate "/"
 
 instance ToString Int where
   toString = show
@@ -55,14 +57,17 @@ instance ToStringForFile HopefullyExerciseName where
 class ToStringForUser a where toStringForUser :: a -> String
 
 instance ToStringForUser Exercises where
-  toStringForUser = forEach ( toStringForUser >>> beautify) >>> glue 
+  toStringForUser = forEach ( toStringForUser >>> beautify ) >>> glue >>> toStringForUser
 
 instance ToStringForUser Exercise where
   toStringForUser = \case
-    ToDo ( ToDoExercise toDoData date ) -> putTogether $ toStrings toDoData ++
+    ToDo ( ToDoExercise toDoData date ) -> glue20CharsEach $ toStrings toDoData ++
       [ toString date ]
-    Done ( DoneExercise doneData ) -> putTogether $ toStrings doneData
-    Missed ( MissedExercise missedData ) -> putTogether $ toStrings missedData
+    Done ( DoneExercise doneData ) -> glue20CharsEach $ toStrings doneData
+    Missed ( MissedExercise missedData ) -> glue20CharsEach $ toStrings missedData
+
+instance ToStringForUser ExerciseData where
+  toStringForUser = toStrings >>> glue20CharsEach >>> beautify
 
 instance ToStringForUser HopefullyExerciseName where
   toStringForUser = \case
@@ -73,7 +78,7 @@ instance ToStringForUser String where
   toStringForUser = ( ++ "\n" )
 
 instance ToStringForUser Strings where
-  toStringForUser = forEach ( ++ "\n" ) >>> glue
+  toStringForUser = forEach toStringForUser >>> glue >>> toStringForUser
 
 print :: ToStringForUser a => a -> IO ()
 print = toStringForUser >>> putStr

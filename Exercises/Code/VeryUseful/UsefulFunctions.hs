@@ -6,7 +6,7 @@ import Data.Function
 import Types
   ( Strings )
 import Renaming
-  ( (>>>), wrap, printString, forEachDo, repeatNTimes, printErrorMessage , glue )
+  ( (>>>), wrap, forEachDo, repeatNTimes, printErrorMessage , glue )
 import FromString
   ( fromString )
 import ToString
