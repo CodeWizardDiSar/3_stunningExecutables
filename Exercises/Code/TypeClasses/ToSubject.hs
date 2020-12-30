@@ -4,8 +4,8 @@ import Prelude
 import Renaming
   ( (.>) )
 import Types
-  ( Subject, ExerciseData( subject ), Exercise( ToDo, Done, Missed ), ToDoExercise( toDoData )
-  , DoneExercise( doneData ), MissedExercise( missedData ), Exercises, Subjects )
+  ( Subject, ExData( subject ), Exercise( ToDo, Done, Missed ), ToDoExercise( exData )
+  , DoneExercise, MissedExercise, Exercises, Subjects )
 
 class ToSubject a where toSubject :: a -> Subject
 
@@ -16,15 +16,9 @@ instance ToSubject Exercise where
     Missed exercise -> toSubject exercise
 
 instance ToSubject ToDoExercise where
-  toSubject = toDoData .> toSubject
+  toSubject = exData .> toSubject
 
-instance ToSubject DoneExercise where
-  toSubject = doneData .> toSubject
-
-instance ToSubject MissedExercise where
-  toSubject = missedData .> toSubject
-
-instance ToSubject ExerciseData where
+instance ToSubject ExData where
   toSubject = subject
 
 class ToSubjects a where toSubjects :: a -> Subjects

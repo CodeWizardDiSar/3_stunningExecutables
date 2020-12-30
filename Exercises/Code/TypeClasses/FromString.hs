@@ -4,11 +4,11 @@ import Prelude
 import Renaming
   ( (.>), printErrorMessage, forEach, glue )
 import Types
-  ( Strings, Subject, ExerciseData( ED, subject, number, name ), ToDoExercise( ToDoExercise )
-  , DoneExercise( DoneExercise ), MissedExercise( MissedExercise )
+  ( Strings, Subject, ExData( ED, subject, number, name ), ToDoExercise( ToDoExercise )
+  , DoneExercise, MissedExercise
   , Date( Date, day, month, year )
   , HopefullyExerciseName , Exercise( ToDo, Done, Missed ), Exercises
-  , HopefullySome( IndeedItIs, Nothing ), Day( Day ), Month( Month ), Year( Year ) )
+  , HopefullySome( IndeedItIs, Nothing ), Day, Month, Year )
 import Data.Function
   ( (&) )
 import Data.List.Split
@@ -20,15 +20,6 @@ class FromString a where fromString :: String -> a
 
 instance FromString Int where
   fromString = read
-
-instance FromString Day where
-  fromString = fromString .> Day
-
-instance FromString Month where
-  fromString = fromString .> Month
-
-instance FromString Year where
-  fromString = fromString .> Year
 
 class FromFileString a where fromFileString :: String -> a
 
@@ -72,14 +63,9 @@ instance FromFileStrings ToDoExercise where
       ToDoExercise ( ED s exNum (exName & fromFileString) ) ( date & fromFileString )
     _ -> printErrorMessage "Bad"
 
-instance FromFileStrings DoneExercise where
+instance FromFileStrings ExData where
   fromFileStrings = \case
-    [ "d", s, exNum, exName ] -> DoneExercise $ ED s exNum (exName & fromFileString)
-    _ -> printErrorMessage "Bad"
-
-instance FromFileStrings MissedExercise where
-  fromFileStrings = \case
-    [ "m", s, exNum, exName ] -> MissedExercise $ ED s exNum (exName & fromFileString)
+    [ "d", s, exNum, exName ] -> ED s exNum (exName & fromFileString)
     _ -> printErrorMessage "Bad"
 
 class FromUserStrings a where fromUserStrings :: Strings -> a
@@ -87,14 +73,7 @@ class FromUserStrings a where fromUserStrings :: Strings -> a
 instance FromUserStrings ToDoExercise where
   fromUserStrings = undefined
 
-instance FromUserStrings DoneExercise where
-  fromUserStrings = fromUserStrings .> DoneExercise
-
-instance FromUserStrings MissedExercise where
-  fromUserStrings = fromUserStrings .> MissedExercise
-
-instance FromUserStrings ExerciseData where
+instance FromUserStrings ExData where
   fromUserStrings = \case
     [ subject, number, nameString ] -> ED subject number ( nameString & fromUserString )
     _ -> printErrorMessage "Programmer messed up in collecting exercise data from user"
-

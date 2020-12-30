@@ -4,14 +4,13 @@ import Prelude
 import Renaming
   ( (.>), forEach, glue )
 import Types
-  ( Strings, ExerciseData( ED ), ToDoExercise( toDoData, date )
-  , DoneExercise( doneData ), MissedExercise( missedData )
+  ( Strings, ExData( ED ), ToDoExercise( exData, date )
+  , DoneExercise, MissedExercise
   , Date( Date, day, month, year ), HopefullyExerciseName
   , Exercise( ToDo, Done, Missed ), Exercises
   , HopefullySome( IndeedItIs, Nothing )
   , ToDoExercise( ToDoExercise )
-  , DoneExercise( DoneExercise ), MissedExercise( MissedExercise )
-  , Day( Day ), Month( Month ), Year( Year ) )
+  , Day, Month, Year )
 import Data.Function
   ( (&) )
 import Data.List.Split
@@ -24,7 +23,7 @@ import Helpers
 class ToString a where toString :: a -> String
 
 instance ToString Date where
-  toString ( Date ( Day day ) ( Month month) ( Year year ) ) =
+  toString ( Date day month year ) =
     [ day, month, year ] & forEach toString & intercalate "/"
 
 instance ToString Int where
@@ -32,7 +31,7 @@ instance ToString Int where
 
 class ToStrings a where toStrings :: a -> Strings
 
-instance ToStrings ExerciseData where
+instance ToStrings ExData where
   toStrings ( ED subject number name ) = [ subject, number, toStringForUser $ name ]
 
 class ToStringForFile a where toStringForFile :: a -> String
@@ -42,10 +41,10 @@ instance ToStringForFile Exercises where
 
 instance ToStringForFile Exercise where
   toStringForFile = \case
-    ToDo toDoEx -> commaSeperate $ "t" : toStrings ( toDoData toDoEx ) ++ 
+    ToDo toDoEx -> commaSeperate $ "t" : toStrings ( exData toDoEx ) ++ 
                      [ toString $ date toDoEx ]
-    Done doneEx -> commaSeperate $ "d" : toStrings ( doneData doneEx )
-    Missed missedEx -> commaSeperate $ "m" : toStrings ( missedData missedEx )
+    Done doneData -> commaSeperate $ "d" : toStrings doneData
+    Missed missedData -> commaSeperate $ "m" : toStrings missedData
 
 commaSeperate = intercalate ","
 
@@ -61,12 +60,12 @@ instance ToStringForUser Exercises where
 
 instance ToStringForUser Exercise where
   toStringForUser = \case
-    ToDo ( ToDoExercise toDoData date ) -> glue20CharsEach $ toStrings toDoData ++
+    ToDo ( ToDoExercise exData date ) -> glue20CharsEach $ toStrings exData ++
       [ toString date ]
-    Done ( DoneExercise doneData ) -> glue20CharsEach $ toStrings doneData
-    Missed ( MissedExercise missedData ) -> glue20CharsEach $ toStrings missedData
+    Done doneData -> glue20CharsEach $ toStrings doneData
+    Missed missedData -> glue20CharsEach $ toStrings missedData
 
-instance ToStringForUser ExerciseData where
+instance ToStringForUser ExData where
   toStringForUser = toStrings .> glue20CharsEach .> beautify
 
 instance ToStringForUser HopefullyExerciseName where

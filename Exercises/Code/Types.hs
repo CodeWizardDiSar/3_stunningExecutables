@@ -1,8 +1,12 @@
 module Types where
-import Prelude ( Eq, String, Int )
+import Prelude ( Eq, String, Int, Ord )
 
 -- Always a pleasure to have types (sorry python)
 data HopefullySome a = IndeedItIs { getA :: a } | Nothing
+  deriving ( Eq )
+
+data ExercisesAndChosen =
+  ExercisesAndChosen { exercises :: Exercises, chosen :: Exercise }
   deriving ( Eq )
 
 data Exercise =
@@ -14,29 +18,22 @@ data Exercise =
 data ExerciseType = ToDoEx | DoneEx | MissedEx
   deriving ( Eq )
 
-data ToDoExercise = ToDoExercise { toDoData :: ExerciseData , date :: Date }
+data ToDoExercise = ToDoExercise { exData :: ExData , date :: Date }
   deriving ( Eq )
 
-data DoneExercise = DoneExercise { doneData :: ExerciseData  }
-  deriving ( Eq )
+type DoneExercise = ExData
+type MissedExercise = ExData
 
-data MissedExercise = MissedExercise { missedData :: ExerciseData  }
-  deriving ( Eq )
-
-data ExerciseData =
+data ExData =
   ED { subject :: Subject, number :: ExerciseNumber, name :: HopefullyExerciseName }
   deriving ( Eq )
    
-
 data Date = Date { day :: Day, month :: Month, year :: Year }
   deriving ( Eq )
 
-data Day = Day Int
-  deriving ( Eq )
-data Month = Month Int
-  deriving ( Eq )
-data Year = Year Int
-  deriving ( Eq )
+type Day = Int
+type Month = Int
+type Year = Int
 
 type Path = String
 type Subject = String

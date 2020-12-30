@@ -1,7 +1,7 @@
-sr=$(shell find '.' -name '*.hs')
+sr = $(shell find '.' -name '*.hs')
 
-ex=./Executable
-in=./Intermediate
+ex = ./Executable
+in = ./Intermediate
 
 all: $(sr)
 	mkdir -p Intermediate

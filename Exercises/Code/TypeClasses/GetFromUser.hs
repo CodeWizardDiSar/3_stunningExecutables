@@ -2,8 +2,8 @@ module GetFromUser where
 import Prelude 
   ( IO, (>>=), sequence )
 import Types
-  ( ToDoExercise( ToDoExercise ), DoneExercise( DoneExercise )
-  , MissedExercise( MissedExercise ), ExerciseData, Strings, Date )
+  ( ToDoExercise( ToDoExercise ), DoneExercise
+  , MissedExercise, ExData, Strings, Date )
 import Renaming
   ( (.>), wrap, forEach )
 import Control.Monad.Zip
@@ -23,13 +23,7 @@ class GetFromUser a where getFromUser :: IO a
 instance GetFromUser ToDoExercise where 
   getFromUser = mzipWith ToDoExercise getFromUser getFromUser
 
-instance GetFromUser DoneExercise where 
-  getFromUser = getFromUser >>= DoneExercise .> wrap  
-
-instance GetFromUser MissedExercise where 
-  getFromUser = getFromUser >>= MissedExercise .> wrap  
-
-instance GetFromUser ExerciseData where 
+instance GetFromUser ExData where 
   getFromUser = getFromUser >>= fromUserStrings .> wrap
 
 instance GetFromUser Strings where 
