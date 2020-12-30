@@ -2,7 +2,7 @@ module ToString where
 import Prelude
   ( String, Int, IO, ($), (++), show, id, putStr )
 import Renaming
-  ( (>>>), forEach, glue )
+  ( (.>), forEach, glue )
 import Types
   ( Strings, ExerciseData( ED ), ToDoExercise( toDoData, date )
   , DoneExercise( doneData ), MissedExercise( missedData )
@@ -38,7 +38,7 @@ instance ToStrings ExerciseData where
 class ToStringForFile a where toStringForFile :: a -> String
 
 instance ToStringForFile Exercises where
-  toStringForFile = ( forEach ( toStringForFile >>> ( ++ "\n" ) ) ) >>> glue
+  toStringForFile = ( forEach ( toStringForFile .> ( ++ "\n" ) ) ) .> glue
 
 instance ToStringForFile Exercise where
   toStringForFile = \case
@@ -57,7 +57,7 @@ instance ToStringForFile HopefullyExerciseName where
 class ToStringForUser a where toStringForUser :: a -> String
 
 instance ToStringForUser Exercises where
-  toStringForUser = forEach ( toStringForUser >>> beautify ) >>> glue >>> toStringForUser
+  toStringForUser = forEach ( toStringForUser .> beautify ) .> glue .> toStringForUser
 
 instance ToStringForUser Exercise where
   toStringForUser = \case
@@ -67,7 +67,7 @@ instance ToStringForUser Exercise where
     Missed ( MissedExercise missedData ) -> glue20CharsEach $ toStrings missedData
 
 instance ToStringForUser ExerciseData where
-  toStringForUser = toStrings >>> glue20CharsEach >>> beautify
+  toStringForUser = toStrings .> glue20CharsEach .> beautify
 
 instance ToStringForUser HopefullyExerciseName where
   toStringForUser = \case
@@ -78,7 +78,7 @@ instance ToStringForUser String where
   toStringForUser = ( ++ "\n" )
 
 instance ToStringForUser Strings where
-  toStringForUser = forEach toStringForUser >>> glue >>> toStringForUser
+  toStringForUser = forEach toStringForUser .> glue .> toStringForUser
 
 print :: ToStringForUser a => a -> IO ()
-print = toStringForUser >>> putStr
+print = toStringForUser .> putStr

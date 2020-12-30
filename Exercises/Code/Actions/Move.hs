@@ -3,7 +3,7 @@ import Prelude
   ( (.), not, filter, (-), (!!), (+), elem, Bool( True, False ), (==), sequence, getLine, IO
   , Int, (>>=) , String, (>>) )
 import Renaming
-  ( wrap, (>>>) )
+  ( wrap, (.>) )
 import ExercisesFromFile
   ( toDoExercises, doneExercises, missedExercises )
 import Data.Function
@@ -14,14 +14,16 @@ import Types
   ( Strings, Exercises, Exercise( ToDo, Done, Missed ), ExerciseData
   , ToDoExercise( ToDoExercise ) , DoneExercise( DoneExercise )
   , MissedExercise( MissedExercise ) )
-import Add
-  ( dateFromUser )
+import GetFromUser
+  ( getFromUser )
 import UsefulFunctions   
   ( printStrings )
 import UsefulForActions
-  ( combine, showSubjects, getChoice, exercisesToSubjects, writeExercisesToFile )
+  ( combine, showSubjects, getChoice, writeExercisesToFile )
+import ToSubject
+  ( toSubjects )
 import ShowExercises
-  ( showExercises, subIs, getChosen )
+  ( subIs, getChosen )
 import Control.Monad
   ( (>=>) )
 import ToString
@@ -44,7 +46,7 @@ move = getChosen >=> moveChosen
 
 moveChosen :: ( Exercises, Int, Int ) -> IO Exercises
 moveChosen = \( exs, subNum, exNum ) ->
- let sub = exercisesToSubjects exs !! ( subNum - 1 )
+ let sub = toSubjects exs !! ( subNum - 1 )
      ex = filter (subIs sub) exs !! ( exNum - 1 )
  in moveOld ex >>= \newEx -> newEx : ( filter (not . (== ex) ) exs ) & wrap
 
@@ -53,15 +55,15 @@ moveOld = \ex ->
   printStrings [ "Move To?", "\t1: To Do", "\t2: Done", "\t3: Missed" ] >>
   getLine >>= \case
     "1" -> moveToToDo ex
-    "2" -> moveTo ( DoneExercise >>> Done ) ex
-    "3" -> moveTo ( MissedExercise >>> Missed ) ex
+    "2" -> moveTo ( DoneExercise .> Done ) ex
+    "3" -> moveTo ( MissedExercise .> Missed ) ex
     _ -> print "what?" >> moveOld ex
 
 moveToToDo :: Exercise -> IO Exercise
 moveToToDo = \case 
   ToDo a -> ToDo a & wrap
-  Done ( DoneExercise a ) -> dateFromUser >>= ( ToDoExercise a >>> ToDo >>> wrap )
-  Missed ( MissedExercise a ) -> dateFromUser >>= ( ToDoExercise a >>> ToDo >>> wrap )
+  Done ( DoneExercise a ) -> getFromUser >>= ( ToDoExercise a .> ToDo .> wrap )
+  Missed ( MissedExercise a ) -> getFromUser >>= ( ToDoExercise a .> ToDo .> wrap )
  
 moveTo :: ( ExerciseData -> Exercise ) -> Exercise -> IO Exercise
 moveTo = \x -> \case

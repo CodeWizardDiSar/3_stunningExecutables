@@ -48,7 +48,6 @@ type Title = String
 type Strings = [ String ]
 
 type Subjects = Strings
-type Headers = Strings
 type Choices = Strings
 type HopefullyExerciseName = HopefullySome String
 type Exercises = [ Exercise ]

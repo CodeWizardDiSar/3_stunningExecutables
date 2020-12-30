@@ -6,7 +6,7 @@ import Types
 import FromString
   ( fromFileString )
 import Renaming
-  ( wrap, forEach, readFromFile, (>>>), splitInLines )
+  ( wrap, forEach, readFromFile, (.>), splitInLines )
 import FileManagement
   ( getCurrentDataKeeper, getVersion )
 
@@ -15,7 +15,7 @@ getExercisesFromFile =
   getVersion >>= \case
     "0"-> wrap []
     _  -> getCurrentDataKeeper >>= readFromFile >>=
-          splitInLines >>> ( forEach fromFileString ) >>> wrap
+          splitInLines .> ( forEach fromFileString ) .> wrap
 
 getExercises :: [ IO Exercises ]
 getExercises = [ toDoExercises, doneExercises, missedExercises ]
@@ -23,7 +23,7 @@ getExercises = [ toDoExercises, doneExercises, missedExercises ]
 
 get :: ExerciseType -> IO Exercises
 get exerciseType =
-  getExercisesFromFile >>= filter ( toExerciseType >>> ( == exerciseType ) ) >>> wrap
+  getExercisesFromFile >>= filter ( toExerciseType .> ( == exerciseType ) ) .> wrap
 
 toExerciseType :: Exercise -> ExerciseType
 toExerciseType = \case 

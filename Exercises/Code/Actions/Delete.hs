@@ -12,7 +12,9 @@ import Data.Function
 import FileManagement
   ( updateVersion )
 import UsefulForActions
-  ( combine, writeExercisesToFile, exercisesToSubjects )
+  ( combine, writeExercisesToFile )
+import ToSubject
+  ( toSubjects )
 import ShowExercises
   ( getChosen, subIs )
 import Control.Monad
@@ -22,8 +24,10 @@ deleteActions :: [ IO () ]
 deleteActions = [ delete ToDoEx, delete DoneEx, delete MissedEx ]
 
 delete :: ExerciseType -> IO ()
-delete exerciseType =
-  exercisesAfterDeletion exerciseType >>= writeExercisesToFile >> updateVersion
+delete exerciseType = exercisesAfterDeletionToFile exerciseType >> updateVersion
+
+exercisesAfterDeletionToFile :: ExerciseType -> IO ()
+exercisesAfterDeletionToFile = exercisesAfterDeletion >=> writeExercisesToFile
 
 exercisesAfterDeletion :: ExerciseType -> IO Exercises
 exercisesAfterDeletion = \case
@@ -36,7 +40,7 @@ deleteChosen = getChosen >=> delete'
 
 delete' :: ( Exercises, Int, Int ) -> IO Exercises
 delete' = \( exercises, subjectNumber, exerciseNumber ) ->
- let sub = exercises & exercisesToSubjects & chosenSubject subjectNumber
+ let sub = exercises & toSubjects & chosenSubject subjectNumber
      ex = subjectExercises sub exercises !! ( exerciseNumber - 1 )
  in removeExercise ex exercises & wrap
 
@@ -44,7 +48,7 @@ chosenSubject :: Int -> Subjects -> Subject
 chosenSubject subjectNumber subjects = subjects !! ( subjectNumber - 1 )
 
 subjectExercises :: Subject -> Exercises -> Exercises
-subjectExercises subject exercises = filter ( subIs subject ) exercises
+subjectExercises subject = filter ( subIs subject )
 
 removeExercise :: Exercise -> Exercises -> Exercises
 removeExercise exercise = filter ( not . ( == exercise ) )

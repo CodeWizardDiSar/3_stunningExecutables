@@ -6,7 +6,7 @@ import Data.Function
 import Types
   ( Strings )
 import Renaming
-  ( (>>>), wrap, forEachDo, repeatNTimes, printErrorMessage , glue )
+  ( (.>), wrap, forEachDo, repeatNTimes, printErrorMessage , glue )
 import FromString
   ( fromString )
 import ToString
@@ -36,7 +36,7 @@ printEmptyLines = \case
   i -> printEmptyLine >> ( i - 1 & printEmptyLines )
 
 addNToString :: Int -> String -> String
-addNToString = \n -> fromString >>> ( + n ) >>> toString
+addNToString = \n -> fromString .> ( + n ) .> toString
 
 addOneToString :: String -> String
 addOneToString = addNToString 1

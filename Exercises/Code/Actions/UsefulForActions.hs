@@ -5,13 +5,13 @@ import Prelude
 import Types
   ( Exercises, Subject, Subjects )
 import ToSubject
-  ( toSubject )
+  ( toSubjects )
 import ToString
   ( toStringForFile, toString, print )
 import FromString
   ( fromString )
 import Renaming
-  ( wrap, (>>>), glue )
+  ( wrap, (.>), glue )
 import FileManagement
   ( writeToNextDataKeeper )
 import Data.Function
@@ -22,34 +22,16 @@ import IsEarlierThan
   ( isEarlierThan )
 
 writeExercisesToFile :: Exercises -> IO ()
-writeExercisesToFile = toStringForFile >>> writeToNextDataKeeper
+writeExercisesToFile = toStringForFile .> writeToNextDataKeeper
 
 getChoice :: IO Int
-getChoice = getLine >>= ( fromString >>> wrap )
+getChoice = getLine >>= ( fromString .> wrap )
 
 combine :: [ IO Exercises ] -> IO Exercises
-combine = sequence >=> ( glue >>> wrap )
+combine = sequence >=> ( glue .> wrap )
 
 showSubjects :: Exercises -> IO ()
-showSubjects = exercisesToSubjects >>> printSubjects 1
-
-toSubjects :: Exercises -> Subjects
-toSubjects = foldl ( \subs ex -> addToSubjects ( toSubject ex ) subs ) [] 
-
-addToSubjects :: Subject -> Subjects -> Subjects
-addToSubjects subject subjects
-  | elem subject subjects = subjects
-  | otherwise = subjects ++ [ subject ]
-
-exercisesToSubjects :: Exercises -> Subjects
-exercisesToSubjects = \case
-  [] -> []
-  ex:exs ->
-    let sub = ex & toSubject
-        subs = exs & exercisesToSubjects
-    in elem sub subs & \case
-       True -> subs
-       _ -> sub:subs
+showSubjects = toSubjects .> printSubjects 1
 
 printSubjects :: Int -> Subjects -> IO ()
 printSubjects = \i -> \case

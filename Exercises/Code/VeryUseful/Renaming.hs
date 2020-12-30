@@ -5,9 +5,9 @@ import Prelude
 import System.Directory
   ( doesFileExist )
 
-infixl 9 >>>
-(>>>) :: ( a -> b ) -> ( b -> c ) -> ( a -> c )
-(>>>) = flip (.)
+infixl 9 .>
+(.>) :: ( a -> b ) -> ( b -> c ) -> ( a -> c )
+(.>) = flip (.)
 
 wrap :: Monad m => a -> m a
 wrap = return

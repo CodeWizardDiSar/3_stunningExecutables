@@ -6,12 +6,14 @@ import Types
   , ExerciseData ( subject, number, name ), ToDoExercise( ToDoExercise )
   , DoneExercise( DoneExercise ), MissedExercise( MissedExercise )
   , ExerciseType ( ToDoEx, DoneEx, MissedEx ) )
-import Add
-  ( dateFromUser )
+import GetFromUser
+  ( getFromUser )
 import UsefulForActions
-  ( combine, printAndGetAnswer, writeExercisesToFile, exercisesToSubjects )
+  ( combine, printAndGetAnswer, writeExercisesToFile )
+import ToSubject
+  ( toSubjects )
 import Renaming 
-  ( wrap, (>>>) )
+  ( wrap, (.>) )
 import ExercisesFromFile
   ( toDoExercises, doneExercises, missedExercises )
 import Data.Function
@@ -44,9 +46,9 @@ getAndEditChosen = getChosen >=> editChosen
 
 editChosen :: ( Exercises, Int, Int ) -> IO Exercises
 editChosen = \( exs, subNum, exNum ) ->
- let sub = exercisesToSubjects exs !! ( subNum - 1 )
+ let sub = toSubjects exs !! ( subNum - 1 )
      ex = filter (subIs sub) exs !! ( exNum - 1 )
- in modify ex >>= ( ( : filter ( not . (==ex) ) exs ) >>> wrap )
+ in modify ex >>= ( ( : filter ( not . (==ex) ) exs ) .> wrap )
 
 newToDoExercise :: Date -> ExerciseData -> IO Exercise
 newToDoExercise date newExerciseData = ToDo ( ToDoExercise newExerciseData date ) & wrap
@@ -66,21 +68,21 @@ modifyToDo ( ToDoExercise exerciseData date ) =
     "1" -> changeSubject exerciseData >>= newToDoExercise date
     "2" -> changeNumber exerciseData >>= newToDoExercise date
     "3" -> changeName exerciseData >>= newToDoExercise date
-    "4" -> dateFromUser >>= \newDate -> ToDo ( ToDoExercise exerciseData newDate ) & wrap
+    "4" -> getFromUser >>= \newDate -> ToDo ( ToDoExercise exerciseData newDate ) & wrap
 
 modifyDone :: DoneExercise -> IO Exercise
 modifyDone ( DoneExercise exerciseData ) =
   chooseAttribute >>= \case
-    "1" -> changeSubject exerciseData >>= newExercise ( DoneExercise >>> Done )
-    "2" -> changeNumber exerciseData >>= newExercise ( DoneExercise >>> Done )
-    "3" -> changeName exerciseData >>= newExercise ( DoneExercise >>> Done )
+    "1" -> changeSubject exerciseData >>= newExercise ( DoneExercise .> Done )
+    "2" -> changeNumber exerciseData >>= newExercise ( DoneExercise .> Done )
+    "3" -> changeName exerciseData >>= newExercise ( DoneExercise .> Done )
 
 modifyMissed :: MissedExercise -> IO Exercise
 modifyMissed ( MissedExercise exerciseData ) =
   chooseAttribute >>= \case
-    "1" -> changeSubject exerciseData >>= newExercise ( MissedExercise >>> Missed )
-    "2" -> changeNumber exerciseData >>= newExercise ( MissedExercise >>> Missed )
-    "3" -> changeName exerciseData >>= newExercise ( MissedExercise >>> Missed )
+    "1" -> changeSubject exerciseData >>= newExercise ( MissedExercise .> Missed )
+    "2" -> changeNumber exerciseData >>= newExercise ( MissedExercise .> Missed )
+    "3" -> changeName exerciseData >>= newExercise ( MissedExercise .> Missed )
 
 changeSubject :: ExerciseData -> IO ExerciseData
 changeSubject exerciseData =

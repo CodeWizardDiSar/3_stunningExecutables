@@ -2,11 +2,11 @@ module Show where
 import Prelude 
   ( String, IO, (>>), (>>=) )
 import Types
-  ( HeaderRow, Headers )
+  ( HeaderRow, ExerciseType( ToDoEx, DoneEx, MissedEx ) )
 import ToString
   ( print )
 import Renaming
-  ( forEach, (>>>) )
+  ( forEach, (.>) )
 import UsefulFunctions
   ( doSequentially )
 import ExercisesFromFile
@@ -19,25 +19,20 @@ import Helpers
   ( glue20CharsEach, beautify )
 
 showActions :: [ IO () ]
-showActions = forEach ( printHeaderRow >> ) [ showToDo, showDone, showMissed, showAll ]
+showActions =
+  forEach ( printBeautified headerRow >> ) [ show ToDoEx, show DoneEx, show MissedEx, showAll ]
 
-printHeaderRow :: IO ()
-printHeaderRow = beautify headerRow & print
-
-showToDo :: IO ()
-showToDo = beautify "ToDo" & print >> toDoExercises >>= sortChrono >>> print
-
-showDone :: IO ()
-showDone = beautify "Done" & print >> doneExercises >>= print
-
-showMissed :: IO ()
-showMissed = beautify "Missed" & print >> missedExercises >>= print
-
-showAll :: IO ()
-showAll = doSequentially [ showToDo, showDone, showMissed ]
+printBeautified :: String -> IO ()
+printBeautified = beautify .> print
 
 headerRow :: HeaderRow
-headerRow = glue20CharsEach headerList
+headerRow = glue20CharsEach [ "Subject", "Number", "Name", "Date" ]
 
-headerList :: Headers
-headerList = [ "Subject", "Number", "Name", "Date" ]
+show :: ExerciseType -> IO ()
+show = \case
+  ToDoEx -> printBeautified "ToDo" >> toDoExercises >>= sortChrono .> print
+  DoneEx -> printBeautified "Done" >> doneExercises >>= print
+  MissedEx -> printBeautified "Missed" >> missedExercises >>= print
+
+showAll :: IO ()
+showAll = doSequentially [ show ToDoEx, show DoneEx, show MissedEx ]

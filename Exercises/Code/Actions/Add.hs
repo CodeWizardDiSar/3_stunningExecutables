@@ -1,53 +1,23 @@
 module Add where
 import Prelude
-  ( (>>=), (>>), IO, sequence )
+  ( (>>=), (>>), IO )
 import Types
-  ( Exercise( ToDo, Done, Missed ), ExerciseData, Date, Strings, ToDoExercise( ToDoExercise ) )
-import FromString
-  ( fromStrings, FromUserStrings, fromUserStrings )
+  ( Exercise( ToDo, Done, Missed ) )
 import Renaming
-  ( (>>>), wrap, forEach )
+  ( (.>) )
 import ExercisesFromFile
   ( getExercisesFromFile )
 import FileManagement
   ( updateVersion )
 import UsefulForActions
-  ( printAndGetAnswer, writeExercisesToFile )
-import Control.Monad.Zip
-  ( mzipWith, mzip, MonadZip )
-import Control.Invertible.Monoidal
-  ( pairADefault )
-
-instance MonadZip IO where
-  mzip = pairADefault
+  ( writeExercisesToFile )
+import GetFromUser
+  ( getFromUser )
 
 addActions :: [ IO () ]
 addActions =
-  [ getToDoExerciseFromUser >>= ToDo >>> add, getExerciseFromUser Done >>= add
-  , getExerciseFromUser Missed >>= add ]
+  [ getFromUser >>= ToDo .> add, getFromUser >>= Done .> add, getFromUser >>= Missed .> add ]
 
 add :: Exercise -> IO ()
 add exerciseFromUser =
-  getExercisesFromFile >>= ( exerciseFromUser : ) >>> writeExercisesToFile >> updateVersion
-
-getExerciseFromUser :: FromUserStrings a => ( a -> Exercise ) -> IO Exercise
-getExerciseFromUser exerciseConstructor =
-  dataStringsFromUser >>= fromUserStrings >>> exerciseConstructor >>> wrap
-
-getToDoExerciseFromUser :: IO ToDoExercise
-getToDoExerciseFromUser = mzipWith ToDoExercise exerciseDataFromUser dateFromUser
-
-exerciseDataFromUser :: IO ExerciseData
-exerciseDataFromUser = dataStringsFromUser >>= fromUserStrings >>> wrap
-
-dataStringsFromUser :: IO Strings
-dataStringsFromUser = printAndGetAnswers [ "Subject?", "Number?", "Name?" ]
-
-dateFromUser :: IO Date
-dateFromUser = printAndGetAnswers dateQuestions >>= fromStrings >>> wrap
-
-dateQuestions :: Strings
-dateQuestions = [ "Day? (number)", "Month? (number)", "Year?" ]
-
-printAndGetAnswers :: Strings -> IO Strings 
-printAndGetAnswers = forEach printAndGetAnswer >>> sequence
+  getExercisesFromFile >>= ( exerciseFromUser : ) .> writeExercisesToFile >> updateVersion

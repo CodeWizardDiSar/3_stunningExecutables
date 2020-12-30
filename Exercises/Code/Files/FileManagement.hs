@@ -2,7 +2,7 @@ module FileManagement where
 import Prelude
   ( Bool( True ), flip, (++), (>>=), (>>), String, IO )
 import Renaming
-  ( fileExists, readFromFile, writeToFile, wrap, (>>>) )
+  ( fileExists, readFromFile, writeToFile, wrap, (.>) )
 import UsefulFunctions
   ( addOneToString, subOneFromString )
 import System.Directory
@@ -42,7 +42,7 @@ getVersion =
     _ -> writeToFile versionKeeper "0" >> wrap "0"
 
 updateVersion :: IO ()
-updateVersion = getVersion >>= addOneToString >>> writeToTemp >> renameTemp
+updateVersion = getVersion >>= addOneToString .> writeToTemp >> renameTemp
 
 downdateVersion :: IO ()
 downdateVersion =
@@ -57,10 +57,10 @@ renameTemp :: IO ()
 renameTemp = renameFile tempVersionKeeper versionKeeper
 
 getCurrentDataKeeper :: IO String
-getCurrentDataKeeper = getVersion >>= addDKPrefix >>> wrap
+getCurrentDataKeeper = getVersion >>= addDKPrefix .> wrap
 
 getNextDataKeeper :: IO Path
-getNextDataKeeper = getVersion >>= addOneToString >>> addDKPrefix >>> wrap
+getNextDataKeeper = getVersion >>= addOneToString .> addDKPrefix .> wrap
 
 writeToNextDataKeeper :: String -> IO ()
 writeToNextDataKeeper = \s -> getNextDataKeeper >>= flip writeToFile s

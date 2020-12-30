@@ -2,7 +2,7 @@ module FromString where
 import Prelude
   ( String, Int, ($), (++), undefined, read )
 import Renaming
-  ( (>>>), printErrorMessage, forEach, glue )
+  ( (.>), printErrorMessage, forEach, glue )
 import Types
   ( Strings, Subject, ExerciseData( ED, subject, number, name ), ToDoExercise( ToDoExercise )
   , DoneExercise( DoneExercise ), MissedExercise( MissedExercise )
@@ -22,18 +22,18 @@ instance FromString Int where
   fromString = read
 
 instance FromString Day where
-  fromString = fromString >>> Day
+  fromString = fromString .> Day
 
 instance FromString Month where
-  fromString = fromString >>> Month
+  fromString = fromString .> Month
 
 instance FromString Year where
-  fromString = fromString >>> Year
+  fromString = fromString .> Year
 
 class FromFileString a where fromFileString :: String -> a
 
 instance FromFileString Exercise where
-  fromFileString = splitOn "," >>> fromFileStrings
+  fromFileString = splitOn "," .> fromFileStrings
 
 instance FromFileString HopefullyExerciseName where
   fromFileString = \case
@@ -41,7 +41,7 @@ instance FromFileString HopefullyExerciseName where
     exName -> IndeedItIs exName
 
 instance FromFileString Date where
-  fromFileString = splitOn "/" >>> fromStrings
+  fromFileString = splitOn "/" .> fromStrings
 
 class FromUserString a where fromUserString :: String -> a
 
@@ -88,10 +88,10 @@ instance FromUserStrings ToDoExercise where
   fromUserStrings = undefined
 
 instance FromUserStrings DoneExercise where
-  fromUserStrings = fromUserStrings >>> DoneExercise
+  fromUserStrings = fromUserStrings .> DoneExercise
 
 instance FromUserStrings MissedExercise where
-  fromUserStrings = fromUserStrings >>> MissedExercise
+  fromUserStrings = fromUserStrings .> MissedExercise
 
 instance FromUserStrings ExerciseData where
   fromUserStrings = \case
