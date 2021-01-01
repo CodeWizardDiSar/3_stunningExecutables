@@ -2,6 +2,8 @@ module Move where
 import Prelude
   ( (.), not, filter, (-), (!!), (+), elem, Bool( True, False ), (==), sequence, getLine, IO
   , Int, (>>=) , String, (>>) )
+import Helpers 
+  ( combine )
 import Renaming
   ( wrap, (.>) )
 import ExercisesFromFile
@@ -19,7 +21,7 @@ import GetFromUser
 import UsefulFunctions   
   ( printStrings )
 import UsefulForActions
-  ( combine, showSubjects, getChoice, writeExercisesToFile )
+  ( writeExercisesToFile )
 import ToSubject
   ( toSubjects )
 import ShowExercises

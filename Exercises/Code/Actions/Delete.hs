@@ -3,6 +3,8 @@ import Prelude
   ( (.), not, filter, (-), (!!), (==), IO, String, Int, (>>=), (>>) )
 import Types
   ( Exercise, Exercises, Subject, Subjects, ExerciseType( ToDoEx, DoneEx, MissedEx ) )
+import Helpers
+  ( combine  )
 import Renaming
   ( wrap )
 import ExercisesFromFile
@@ -12,7 +14,7 @@ import Data.Function
 import FileManagement
   ( updateVersion )
 import UsefulForActions
-  ( combine, writeExercisesToFile )
+  ( writeExercisesToFile )
 import ToSubject
   ( toSubjects )
 import ShowExercises

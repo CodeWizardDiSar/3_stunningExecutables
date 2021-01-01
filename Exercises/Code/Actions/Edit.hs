@@ -6,10 +6,12 @@ import Types
   , ExData ( subject, number, name ), ToDoExercise( ToDoExercise )
   , DoneExercise, MissedExercise
   , ExerciseType ( ToDoEx, DoneEx, MissedEx ) )
+import Helpers
+  ( combine )
 import GetFromUser
   ( getFromUser )
 import UsefulForActions
-  ( combine, printAndGetAnswer, writeExercisesToFile )
+  ( printAndGetAnswer, writeExercisesToFile )
 import ToSubject
   ( toSubjects )
 import Renaming 
