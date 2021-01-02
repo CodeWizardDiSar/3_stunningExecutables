@@ -39,12 +39,13 @@ type Path = String
 type Subject = String
 type ExerciseNumber = String
 type HeaderRow = String
+type Choice = String
 type ChoicesWithTitle = String
 type Title = String
 
 type Strings = [ String ]
 
-type Subjects = Strings
-type Choices = Strings
+type Subjects = [ Subject ]
+type Choices = [ Choice ]
 type HopefullyExerciseName = HopefullySome String
 type Exercises = [ Exercise ]

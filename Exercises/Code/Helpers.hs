@@ -8,7 +8,6 @@ import Renaming
 import Control.Monad
   ( (>=>) )
 
-
 beautify :: String -> String
 beautify = ( "\t" ++ ) .> ( ++ "\n" )
 
@@ -17,4 +16,3 @@ glue20CharsEach = forEach ( ( ++ repeat ' ') .> take 20 ) .> glue
 
 combine :: [ IO Exercises ] -> IO Exercises
 combine = sequence >=> ( glue .> wrap )
-

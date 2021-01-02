@@ -4,7 +4,7 @@ import Prelude
 import Renaming
   ( forEach, glue )
 import Types
-  ( ChoicesWithTitle, Choices, Title, Strings )
+  ( Choice, Choices, ChoicesWithTitle, Title, Strings )
 import UsefulFunctions
   ( tabBefore, tabsBefore )
 import Data.Function
@@ -48,6 +48,5 @@ putNumbers = zipWith ( \int string -> toString int ++ ": " ++ string ) ( [ 1.. ]
 exerciseTypes :: Strings
 exerciseTypes = [ "To Do", "Done", "Missed" ]
 
-type Choice = String
 exitOption :: Choice
 exitOption = "enter: Exit"
