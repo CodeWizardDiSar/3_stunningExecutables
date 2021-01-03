@@ -53,20 +53,20 @@ class FromFileStrings a where fromFileStrings :: Strings -> a
 instance FromFileStrings Exercise where
   fromFileStrings = \case
     [ "t", s, exNum, exName, date ] -> ToDo $ fromFileStrings [ "t", s, exNum, exName, date ]
-    [ "d", s, exNum, exName ] -> Done $ fromFileStrings [ "d", s, exNum, exName ]
-    [ "m", s, exNum, exName ] -> Missed $ fromFileStrings [ "m", s, exNum, exName ]
+    [ "d", s, exNum, exName ] -> Done $ fromFileStrings [ s, exNum, exName ]
+    [ "m", s, exNum, exName ] -> Missed $ fromFileStrings [ s, exNum, exName ]
     _ -> printErrorMessage "Line To Exercise" 
 
 instance FromFileStrings ToDoExercise where
   fromFileStrings = \case
     [ "t", s, exNum, exName, date ] ->
       ToDoExercise ( ED s exNum (exName & fromFileString) ) ( date & fromFileString )
-    _ -> printErrorMessage "Bad"
+    _ -> printErrorMessage "Bad: ToDo"
 
 instance FromFileStrings ExData where
   fromFileStrings = \case
-    [ "d", s, exNum, exName ] -> ED s exNum (exName & fromFileString)
-    _ -> printErrorMessage "Bad"
+    [ s, exNum, exName ] -> ED s exNum (exName & fromFileString)
+    _ -> printErrorMessage "Bad: ExerciseData"
 
 class FromUserStrings a where fromUserStrings :: Strings -> a
 

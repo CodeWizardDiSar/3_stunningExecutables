@@ -2,8 +2,13 @@ module Move where
 import Prelude
   ( (.), not, filter, (-), (!!), (+), elem, Bool( True, False ), (==), sequence, getLine, IO
   , Int, (>>=) , String, (>>) )
+import Types
+  ( Strings, Exercises, Exercise( ToDo, Done, Missed ), ExData
+  , ToDoExercise( ToDoExercise ) , DoneExercise
+  , MissedExercise 
+  , ExercisesAndChosen( ExercisesAndChosen, chosen ) )
 import Helpers 
-  ( combine )
+  ( combine, removeChosen )
 import Renaming
   ( wrap, (.>) )
 import ExercisesFromFile
@@ -12,10 +17,6 @@ import Data.Function
   ( (&), ($) )
 import FileManagement     
   ( writeToNextDataKeeper, updateVersion )
-import Types
-  ( Strings, Exercises, Exercise( ToDo, Done, Missed ), ExData
-  , ToDoExercise( ToDoExercise ) , DoneExercise
-  , MissedExercise )
 import GetFromUser
   ( getFromUser )
 import UsefulFunctions   
@@ -39,18 +40,16 @@ moveFrom = \exType -> getAllExs exType >>= writeExercisesToFile >> updateVersion
 
 getAllExs :: String -> IO Exercises
 getAllExs = \case
- "todo"  -> combine [ toDoExercises >>= move, doneExercises, missedExercises ]
- "done"  -> combine [ toDoExercises, doneExercises >>= move, missedExercises ]
- "missed"-> combine [ toDoExercises, doneExercises, missedExercises >>= move ]
+  "todo"  -> combine [ toDoExercises >>= move, doneExercises, missedExercises ]
+  "done"  -> combine [ toDoExercises, doneExercises >>= move, missedExercises ]
+  "missed"-> combine [ toDoExercises, doneExercises, missedExercises >>= move ]
 
 move :: Exercises -> IO Exercises
-move = getChosen >=> moveChosen
+move = getChosen >=> moveChosen2
 
-moveChosen :: ( Exercises, Int, Int ) -> IO Exercises
-moveChosen = \( exs, subNum, exNum ) ->
- let sub = toSubjects exs !! ( subNum - 1 )
-     ex = filter (subIs sub) exs !! ( exNum - 1 )
- in moveOld ex >>= \newEx -> newEx : ( filter (not . (== ex) ) exs ) & wrap
+moveChosen2 :: ExercisesAndChosen -> IO Exercises
+moveChosen2 exercisesAndChosen =
+  moveOld ( chosen exercisesAndChosen ) >>= ( : removeChosen exercisesAndChosen ) .> wrap
 
 moveOld :: Exercise -> IO Exercise
 moveOld = \ex ->

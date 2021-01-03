@@ -2,11 +2,12 @@ module Delete where
 import Prelude   
   ( (.), not, filter, (-), (!!), (==), IO, String, Int, (>>=), (>>) )
 import Types
-  ( Exercise, Exercises, Subject, Subjects, ExerciseType( ToDoEx, DoneEx, MissedEx ) )
+  ( Exercise, Exercises, Subject, Subjects, ExerciseType( ToDoEx, DoneEx, MissedEx )
+  , ExercisesAndChosen( ExercisesAndChosen ) )
 import Helpers
-  ( combine  )
+  ( combine, removeChosen )
 import Renaming
-  ( wrap )
+  ( wrap, (.>) )
 import ExercisesFromFile
   ( toDoExercises, doneExercises, missedExercises )
 import Data.Function
@@ -38,19 +39,4 @@ exercisesAfterDeletion = \case
   MissedEx -> combine [ toDoExercises, doneExercises, missedExercises >>= deleteChosen ]
 
 deleteChosen :: Exercises -> IO Exercises
-deleteChosen = getChosen >=> delete'
-
-delete' :: ( Exercises, Int, Int ) -> IO Exercises
-delete' = \( exercises, subjectNumber, exerciseNumber ) ->
- let sub = exercises & toSubjects & chosenSubject subjectNumber
-     ex = subjectExercises sub exercises !! ( exerciseNumber - 1 )
- in removeExercise ex exercises & wrap
-
-chosenSubject :: Int -> Subjects -> Subject
-chosenSubject subjectNumber subjects = subjects !! ( subjectNumber - 1 )
-
-subjectExercises :: Subject -> Exercises -> Exercises
-subjectExercises subject = filter ( subIs subject )
-
-removeExercise :: Exercise -> Exercises -> Exercises
-removeExercise exercise = filter ( not . ( == exercise ) )
+deleteChosen = getChosen >=> ( removeChosen .> wrap )

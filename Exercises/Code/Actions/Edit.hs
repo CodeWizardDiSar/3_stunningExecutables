@@ -5,9 +5,10 @@ import Types
   ( Exercise( ToDo, Done, Missed ), HopefullySome( IndeedItIs ), Exercises, Date
   , ExData ( subject, number, name ), ToDoExercise( ToDoExercise )
   , DoneExercise, MissedExercise
-  , ExerciseType ( ToDoEx, DoneEx, MissedEx ) )
+  , ExerciseType ( ToDoEx, DoneEx, MissedEx ) 
+  , ExercisesAndChosen ( ExercisesAndChosen, chosen ) )
 import Helpers
-  ( combine )
+  ( combine, removeChosen )
 import GetFromUser
   ( getFromUser )
 import UsefulForActions
@@ -46,11 +47,9 @@ editExercises = \case
 getAndEditChosen :: Exercises -> IO Exercises
 getAndEditChosen = getChosen >=> editChosen
 
-editChosen :: ( Exercises, Int, Int ) -> IO Exercises
-editChosen = \( exs, subNum, exNum ) ->
- let sub = toSubjects exs !! ( subNum - 1 )
-     ex = filter (subIs sub) exs !! ( exNum - 1 )
- in modify ex >>= ( ( : filter ( not . (==ex) ) exs ) .> wrap )
+editChosen :: ExercisesAndChosen -> IO Exercises
+editChosen exercisesAndChosen =
+  modify ( chosen exercisesAndChosen ) >>= ( : removeChosen exercisesAndChosen ) .> wrap
 
 newToDoExercise :: Date -> ExData -> IO Exercise
 newToDoExercise date newExData = ToDo ( ToDoExercise newExData date ) & wrap
