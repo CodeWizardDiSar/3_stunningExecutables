@@ -1,4 +1,5 @@
 module Move where
+
 import Prelude
   ( (.), not, filter, (-), (!!), (+), elem, Bool( True, False ), (==), sequence, getLine, IO
   , Int, (>>=) , String, (>>) )
@@ -22,7 +23,7 @@ import GetFromUser
 import UsefulFunctions   
   ( printStrings )
 import UsefulForActions
-  ( writeExercisesToFile )
+  ( exsToFileAndUpdate )
 import ToSubject
   ( toSubjects )
 import ShowExercises
@@ -36,7 +37,7 @@ moveActions :: [ IO () ]
 moveActions = [ moveFrom "todo", moveFrom "done", moveFrom "missed" ]
 
 moveFrom :: String -> IO ()
-moveFrom = \exType -> getAllExs exType >>= writeExercisesToFile >> updateVersion
+moveFrom = getAllExs >=> exsToFileAndUpdate
 
 getAllExs :: String -> IO Exercises
 getAllExs = \case

@@ -1,23 +1,23 @@
 module Add where
+
 import Prelude
-  ( (>>=), (>>), IO )
+  ( IO )
 import Types
-  ( Exercise( ToDo, Done, Missed ) )
-import Renaming
-  ( (.>) )
+  ( ExerciseType( ToDoEx, DoneEx, MissedEx ), Exercises )
 import ExercisesFromFile
   ( getExercisesFromFile )
-import FileManagement
-  ( updateVersion )
 import UsefulForActions
-  ( writeExercisesToFile )
+  ( exsToFileAndUpdate )
 import GetFromUser
-  ( getFromUser )
+  ( getExerciseFromUser, myMZipWith )
+import Control.Monad
+  ( (>=>) )
 
 addActions :: [ IO () ]
-addActions =
-  [ getFromUser >>= ToDo .> add, getFromUser >>= Done .> add, getFromUser >>= Missed .> add ]
+addActions = [ add ToDoEx, add DoneEx, add MissedEx ]
 
-add :: Exercise -> IO ()
-add exerciseFromUser =
-  getExercisesFromFile >>= ( exerciseFromUser : ) .> writeExercisesToFile >> updateVersion
+add :: ExerciseType -> IO ()
+add = exsAfterAddition >=> exsToFileAndUpdate
+
+exsAfterAddition :: ExerciseType -> IO Exercises
+exsAfterAddition exType = myMZipWith (:) ( getExerciseFromUser exType ) getExercisesFromFile

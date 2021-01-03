@@ -1,4 +1,5 @@
 module UsefulForActions where
+
 import Prelude
   ( not, (.), filter, (>), length, Bool( True ), getLine, IO, elem
   , (>>), (++), (>>=), String, foldl, otherwise )
@@ -20,15 +21,11 @@ import Control.Monad
   ( (>=>) )
 import IsEarlierThan
   ( isEarlierThan )
+import FileManagement
+  ( updateVersion )
 
-writeExercisesToFile :: Exercises -> IO ()
-writeExercisesToFile = toStringForFile .> writeToNextDataKeeper
-
-sortChrono :: Exercises -> Exercises
-sortChrono = \case
-  [] -> [] 
-  ex:exs -> sortChrono ( filter ( not . isEarlierThan ex ) exs) ++ [ ex ] ++
-    sortChrono ( filter ( isEarlierThan ex ) exs)
+exsToFileAndUpdate :: Exercises -> IO ()
+exsToFileAndUpdate exs = exs & toStringForFile & writeToNextDataKeeper >> updateVersion
 
 printAndGetAnswer :: String -> IO String
 printAndGetAnswer = \s ->

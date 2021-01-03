@@ -1,4 +1,5 @@
 module Choices where
+
 import Prelude
   ( zipWith, String, Int, (+), (++) )
 import Renaming
@@ -37,16 +38,16 @@ initialChoices =
   putNumbers [ "Add", "Show", "Edit", "Delete", "Move", "Undo" ] ++ [ exitOption ]
 
 exceptAllChoices :: Choices
-exceptAllChoices = putNumbers exerciseTypes ++ [ exitOption ]
+exceptAllChoices = putNumbers exTypes ++ [ exitOption ]
 
 showChoices :: Choices
-showChoices = putNumbers ( exerciseTypes ++ [ "All" ] ) ++ [ exitOption ]
+showChoices = putNumbers ( exTypes ++ [ "All" ] ) ++ [ exitOption ]
 
 putNumbers :: Strings -> Choices
 putNumbers = zipWith ( \int string -> toString int ++ ": " ++ string ) ( [ 1.. ] :: [ Int ] )
 
-exerciseTypes :: Strings
-exerciseTypes = [ "To Do", "Done", "Missed" ]
+exTypes :: Strings
+exTypes = [ "To Do", "Done", "Missed" ]
 
 exitOption :: Choice
 exitOption = "enter: Exit"

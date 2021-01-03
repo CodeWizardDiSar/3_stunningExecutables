@@ -1,6 +1,7 @@
 module Edit where
+
 import Prelude
-  ( (.), not, filter, (-), (!!), (==), getLine, (++), (>>=), IO, String, Int, (>>) )
+  ( getLine, (++), (>>=), IO, String, (>>) )
 import Types
   ( Exercise( ToDo, Done, Missed ), HopefullySome( IndeedItIs ), Exercises, Date
   , ExData ( subject, number, name ), ToDoExercise( ToDoExercise )
@@ -12,11 +13,11 @@ import Helpers
 import GetFromUser
   ( getFromUser )
 import UsefulForActions
-  ( printAndGetAnswer, writeExercisesToFile )
+  ( printAndGetAnswer, exsToFileAndUpdate )
 import ToSubject
   ( toSubjects )
 import Renaming 
-  ( wrap, (.>) )
+  ( wrap, (.>), forEach )
 import ExercisesFromFile
   ( toDoExercises, doneExercises, missedExercises )
 import Data.Function
@@ -36,7 +37,7 @@ editActions :: [ IO () ]
 editActions = [ edit ToDoEx, edit DoneEx, edit MissedEx ]
 
 edit :: ExerciseType -> IO ()
-edit exerciseType = editExercises exerciseType >>= writeExercisesToFile >> updateVersion
+edit = editExercises >=> exsToFileAndUpdate
 
 editExercises :: ExerciseType -> IO Exercises
 editExercises = \case
@@ -109,11 +110,5 @@ printBasic = exData & putNumbers & printStrings
 printBasicAndDate :: IO ()
 printBasicAndDate = exData ++ [ "Date" ] & putNumbers & printStrings
 
-getSubject :: IO String
-getSubject = printAndGetAnswer "New Subject?"
-
-getENum :: IO String
-getENum = printAndGetAnswer "New Exercise Number?"
-
-getEName :: IO String
-getEName = printAndGetAnswer "New Exercise Name?"
+[ getSubject, getENum, getEName ] =
+  forEach printAndGetAnswer [ "New Subject?", "New Number?", "New Name?" ]

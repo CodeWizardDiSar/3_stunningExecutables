@@ -1,4 +1,5 @@
 module UsefulFunctions where
+
 import Prelude 
   ( IO, (+), (-), sequence_, (++), (>>), String, Int )
 import Data.Function

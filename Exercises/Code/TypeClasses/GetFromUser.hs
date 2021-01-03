@@ -1,9 +1,10 @@
 module GetFromUser where
+
 import Prelude 
-  ( IO, (>>=), sequence )
+  ( IO, (>>=), sequence, Monad )
 import Types
-  ( ToDoExercise( ToDoExercise ), DoneExercise
-  , MissedExercise, ExData, Strings, Date )
+  ( ToDoExercise( ToDoExercise ), DoneExercise , MissedExercise, ExData, Strings, Date
+  , ExerciseType ( ToDoEx, DoneEx, MissedEx ), Exercise( ToDo, Done, Missed ) )
 import Renaming
   ( (.>), wrap, forEach )
 import Control.Monad.Zip
@@ -17,6 +18,15 @@ import UsefulForActions
 
 instance MonadZip IO where
   mzip = pairADefault
+
+myMZipWith :: MonadZip m => ( a -> b -> c ) ->  m a -> m b -> m c
+myMZipWith = mzipWith
+
+getExerciseFromUser :: ExerciseType -> IO Exercise
+getExerciseFromUser = \case
+  ToDoEx -> getFromUser >>= ToDo .> wrap
+  DoneEx -> getFromUser >>= Done .> wrap
+  MissedEx -> getFromUser >>= Missed .> wrap
 
 class GetFromUser a where getFromUser :: IO a
 

@@ -1,4 +1,5 @@
 module Renaming where
+
 import Prelude 
   ( String, Int, Monad, readFile, writeFile, replicate, lines, error, read, show, concat
   , putStrLn, map, mapM_, return, id, (>>=), (>>), (++), flip, (.) )

@@ -1,25 +1,19 @@
 module Delete where
+
 import Prelude   
-  ( (.), not, filter, (-), (!!), (==), IO, String, Int, (>>=), (>>) )
+  ( IO, (>>=) )
 import Types
-  ( Exercise, Exercises, Subject, Subjects, ExerciseType( ToDoEx, DoneEx, MissedEx )
-  , ExercisesAndChosen( ExercisesAndChosen ) )
+  ( Exercises, ExerciseType( ToDoEx, DoneEx, MissedEx ) )
 import Helpers
   ( combine, removeChosen )
 import Renaming
   ( wrap, (.>) )
 import ExercisesFromFile
   ( toDoExercises, doneExercises, missedExercises )
-import Data.Function
-  ( (&) )
-import FileManagement
-  ( updateVersion )
 import UsefulForActions
-  ( writeExercisesToFile )
-import ToSubject
-  ( toSubjects )
+  ( exsToFileAndUpdate )
 import ShowExercises
-  ( getChosen, subIs )
+  ( getChosen )
 import Control.Monad
   ( (>=>) )
 
@@ -27,13 +21,10 @@ deleteActions :: [ IO () ]
 deleteActions = [ delete ToDoEx, delete DoneEx, delete MissedEx ]
 
 delete :: ExerciseType -> IO ()
-delete exerciseType = exercisesAfterDeletionToFile exerciseType >> updateVersion
+delete = exsAfterDeletion >=> exsToFileAndUpdate
 
-exercisesAfterDeletionToFile :: ExerciseType -> IO ()
-exercisesAfterDeletionToFile = exercisesAfterDeletion >=> writeExercisesToFile
-
-exercisesAfterDeletion :: ExerciseType -> IO Exercises
-exercisesAfterDeletion = \case
+exsAfterDeletion :: ExerciseType -> IO Exercises
+exsAfterDeletion = \case
   ToDoEx -> combine [ toDoExercises >>= deleteChosen, doneExercises, missedExercises ]
   DoneEx -> combine [ toDoExercises, doneExercises >>= deleteChosen, missedExercises ]
   MissedEx -> combine [ toDoExercises, doneExercises, missedExercises >>= deleteChosen ]

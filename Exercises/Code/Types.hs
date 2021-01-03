@@ -1,4 +1,5 @@
 module Types where
+
 import Prelude ( Eq, String, Int, Ord )
 
 -- Always a pleasure to have types (sorry python)

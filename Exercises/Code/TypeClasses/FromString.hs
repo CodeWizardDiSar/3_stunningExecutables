@@ -1,4 +1,5 @@
 module FromString where
+
 import Prelude
   ( String, Int, ($), (++), undefined, read )
 import Renaming

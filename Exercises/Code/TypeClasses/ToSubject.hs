@@ -1,4 +1,5 @@
 module ToSubject where
+
 import Prelude
   ( String, foldl, elem, otherwise, (++) )
 import Renaming

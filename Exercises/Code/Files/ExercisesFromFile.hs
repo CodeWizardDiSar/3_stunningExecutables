@@ -1,4 +1,5 @@
 module ExercisesFromFile where
+
 import Prelude
   ( filter, IO, (>>=), (==) )
 import Types 
@@ -22,8 +23,8 @@ getExercises = [ toDoExercises, doneExercises, missedExercises ]
 [ toDoExercises, doneExercises, missedExercises ] = [ get ToDoEx, get DoneEx, get MissedEx ]
 
 get :: ExerciseType -> IO Exercises
-get exerciseType =
-  getExercisesFromFile >>= filter ( toExerciseType .> ( == exerciseType ) ) .> wrap
+get exType =
+  getExercisesFromFile >>= filter ( toExerciseType .> ( == exType ) ) .> wrap
 
 toExerciseType :: Exercise -> ExerciseType
 toExerciseType = \case 

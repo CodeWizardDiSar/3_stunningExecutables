@@ -1,4 +1,5 @@
 module IsEarlierThan where
+
 import Prelude
   ( Bool, Int, (<), (||), (==), (&&) )
 import Types
