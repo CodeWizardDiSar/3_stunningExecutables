@@ -3,7 +3,7 @@ module Types where
 import Prelude ( Eq, String, Int, Ord )
 
 -- Always a pleasure to have types (sorry python)
-data HopefullySome a = IndeedItIs { getA :: a } | Nothing
+data HopefullySome a = IndeedItIs a | Nothing
   deriving ( Eq )
 
 data ExercisesAndChosen =
@@ -26,7 +26,7 @@ type DoneExercise = ExData
 type MissedExercise = ExData
 
 data ExData =
-  ED { subject :: Subject, number :: ExerciseNumber, name :: HopefullyExerciseName }
+  ED { subject :: Subject, number :: ExerciseNumber, name :: HopefullyExName }
   deriving ( Eq )
    
 data Date = Date { day :: Day, month :: Month, year :: Year }
@@ -48,5 +48,5 @@ type Strings = [ String ]
 
 type Subjects = [ Subject ]
 type Choices = [ Choice ]
-type HopefullyExerciseName = HopefullySome String
+type HopefullyExName = HopefullySome String
 type Exercises = [ Exercise ]

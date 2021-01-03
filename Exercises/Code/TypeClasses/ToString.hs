@@ -7,7 +7,7 @@ import Renaming
 import Types
   ( Strings, ExData( ED ), ToDoExercise( exData, date )
   , DoneExercise, MissedExercise
-  , Date( Date, day, month, year ), HopefullyExerciseName
+  , Date( Date, day, month, year ), HopefullyExName
   , Exercise( ToDo, Done, Missed ), Exercises
   , HopefullySome( IndeedItIs, Nothing )
   , ToDoExercise( ToDoExercise )
@@ -49,7 +49,7 @@ instance ToStringForFile Exercise where
 
 commaSeperate = intercalate ","
 
-instance ToStringForFile HopefullyExerciseName where
+instance ToStringForFile HopefullyExName where
   toStringForFile = \case
     IndeedItIs e -> e 
     Nothing -> "_"
@@ -69,7 +69,7 @@ instance ToStringForUser Exercise where
 instance ToStringForUser ExData where
   toStringForUser = toStrings .> glue20CharsEach .> beautify
 
-instance ToStringForUser HopefullyExerciseName where
+instance ToStringForUser HopefullyExName where
   toStringForUser = \case
     IndeedItIs n -> n 
     Nothing -> "No Name"

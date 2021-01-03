@@ -8,7 +8,7 @@ import Types
   ( Strings, Subject, ExData( ED, subject, number, name ), ToDoExercise( ToDoExercise )
   , DoneExercise, MissedExercise
   , Date( Date, day, month, year )
-  , HopefullyExerciseName , Exercise( ToDo, Done, Missed ), Exercises
+  , HopefullyExName , Exercise( ToDo, Done, Missed ), Exercises
   , HopefullySome( IndeedItIs, Nothing ), Day, Month, Year )
 import Data.Function
   ( (&) )
@@ -27,7 +27,7 @@ class FromFileString a where fromFileString :: String -> a
 instance FromFileString Exercise where
   fromFileString = splitOn "," .> fromFileStrings
 
-instance FromFileString HopefullyExerciseName where
+instance FromFileString HopefullyExName where
   fromFileString = \case
     "_" -> Nothing
     exName -> IndeedItIs exName
@@ -37,7 +37,7 @@ instance FromFileString Date where
 
 class FromUserString a where fromUserString :: String -> a
 
-instance FromUserString HopefullyExerciseName where
+instance FromUserString HopefullyExName where
   fromUserString = \case
     "" -> Nothing
     name -> IndeedItIs name

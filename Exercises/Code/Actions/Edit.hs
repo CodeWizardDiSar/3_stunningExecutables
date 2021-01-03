@@ -111,4 +111,4 @@ printBasicAndDate :: IO ()
 printBasicAndDate = exData ++ [ "Date" ] & putNumbers & printStrings
 
 [ getSubject, getENum, getEName ] =
-  forEach printAndGetAnswer [ "New Subject?", "New Number?", "New Name?" ]
+  forEach printAndGetAnswer [ "New Subject?", "New Number?", "New Name?" ] :: [ IO String ]

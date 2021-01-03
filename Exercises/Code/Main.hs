@@ -35,14 +35,13 @@ main :: IO ()
 main = doSequentially [ printEmptyLine, printWelcomingMessage, initialMenu ] 
 
 -- WIMAE = With Initial Menu After Each
-menus :: [ IO () ]
 menus = [ initialMenu, addMenu, showMenu, editMenu, deleteMenu, moveMenu ] 
 [ initialMenu, addMenu, showMenu, editMenu, deleteMenu, moveMenu ] =
-  printChoicesAndDoChosenAction `forEach`
+  forEach printChoicesAndDoChosenAction
     [ ( initialChoicesWT, initialActions ), ( addChoicesWT, addActionsWIMAE )
     , ( showChoicesWT, showActionsWIMAE ), ( editChoicesWT, editActionsWIMAE )
     , ( deleteChoicesWT, deleteActionsWIMAE ), ( moveChoicesWT, moveActionsWIMAE )
-    ]
+    ] :: [ IO () ]
 
 initialActions :: [ IO () ]
 initialActions = [ addMenu, showMenu, editMenu, deleteMenu, moveMenu, undo ]
@@ -58,22 +57,18 @@ doChosenFrom actions input =
       case i > 0 && i <= length actions of
         True -> actions !! ( i - 1 )
         _ -> showConfusion >> initialMenu
-    Nothing ->
+    _ ->
       case input of
         "" -> waveAndExit
         _ -> showConfusion >> initialMenu
 
-actionsWIMAE :: [ [ IO () ] ]
-actionsWIMAE = 
-  [ addActionsWIMAE, showActionsWIMAE, editActionsWIMAE, deleteActionsWIMAE, moveActionsWIMAE ]
 [ addActionsWIMAE, showActionsWIMAE, editActionsWIMAE, deleteActionsWIMAE, moveActionsWIMAE ] =
   forEach ( forEach ( >> initialMenu ) )
     [ addActions, showActions, editActions, deleteActions, moveActions ]
+      :: [ [ IO () ] ]
 
 undo :: IO ()
 undo = getCurrentDataKeeper >>= removeFile >> downdateVersion >> initialMenu
 
-printingStuff :: [ IO () ]
-printingStuff = [ printWelcomingMessage, waveAndExit, showConfusion ]
 [ printWelcomingMessage, waveAndExit ] =
-  forEach print [ "Welcome to the exercises manager!\n", "bye!" ]
+  forEach print [ "Welcome to the exercises manager!\n", "bye!" ] :: [ IO () ]
