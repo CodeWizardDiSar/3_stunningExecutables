@@ -7,9 +7,12 @@ import Types
   ( Strings, Exercises, Exercise( ToDo, Done, Missed ), ExData
   , ToDoExercise( ToDoExercise ) , DoneExercise
   , MissedExercise 
-  , ExercisesAndChosen( ExercisesAndChosen, chosen ) )
+  , ExercisesAndChosen( ExercisesAndChosen, chosen ) 
+  , ExerciseType( ToDoEx, DoneEx, MissedEx  ) )
 import Helpers 
-  ( combine, removeChosen )
+  ( removeChosen )
+import Helpers2
+  ( exsAfter )
 import Renaming
   ( wrap, (.>) )
 import ExercisesFromFile
@@ -34,22 +37,13 @@ import ToString
   ( print )
 
 moveActions :: [ IO () ]
-moveActions = [ moveFrom "todo", moveFrom "done", moveFrom "missed" ]
+moveActions = [ moveFrom ToDoEx, moveFrom DoneEx, moveFrom MissedEx ]
 
-moveFrom :: String -> IO ()
-moveFrom = getAllExs >=> exsToFileAndUpdate
+moveFrom :: ExerciseType -> IO ()
+moveFrom = exsAfter ( getChosen >=> moveChosen ) >=> exsToFileAndUpdate
 
-getAllExs :: String -> IO Exercises
-getAllExs = \case
-  "todo"  -> combine [ toDoExercises >>= move, doneExercises, missedExercises ]
-  "done"  -> combine [ toDoExercises, doneExercises >>= move, missedExercises ]
-  "missed"-> combine [ toDoExercises, doneExercises, missedExercises >>= move ]
-
-move :: Exercises -> IO Exercises
-move = getChosen >=> moveChosen2
-
-moveChosen2 :: ExercisesAndChosen -> IO Exercises
-moveChosen2 exercisesAndChosen =
+moveChosen :: ExercisesAndChosen -> IO Exercises
+moveChosen exercisesAndChosen =
   moveOld ( chosen exercisesAndChosen ) >>= ( : removeChosen exercisesAndChosen ) .> wrap
 
 moveOld :: Exercise -> IO Exercise

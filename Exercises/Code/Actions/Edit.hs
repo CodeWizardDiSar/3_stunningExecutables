@@ -3,13 +3,14 @@ module Edit where
 import Prelude
   ( getLine, (++), (>>=), IO, String, (>>) )
 import Types
-  ( Exercise( ToDo, Done, Missed ), HopefullySome( IndeedItIs ), Exercises, Date
-  , ExData ( subject, number, name ), ToDoExercise( ToDoExercise )
-  , DoneExercise, MissedExercise
-  , ExerciseType ( ToDoEx, DoneEx, MissedEx ) 
+  ( Exercise( ToDo, Done, Missed ), HopefullySome( IndeedItIs ), Exercises, Date, Strings
+  , ExData ( subject, number, name ), ToDoExercise( ToDoExercise ), DoneExercise
+  , MissedExercise , ExerciseType ( ToDoEx, DoneEx, MissedEx ) 
   , ExercisesAndChosen ( ExercisesAndChosen, chosen ) )
 import Helpers
-  ( combine, removeChosen )
+  ( removeChosen )
+import Helpers2
+  ( exsAfter )
 import GetFromUser
   ( getFromUser )
 import UsefulForActions
@@ -37,51 +38,35 @@ editActions :: [ IO () ]
 editActions = [ edit ToDoEx, edit DoneEx, edit MissedEx ]
 
 edit :: ExerciseType -> IO ()
-edit = editExercises >=> exsToFileAndUpdate
-
-editExercises :: ExerciseType -> IO Exercises
-editExercises = \case
-  ToDoEx -> combine [ toDoExercises >>= getAndEditChosen, doneExercises, missedExercises ]
-  DoneEx -> combine [ toDoExercises, doneExercises >>= getAndEditChosen, missedExercises ]
-  MissedEx -> combine [ toDoExercises, doneExercises, missedExercises >>= getAndEditChosen ]
-
-getAndEditChosen :: Exercises -> IO Exercises
-getAndEditChosen = getChosen >=> editChosen
+edit = exsAfter ( getChosen >=> editChosen ) >=> exsToFileAndUpdate
 
 editChosen :: ExercisesAndChosen -> IO Exercises
-editChosen exercisesAndChosen =
-  modify ( chosen exercisesAndChosen ) >>= ( : removeChosen exercisesAndChosen ) .> wrap
+editChosen exsAndChosen =
+  editEx ( chosen exsAndChosen ) >>= ( : removeChosen exsAndChosen ) .> wrap
 
-newToDoExercise :: Date -> ExData -> IO Exercise
-newToDoExercise date newExData = ToDo ( ToDoExercise newExData date ) & wrap
+editEx :: Exercise -> IO Exercise
+editEx = \case
+  ToDo toDoExercise -> editToDoEx toDoExercise
+  Done exData -> editDoneOrMissedEx Done exData
+  Missed exData -> editDoneOrMissedEx Missed exData
 
-modify :: Exercise -> IO Exercise
-modify = \case
-  ToDo toDoExercise -> modifyToDo toDoExercise
-  Done doneExercise -> modifyDone doneExercise
-  Missed missedExercise -> modifyMissed missedExercise
-
-modifyToDo :: ToDoExercise -> IO Exercise
-modifyToDo ( ToDoExercise exerciseData date ) =
+editToDoEx :: ToDoExercise -> IO Exercise
+editToDoEx ( ToDoExercise exerciseData date ) =
   chooseAttributeWithDate >>= \case
     "1" -> changeSubject exerciseData >>= newToDoExercise date
     "2" -> changeNumber exerciseData >>= newToDoExercise date
     "3" -> changeName exerciseData >>= newToDoExercise date
     "4" -> getFromUser >>= \newDate -> ToDo ( ToDoExercise exerciseData newDate ) & wrap
 
-modifyDone :: DoneExercise -> IO Exercise
-modifyDone exerciseData =
-  chooseAttribute >>= \case
-    "1" -> changeSubject exerciseData >>= Done .> wrap
-    "2" -> changeNumber exerciseData >>= Done .> wrap
-    "3" -> changeName exerciseData >>= Done .> wrap
+newToDoExercise :: Date -> ExData -> IO Exercise
+newToDoExercise date newExData = ToDo ( ToDoExercise newExData date ) & wrap
 
-modifyMissed :: MissedExercise -> IO Exercise
-modifyMissed exerciseData =
+editDoneOrMissedEx :: ( ExData -> Exercise ) -> ExData -> IO Exercise
+editDoneOrMissedEx constructor exerciseData =
   chooseAttribute >>= \case
-    "1" -> changeSubject exerciseData >>= Missed .> wrap
-    "2" -> changeNumber exerciseData >>= Missed .> wrap
-    "3" -> changeName exerciseData >>= Missed .> wrap
+    "1" -> changeSubject exerciseData >>= constructor .> wrap
+    "2" -> changeNumber exerciseData >>= constructor .> wrap
+    "3" -> changeName exerciseData >>= constructor .> wrap
 
 changeSubject :: ExData -> IO ExData
 changeSubject exerciseData =
@@ -104,11 +89,14 @@ chooseAttributeWithDate = printBasicAndDate >> getLine
 exData :: [ String ] 
 exData = [ "Subject", "Number", "Name" ]
 
+putNumbersAndTabs :: Strings -> Strings
+putNumbersAndTabs = putNumbers .> forEach ('\t':)
+
 printBasic :: IO ()
-printBasic = exData & putNumbers & printStrings
+printBasic = exData & putNumbersAndTabs & printStrings
 
 printBasicAndDate :: IO ()
-printBasicAndDate = exData ++ [ "Date" ] & putNumbers & printStrings
+printBasicAndDate = exData ++ [ "Date" ] & putNumbersAndTabs & printStrings
 
 [ getSubject, getENum, getEName ] =
   forEach printAndGetAnswer [ "New Subject?", "New Number?", "New Name?" ] :: [ IO String ]

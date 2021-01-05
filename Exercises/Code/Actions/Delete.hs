@@ -5,11 +5,11 @@ import Prelude
 import Types
   ( Exercises, ExerciseType( ToDoEx, DoneEx, MissedEx ) )
 import Helpers
-  ( combine, removeChosen )
+  ( removeChosen )
+import Helpers2
+  ( exsAfter )
 import Renaming
   ( wrap, (.>) )
-import ExercisesFromFile
-  ( toDoExercises, doneExercises, missedExercises )
 import UsefulForActions
   ( exsToFileAndUpdate )
 import ShowExercises
@@ -21,13 +21,7 @@ deleteActions :: [ IO () ]
 deleteActions = [ delete ToDoEx, delete DoneEx, delete MissedEx ]
 
 delete :: ExerciseType -> IO ()
-delete = exsAfterDeletion >=> exsToFileAndUpdate
-
-exsAfterDeletion :: ExerciseType -> IO Exercises
-exsAfterDeletion = \case
-  ToDoEx -> combine [ toDoExercises >>= deleteChosen, doneExercises, missedExercises ]
-  DoneEx -> combine [ toDoExercises, doneExercises >>= deleteChosen, missedExercises ]
-  MissedEx -> combine [ toDoExercises, doneExercises, missedExercises >>= deleteChosen ]
+delete = exsAfter deleteChosen >=> exsToFileAndUpdate
 
 deleteChosen :: Exercises -> IO Exercises
 deleteChosen = getChosen >=> ( removeChosen .> wrap )
