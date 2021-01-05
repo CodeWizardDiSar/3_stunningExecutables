@@ -1,12 +1,10 @@
 module Move where
 
 import Prelude
-  ( (.), not, filter, (-), (!!), (+), elem, Bool( True, False ), (==), sequence, getLine, IO
-  , Int, (>>=) , String, (>>) )
+  ( getLine, IO, (>>=), (>>) )
 import Types
   ( Strings, Exercises, Exercise( ToDo, Done, Missed ), ExData
-  , ToDoExercise( ToDoExercise ) , DoneExercise
-  , MissedExercise 
+  , ToDoExercise( ToDoExercise )
   , ExercisesAndChosen( ExercisesAndChosen, chosen ) 
   , ExerciseType( ToDoEx, DoneEx, MissedEx  ) )
 import Helpers 
@@ -15,22 +13,16 @@ import Helpers2
   ( exsAfter )
 import Renaming
   ( wrap, (.>) )
-import ExercisesFromFile
-  ( toDoExercises, doneExercises, missedExercises )
 import Data.Function
-  ( (&), ($) )
-import FileManagement     
-  ( writeToNextDataKeeper, updateVersion )
+  ( (&) )
 import GetFromUser
   ( getFromUser )
 import UsefulFunctions   
   ( printStrings )
 import UsefulForActions
   ( exsToFileAndUpdate )
-import ToSubject
-  ( toSubjects )
 import ShowExercises
-  ( subIs, getChosen )
+  ( getChosen )
 import Control.Monad
   ( (>=>) )
 import ToString

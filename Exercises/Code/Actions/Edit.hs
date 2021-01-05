@@ -4,8 +4,8 @@ import Prelude
   ( getLine, (++), (>>=), IO, String, (>>) )
 import Types
   ( Exercise( ToDo, Done, Missed ), HopefullySome( IndeedItIs ), Exercises, Date, Strings
-  , ExData ( subject, number, name ), ToDoExercise( ToDoExercise ), DoneExercise
-  , MissedExercise , ExerciseType ( ToDoEx, DoneEx, MissedEx ) 
+  , ExData ( subject, number, name ), ToDoExercise( ToDoExercise ), Choice
+  , ExerciseType ( ToDoEx, DoneEx, MissedEx ), Choices
   , ExercisesAndChosen ( ExercisesAndChosen, chosen ) )
 import Helpers
   ( removeChosen )
@@ -15,20 +15,14 @@ import GetFromUser
   ( getFromUser )
 import UsefulForActions
   ( printAndGetAnswer, exsToFileAndUpdate )
-import ToSubject
-  ( toSubjects )
 import Renaming 
   ( wrap, (.>), forEach )
-import ExercisesFromFile
-  ( toDoExercises, doneExercises, missedExercises )
 import Data.Function
   ( (&) )
-import FileManagement
-  ( updateVersion )
 import UsefulFunctions
   ( printStrings )
 import ShowExercises
-  ( getChosen, subIs )
+  ( getChosen )
 import Control.Monad
   ( (>=>) )
 import Choices
@@ -52,7 +46,7 @@ editEx = \case
 
 editToDoEx :: ToDoExercise -> IO Exercise
 editToDoEx ( ToDoExercise exerciseData date ) =
-  chooseAttributeWithDate >>= \case
+  getChoiceWithDate >>= \case
     "1" -> changeSubject exerciseData >>= newToDoExercise date
     "2" -> changeNumber exerciseData >>= newToDoExercise date
     "3" -> changeName exerciseData >>= newToDoExercise date
@@ -63,7 +57,7 @@ newToDoExercise date newExData = ToDo ( ToDoExercise newExData date ) & wrap
 
 editDoneOrMissedEx :: ( ExData -> Exercise ) -> ExData -> IO Exercise
 editDoneOrMissedEx constructor exerciseData =
-  chooseAttribute >>= \case
+  getChoice >>= \case
     "1" -> changeSubject exerciseData >>= constructor .> wrap
     "2" -> changeNumber exerciseData >>= constructor .> wrap
     "3" -> changeName exerciseData >>= constructor .> wrap
@@ -80,23 +74,17 @@ changeName :: ExData -> IO ExData
 changeName exerciseData =
   getEName >>= \newName -> exerciseData { name = IndeedItIs newName } & wrap
 
-chooseAttribute :: IO String
-chooseAttribute = printBasic >> getLine
+[ getChoice, getChoiceWithDate ] =
+  forEach ( >> getLine ) [ printExDataChoices, printExDataAndDateChoices ] :: [ IO Choice ]
 
-chooseAttributeWithDate :: IO String
-chooseAttributeWithDate = printBasicAndDate >> getLine
+exDataChoices :: Choices
+exDataChoices = [ "Subject", "Number", "Name" ]
 
-exData :: [ String ] 
-exData = [ "Subject", "Number", "Name" ]
+putNumbersTabsAndPrint :: Choices -> IO ()
+putNumbersTabsAndPrint = putNumbers .> forEach ('\t':) .> printStrings
 
-putNumbersAndTabs :: Strings -> Strings
-putNumbersAndTabs = putNumbers .> forEach ('\t':)
-
-printBasic :: IO ()
-printBasic = exData & putNumbersAndTabs & printStrings
-
-printBasicAndDate :: IO ()
-printBasicAndDate = exData ++ [ "Date" ] & putNumbersAndTabs & printStrings
+[ printExDataChoices, printExDataAndDateChoices ] = 
+  forEach putNumbersTabsAndPrint [ exDataChoices, exDataChoices ++ [ "Date" ] ] :: [ IO () ]
 
 [ getSubject, getENum, getEName ] =
   forEach printAndGetAnswer [ "New Subject?", "New Number?", "New Name?" ] :: [ IO String ]
