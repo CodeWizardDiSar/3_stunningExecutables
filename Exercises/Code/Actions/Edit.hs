@@ -27,6 +27,8 @@ import Control.Monad
   ( (>=>) )
 import Choices
   ( putNumbers )
+import ToString
+  ( print )
 
 editActions :: [ IO () ]
 editActions = [ edit ToDoEx, edit DoneEx, edit MissedEx ]
@@ -51,6 +53,7 @@ editToDoEx ( ToDoExercise exerciseData date ) =
     "2" -> changeNumber exerciseData >>= newToDoExercise date
     "3" -> changeName exerciseData >>= newToDoExercise date
     "4" -> getFromUser >>= \newDate -> ToDo ( ToDoExercise exerciseData newDate ) & wrap
+    _   -> print "I'm sorry, what?\n" >> editToDoEx ( ToDoExercise exerciseData date )
 
 newToDoExercise :: Date -> ExData -> IO Exercise
 newToDoExercise date newExData = ToDo ( ToDoExercise newExData date ) & wrap
@@ -61,6 +64,7 @@ editDoneOrMissedEx constructor exerciseData =
     "1" -> changeSubject exerciseData >>= constructor .> wrap
     "2" -> changeNumber exerciseData >>= constructor .> wrap
     "3" -> changeName exerciseData >>= constructor .> wrap
+    _   -> print "I'm sorry, what?\n" >> editDoneOrMissedEx constructor exerciseData
 
 changeSubject :: ExData -> IO ExData
 changeSubject exerciseData =
