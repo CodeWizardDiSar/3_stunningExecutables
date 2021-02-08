@@ -15,14 +15,8 @@ import Types
 import ToString
   ( print )
 
-homeDir :: Path
-homeDir = "/home/gnostis"
-
-desktopDir :: Path
-desktopDir = homeDir ++ "/Desktop"
-
 exercisesDir :: Path
-exercisesDir = desktopDir ++ "/StunningExecutables/Exercises"
+exercisesDir = "/home/gnostis/StunningExecutables/Exercises"
 
 dataDir :: Path
 dataDir = exercisesDir ++ "/Data"
