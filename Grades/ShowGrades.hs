@@ -3,7 +3,7 @@ import Data.List.Split
 
 from x = x 
 element n from x = from x!!(n-1)
-gradesCsv = "/home/gnostis/Dropbox/2_Hobbies/1_Prog/1_Projects/1_UniRelated/2_Grades/grades.csv"
+gradesCsv = "grades.csv"
 
 kormos     = filter (\x -> element 1 from x == "k")
 roes       = filter (\x -> element 1 from x == "r") 

@@ -15,11 +15,8 @@ import Types
 import ToString
   ( print )
 
-exercisesDir :: Path
-exercisesDir = "/home/gnostis/StunningExecutables/Exercises"
-
 dataDir :: Path
-dataDir = exercisesDir ++ "/Data"
+dataDir = "Data"
 
 versionKeeper :: Path
 versionKeeper = dataDir ++ "/ver"   
