@@ -1,7 +1,7 @@
 module FileManagement where
 
 import Prelude
-  ( Bool( True ), flip, (++), (>>=), (>>), String, IO )
+  ( Bool( True ), flip, (++), (>>=), (>>), String, IO, error )
 import Renaming
   ( fileExists, readFromFile, writeToFile, wrap, (.>) )
 import UsefulFunctions
