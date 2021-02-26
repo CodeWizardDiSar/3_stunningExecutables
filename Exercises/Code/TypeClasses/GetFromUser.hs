@@ -43,7 +43,7 @@ instance GetFromUser Date where
   getFromUser = printAndGetAnswers dateQuestions >>= fromStrings .> wrap
 
 dateQuestions :: Strings
-dateQuestions = [ "Day? (number)", "Month? (number)", "Year?" ]
+dateQuestions = [ "Day? (number)", "Month? (number)" ]
 
 printAndGetAnswers :: Strings -> IO Strings 
 printAndGetAnswers = forEach printAndGetAnswer .> sequence

@@ -7,11 +7,11 @@ import Renaming
 import Types
   ( Strings, ExData( ED ), ToDoExercise( exData, date )
   , DoneExercise, MissedExercise
-  , Date( Date, day, month, year ), HopefullyExName
+  , Date( Date, day, month ), HopefullyExName
   , Exercise( ToDo, Done, Missed ), Exercises
   , HopefullySome( IndeedItIs, Nothing )
   , ToDoExercise( ToDoExercise )
-  , Day, Month, Year )
+  , Day, Month )
 import Data.Function
   ( (&) )
 import Data.List.Split
@@ -24,8 +24,8 @@ import Helpers
 class ToString a where toString :: a -> String
 
 instance ToString Date where
-  toString ( Date day month year ) =
-    [ day, month, year ] & forEach toString & intercalate "/"
+  toString ( Date day month ) =
+    [ day, month ] & forEach toString & intercalate "/"
 
 instance ToString Int where
   toString = show

@@ -3,7 +3,7 @@ module IsEarlierThan where
 import Prelude
   ( Bool, Int, (<), (||), (==), (&&) )
 import Types
-  ( Exercise( ToDo ), ToDoExercise( date ), Date( Date ), Day, Month, Year )
+  ( Exercise( ToDo ), ToDoExercise( date ), Date( Date ), Day, Month )
 import Renaming
   ( printErrorMessage )
 
@@ -16,6 +16,4 @@ instance IsEarlierThan Exercise where
           "Programmer messed up: trying to sort chronologically non-ToDo exercise"
 
 instance IsEarlierThan Date where 
-  ( Date day1 month1 year1 ) `isEarlierThan` ( Date day2 month2 year2 ) =
-      year1 < year2 || ( year1 == year2 && month1 < month2 )
-                    || ( year1 == year2 && month1 == month2 && day1 < day2 )
+  ( Date day1 month1 ) `isEarlierThan` ( Date day2 month2 ) = month1 < month2 || ( month1 == month2 && day1 < day2 )

@@ -7,9 +7,9 @@ import Renaming
 import Types
   ( Strings, Subject, ExData( ED, subject, number, name ), ToDoExercise( ToDoExercise )
   , DoneExercise, MissedExercise
-  , Date( Date, day, month, year )
+  , Date( Date, day, month )
   , HopefullyExName , Exercise( ToDo, Done, Missed ), Exercises
-  , HopefullySome( IndeedItIs, Nothing ), Day, Month, Year )
+  , HopefullySome( IndeedItIs, Nothing ), Day, Month )
 import Data.Function
   ( (&) )
 import Data.List.Split
@@ -46,7 +46,7 @@ class FromStrings a where fromStrings :: Strings -> a
 
 instance FromStrings Date where
   fromStrings = \case 
-    [ d, m, y ] -> Date ( fromString d ) ( fromString m ) ( fromString y )
+    [ d, m ] -> Date ( fromString d ) ( fromString m )
     _ -> printErrorMessage "Programmer messed up in collecting date info"
 
 class FromFileStrings a where fromFileStrings :: Strings -> a

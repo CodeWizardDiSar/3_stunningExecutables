@@ -29,12 +29,11 @@ data ExData =
   ED { subject :: Subject, number :: ExerciseNumber, name :: HopefullyExName }
   deriving ( Eq )
    
-data Date = Date { day :: Day, month :: Month, year :: Year }
+data Date = Date { day :: Day, month :: Month }
   deriving ( Eq )
 
 type Day = Int
 type Month = Int
-type Year = Int
 
 type Path = String
 type Subject = String
