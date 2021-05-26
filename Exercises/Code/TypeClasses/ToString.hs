@@ -6,9 +6,9 @@ import Renaming
   ( (.>), forEach, glue )
 import Types
   ( Strings, ExData( ED ), ToDoExercise( exData, date )
-  , DoneExercise, MissedExercise
+  , DoneExercise, OtherExercise
   , Date( Date, day, month ), HopefullyExName
-  , Exercise( ToDo, Done, Missed ), Exercises
+  , Exercise( ToDo, Done, Other ), Exercises
   , HopefullySome( IndeedItIs, Nothing )
   , ToDoExercise( ToDoExercise )
   , Day, Month )
@@ -45,7 +45,7 @@ instance ToStringForFile Exercise where
     ToDo toDoEx -> commaSeperate $ "t" : toStrings ( exData toDoEx ) ++ 
                      [ toString $ date toDoEx ]
     Done doneData -> commaSeperate $ "d" : toStrings doneData
-    Missed missedData -> commaSeperate $ "m" : toStrings missedData
+    Other missedData -> commaSeperate $ "m" : toStrings missedData
 
 commaSeperate = intercalate ","
 
@@ -64,7 +64,7 @@ instance ToStringForUser Exercise where
     ToDo ( ToDoExercise exData date ) -> glue20CharsEach $ toStrings exData ++
       [ toString date ]
     Done doneData -> glue20CharsEach $ toStrings doneData
-    Missed missedData -> glue20CharsEach $ toStrings missedData
+    Other missedData -> glue20CharsEach $ toStrings missedData
 
 instance ToStringForUser ExData where
   toStringForUser = toStrings .> glue20CharsEach .> beautify

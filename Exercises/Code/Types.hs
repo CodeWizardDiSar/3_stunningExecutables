@@ -13,17 +13,17 @@ data ExercisesAndChosen =
 data Exercise =
   ToDo { toDo :: ToDoExercise } |
   Done { done :: DoneExercise } |
-  Missed { missed :: MissedExercise }
+  Other { missed :: OtherExercise }
   deriving ( Eq )
 
-data ExerciseType = ToDoEx | DoneEx | MissedEx
+data ExerciseType = ToDoEx | DoneEx | OtherEx
   deriving ( Eq )
 
 data ToDoExercise = ToDoExercise { exData :: ExData , date :: Date }
   deriving ( Eq )
 
 type DoneExercise = ExData
-type MissedExercise = ExData
+type OtherExercise = ExData
 
 data ExData =
   ED { subject :: Subject, number :: ExerciseNumber, name :: HopefullyExName }

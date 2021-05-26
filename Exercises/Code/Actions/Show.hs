@@ -3,7 +3,7 @@ module Show where
 import Prelude 
   ( String, IO, (>>), (>>=), (++) )
 import Types
-  ( HeaderRow, ExerciseType( ToDoEx, DoneEx, MissedEx ), Exercises )
+  ( HeaderRow, ExerciseType( ToDoEx, DoneEx, OtherEx ), Exercises )
 import ToString
   ( print )
 import Renaming
@@ -23,7 +23,7 @@ import IsEarlierThan
 
 showActions :: [ IO () ]
 showActions =
-  forEach ( printBeautified headerRow >> ) [ show ToDoEx, show DoneEx, show MissedEx, showAll ]
+  forEach ( printBeautified headerRow >> ) [ show ToDoEx, show DoneEx, show OtherEx, showAll ]
 
 printBeautified :: String -> IO ()
 printBeautified = beautify .> print
@@ -35,7 +35,7 @@ show :: ExerciseType -> IO ()
 show = \case
   ToDoEx -> printBeautified "ToDo" >> toDoExercises >>= sortChronologically .> print
   DoneEx -> printBeautified "Done" >> doneExercises >>= print
-  MissedEx -> printBeautified "Missed" >> missedExercises >>= print
+  OtherEx -> printBeautified "Other" >> missedExercises >>= print
 
 sortChronologically :: Exercises -> Exercises
 sortChronologically = \case
@@ -44,4 +44,4 @@ sortChronologically = \case
             sortChronologically earlier ++ [ ex ] ++ sortChronologically later
 
 showAll :: IO ()
-showAll = doSequentially [ show ToDoEx, show DoneEx, show MissedEx ]
+showAll = doSequentially [ show ToDoEx, show DoneEx, show OtherEx ]

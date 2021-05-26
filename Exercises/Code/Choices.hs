@@ -47,7 +47,7 @@ putNumbers :: Strings -> Choices
 putNumbers = zipWith ( \int string -> toString int ++ ": " ++ string ) ( [ 1.. ] :: [ Int ] )
 
 exTypes :: Strings
-exTypes = [ "To Do", "Done", "Missed" ]
+exTypes = [ "To Do", "Done", "Other" ]
 
 exitOption :: Choice
 exitOption = "enter: Exit"

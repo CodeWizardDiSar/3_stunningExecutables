@@ -3,7 +3,7 @@ module Delete where
 import Prelude   
   ( IO, (>>=) )
 import Types
-  ( Exercises, ExerciseType( ToDoEx, DoneEx, MissedEx ) )
+  ( Exercises, ExerciseType( ToDoEx, DoneEx, OtherEx ) )
 import Helpers
   ( removeChosen )
 import Helpers2
@@ -18,7 +18,7 @@ import Control.Monad
   ( (>=>) )
 
 deleteActions :: [ IO () ]
-deleteActions = [ delete ToDoEx, delete DoneEx, delete MissedEx ]
+deleteActions = [ delete ToDoEx, delete DoneEx, delete OtherEx ]
 
 delete :: ExerciseType -> IO ()
 delete = exsAfter deleteChosen >=> exsToFileAndUpdate

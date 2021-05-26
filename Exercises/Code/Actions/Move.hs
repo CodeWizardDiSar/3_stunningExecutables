@@ -3,10 +3,10 @@ module Move where
 import Prelude
   ( getLine, IO, (>>=), (>>) )
 import Types
-  ( Strings, Exercises, Exercise( ToDo, Done, Missed ), ExData
+  ( Strings, Exercises, Exercise( ToDo, Done, Other ), ExData
   , ToDoExercise( ToDoExercise )
   , ExercisesAndChosen( ExercisesAndChosen, chosen ) 
-  , ExerciseType( ToDoEx, DoneEx, MissedEx  ) )
+  , ExerciseType( ToDoEx, DoneEx, OtherEx  ) )
 import Helpers 
   ( removeChosen )
 import Helpers2
@@ -29,7 +29,7 @@ import ToString
   ( print )
 
 moveActions :: [ IO () ]
-moveActions = [ moveFrom ToDoEx, moveFrom DoneEx, moveFrom MissedEx ]
+moveActions = [ moveFrom ToDoEx, moveFrom DoneEx, moveFrom OtherEx ]
 
 moveFrom :: ExerciseType -> IO ()
 moveFrom = exsAfter ( getChosen >=> moveChosen ) >=> exsToFileAndUpdate
@@ -40,21 +40,21 @@ moveChosen exercisesAndChosen =
 
 moveOld :: Exercise -> IO Exercise
 moveOld = \ex ->
-  printStrings [ "Move To?", "\t1: To Do", "\t2: Done", "\t3: Missed" ] >>
+  printStrings [ "Move To?", "\t1: To Do", "\t2: Done", "\t3: Other" ] >>
   getLine >>= \case
     "1" -> moveToToDo ex
     "2" -> moveTo Done ex
-    "3" -> moveTo Missed ex
+    "3" -> moveTo Other ex
     _ -> print "what?" >> moveOld ex
 
 moveToToDo :: Exercise -> IO Exercise
 moveToToDo = \case 
   ToDo a -> ToDo a & wrap
   Done a -> getFromUser >>= ( ToDoExercise a .> ToDo .> wrap )
-  Missed a -> getFromUser >>= ( ToDoExercise a .> ToDo .> wrap )
+  Other a -> getFromUser >>= ( ToDoExercise a .> ToDo .> wrap )
  
 moveTo :: ( ExData -> Exercise ) -> Exercise -> IO Exercise
 moveTo = \x -> \case
   ToDo ( ToDoExercise a b ) -> x a & wrap
   Done a -> x a & wrap
-  Missed a -> x a & wrap
+  Other a -> x a & wrap

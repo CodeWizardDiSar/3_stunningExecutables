@@ -3,8 +3,8 @@ module GetFromUser where
 import Prelude 
   ( IO, (>>=), sequence, Monad )
 import Types
-  ( ToDoExercise( ToDoExercise ), DoneExercise , MissedExercise, ExData, Strings, Date
-  , ExerciseType ( ToDoEx, DoneEx, MissedEx ), Exercise( ToDo, Done, Missed ) )
+  ( ToDoExercise( ToDoExercise ), DoneExercise , OtherExercise, ExData, Strings, Date
+  , ExerciseType ( ToDoEx, DoneEx, OtherEx ), Exercise( ToDo, Done, Other ) )
 import Renaming
   ( (.>), wrap, forEach )
 import Control.Monad.Zip
@@ -26,7 +26,7 @@ getExerciseFromUser :: ExerciseType -> IO Exercise
 getExerciseFromUser = \case
   ToDoEx -> getFromUser >>= ToDo .> wrap
   DoneEx -> getFromUser >>= Done .> wrap
-  MissedEx -> getFromUser >>= Missed .> wrap
+  OtherEx -> getFromUser >>= Other .> wrap
 
 class GetFromUser a where getFromUser :: IO a
 

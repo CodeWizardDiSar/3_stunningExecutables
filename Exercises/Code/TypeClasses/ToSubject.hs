@@ -5,8 +5,8 @@ import Prelude
 import Renaming
   ( (.>) )
 import Types
-  ( Subject, ExData( subject ), Exercise( ToDo, Done, Missed ), ToDoExercise( exData )
-  , DoneExercise, MissedExercise, Exercises, Subjects )
+  ( Subject, ExData( subject ), Exercise( ToDo, Done, Other ), ToDoExercise( exData )
+  , DoneExercise, OtherExercise, Exercises, Subjects )
 
 class ToSubject a where toSubject :: a -> Subject
 
@@ -14,7 +14,7 @@ instance ToSubject Exercise where
   toSubject = \case 
     ToDo exercise -> toSubject exercise
     Done exercise -> toSubject exercise
-    Missed exercise -> toSubject exercise
+    Other exercise -> toSubject exercise
 
 instance ToSubject ToDoExercise where
   toSubject = exData .> toSubject

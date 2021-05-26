@@ -3,7 +3,7 @@ module ExercisesFromFile where
 import Prelude
   ( filter, IO, (>>=), (==) )
 import Types 
-  ( Exercise( ToDo, Done, Missed ), ExerciseType( ToDoEx, DoneEx, MissedEx ), Exercises )
+  ( Exercise( ToDo, Done, Other ), ExerciseType( ToDoEx, DoneEx, OtherEx ), Exercises )
 import FromString
   ( fromFileString )
 import Renaming
@@ -20,7 +20,7 @@ getExercisesFromFile =
 
 getExercises :: [ IO Exercises ]
 getExercises = [ toDoExercises, doneExercises, missedExercises ]
-[ toDoExercises, doneExercises, missedExercises ] = [ get ToDoEx, get DoneEx, get MissedEx ]
+[ toDoExercises, doneExercises, missedExercises ] = [ get ToDoEx, get DoneEx, get OtherEx ]
 
 get :: ExerciseType -> IO Exercises
 get exType =
@@ -30,4 +30,4 @@ toExerciseType :: Exercise -> ExerciseType
 toExerciseType = \case 
   ToDo _ -> ToDoEx
   Done _ -> DoneEx
-  Missed _ -> MissedEx
+  Other _ -> OtherEx

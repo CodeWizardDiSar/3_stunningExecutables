@@ -6,9 +6,9 @@ import Renaming
   ( (.>), printErrorMessage, forEach, glue )
 import Types
   ( Strings, Subject, ExData( ED, subject, number, name ), ToDoExercise( ToDoExercise )
-  , DoneExercise, MissedExercise
+  , DoneExercise, OtherExercise
   , Date( Date, day, month )
-  , HopefullyExName , Exercise( ToDo, Done, Missed ), Exercises
+  , HopefullyExName , Exercise( ToDo, Done, Other ), Exercises
   , HopefullySome( IndeedItIs, Nothing ), Day, Month )
 import Data.Function
   ( (&) )
@@ -55,7 +55,7 @@ instance FromFileStrings Exercise where
   fromFileStrings = \case
     [ "t", s, exNum, exName, date ] -> ToDo $ fromFileStrings [ "t", s, exNum, exName, date ]
     [ "d", s, exNum, exName ] -> Done $ fromFileStrings [ s, exNum, exName ]
-    [ "m", s, exNum, exName ] -> Missed $ fromFileStrings [ s, exNum, exName ]
+    [ "m", s, exNum, exName ] -> Other $ fromFileStrings [ s, exNum, exName ]
     _ -> printErrorMessage "Line To Exercise" 
 
 instance FromFileStrings ToDoExercise where
