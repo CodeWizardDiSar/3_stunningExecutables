@@ -20,4 +20,3 @@ exsAfter doToChosen = \case
 
 combine :: [ IO Exercises ] -> IO Exercises
 combine = sequence >=> ( glue .> wrap )
-

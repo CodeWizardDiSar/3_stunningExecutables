@@ -9,7 +9,7 @@ import Types
   , DoneExercise, OtherExercise
   , Date( Date, day, month )
   , HopefullyExName , Exercise( ToDo, Done, Other ), Exercises
-  , HopefullySome( IndeedItIs, Nothing ), Day, Month )
+  , HopefullySome( IndeedItIsAn, Nothing ), Day, Month )
 import Data.Function
   ( (&) )
 import Data.List.Split
@@ -30,7 +30,7 @@ instance FromFileString Exercise where
 instance FromFileString HopefullyExName where
   fromFileString = \case
     "_" -> Nothing
-    exName -> IndeedItIs exName
+    exName -> IndeedItIsAn exName
 
 instance FromFileString Date where
   fromFileString = splitOn "/" .> fromStrings
@@ -40,7 +40,7 @@ class FromUserString a where fromUserString :: String -> a
 instance FromUserString HopefullyExName where
   fromUserString = \case
     "" -> Nothing
-    name -> IndeedItIs name
+    name -> IndeedItIsAn name
 
 class FromStrings a where fromStrings :: Strings -> a
 

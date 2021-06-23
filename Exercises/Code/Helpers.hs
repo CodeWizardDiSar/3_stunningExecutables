@@ -16,4 +16,3 @@ glue20CharsEach = forEach ( ( ++ repeat ' ' ) .> take 20 ) .> glue
 removeChosen :: ExercisesAndChosen -> Exercises
 removeChosen ( ExercisesAndChosen exercises chosen ) =
   filter ( not . ( == chosen ) ) exercises
-

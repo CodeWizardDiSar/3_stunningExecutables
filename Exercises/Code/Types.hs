@@ -3,7 +3,7 @@ module Types where
 import Prelude ( Eq, String, Int, Ord )
 
 -- Always a pleasure to have types (sorry python)
-data HopefullySome a = IndeedItIs a | Nothing
+data HopefullySome a = IndeedItIsAn a | Nothing
   deriving ( Eq )
 
 data ExercisesAndChosen =

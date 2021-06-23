@@ -9,7 +9,7 @@ import Types
   , DoneExercise, OtherExercise
   , Date( Date, day, month ), HopefullyExName
   , Exercise( ToDo, Done, Other ), Exercises
-  , HopefullySome( IndeedItIs, Nothing )
+  , HopefullySome( IndeedItIsAn, Nothing )
   , ToDoExercise( ToDoExercise )
   , Day, Month )
 import Data.Function
@@ -51,7 +51,7 @@ commaSeperate = intercalate ","
 
 instance ToStringForFile HopefullyExName where
   toStringForFile = \case
-    IndeedItIs e -> e 
+    IndeedItIsAn e -> e 
     Nothing -> "_"
 
 class ToStringForUser a where toStringForUser :: a -> String
@@ -71,7 +71,7 @@ instance ToStringForUser ExData where
 
 instance ToStringForUser HopefullyExName where
   toStringForUser = \case
-    IndeedItIs n -> n 
+    IndeedItIsAn n -> n 
     Nothing -> "No Name"
 
 instance ToStringForUser String where

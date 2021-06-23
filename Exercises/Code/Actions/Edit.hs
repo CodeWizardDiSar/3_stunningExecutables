@@ -3,7 +3,7 @@ module Edit where
 import Prelude
   ( getLine, (++), (>>=), IO, String, (>>) )
 import Types
-  ( Exercise( ToDo, Done, Other ), HopefullySome( IndeedItIs ), Exercises, Date, Strings
+  ( Exercise( ToDo, Done, Other ), HopefullySome( IndeedItIsAn ), Exercises, Date, Strings
   , ExData ( subject, number, name ), ToDoExercise( ToDoExercise ), Choice
   , ExerciseType ( ToDoEx, DoneEx, OtherEx ), Choices
   , ExercisesAndChosen ( ExercisesAndChosen, chosen ) )
@@ -76,7 +76,7 @@ changeNumber exerciseData =
 
 changeName :: ExData -> IO ExData
 changeName exerciseData =
-  getEName >>= \newName -> exerciseData { name = IndeedItIs newName } & wrap
+  getEName >>= \newName -> exerciseData { name = IndeedItIsAn newName } & wrap
 
 [ getChoice, getChoiceWithDate ] =
   forEach ( >> getLine ) [ printExDataChoices, printExDataAndDateChoices ] :: [ IO Choice ]
