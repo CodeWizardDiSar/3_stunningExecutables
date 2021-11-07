@@ -11,7 +11,6 @@ import Control.Monad
 import Renaming
   ( (.>), glue, wrap ) 
 
-
 exsAfter :: ( Exercises -> IO Exercises ) -> ExerciseType -> IO Exercises
 exsAfter doToChosen = \case
   ToDoEx -> combine [ toDoExercises >>= doToChosen, doneExercises, missedExercises ]
