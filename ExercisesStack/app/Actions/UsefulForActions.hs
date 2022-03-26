@@ -1,28 +1,17 @@
 module Actions.UsefulForActions where
 
 import Prelude
-  ( not, (.), filter, (>), length, Bool( True ), getLine, IO, elem
-  , (>>), (++), (>>=), String, foldl, otherwise )
+  ( (.), (>), length, Bool( True ), getLine, IO, (>>), (++), (>>=), String )
 import Types
-  ( Exercises, Subject, Subjects )
-import ToSubject
-  ( toSubjects )
-import ToString
-  ( toStringForFile, toString, print )
-import FromString
-  ( fromString )
+  ( Exercises )
+import TypeClasses.ToString
+  ( toStringForFile, print )
 import VeryUseful.Renaming
-  ( wrap, (.>), glue )
-import FileManagement
-  ( writeToNextDataKeeper )
+  ( wrap, (.>) )
 import Data.Function
   ( (&) )
-import Control.Monad
-  ( (>=>) )
-import IsEarlierThan
-  ( isEarlierThan )
-import FileManagement
-  ( updateVersion )
+import Files.FileManagement
+  ( updateVersion, writeToNextDataKeeper )
 
 exsToFileAndUpdate :: Exercises -> IO ()
 exsToFileAndUpdate exs = exs & toStringForFile & writeToNextDataKeeper >> updateVersion

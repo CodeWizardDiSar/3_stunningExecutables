@@ -8,7 +8,7 @@ import TypeClasses.FromString
   ( fromFileString )
 import VeryUseful.Renaming
   ( wrap, forEach, readFromFile, (.>), splitInLines )
-import FileManagement
+import Files.FileManagement
   ( getCurrentDataKeeper, getVersion )
 
 getExercisesFromFile :: IO Exercises

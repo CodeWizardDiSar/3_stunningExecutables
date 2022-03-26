@@ -6,11 +6,11 @@ import Data.Function
   ( (&) )
 import Types
   ( Strings )
-import Renaming
+import VeryUseful.Renaming
   ( (.>), wrap, forEachDo, repeatNTimes, printErrorMessage , glue )
-import FromString
+import TypeClasses.FromString
   ( fromString )
-import ToString
+import TypeClasses.ToString
   ( toString, print )
 
 doSequentially :: [ IO () ] -> IO ()

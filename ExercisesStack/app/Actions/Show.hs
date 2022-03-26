@@ -4,13 +4,13 @@ import Prelude
   ( String, IO, (>>), (>>=), (++) )
 import Types
   ( HeaderRow, ExerciseType( ToDoEx, DoneEx, OtherEx ), Exercises )
-import ToString
+import TypeClasses.ToString
   ( print )
-import Renaming
+import VeryUseful.Renaming
   ( forEach, (.>) )
-import UsefulFunctions
+import VeryUseful.UsefulFunctions
   ( doSequentially )
-import ExercisesFromFile
+import Files.ExercisesFromFile
   ( toDoExercises, doneExercises, missedExercises )
 import Data.Function
   ( (&) )
@@ -18,7 +18,7 @@ import Helpers
   ( glue20CharsEach, beautify )
 import Data.List
   ( partition )
-import IsEarlierThan
+import TypeClasses.IsEarlierThan
   ( isEarlierThan )
 
 showActions :: [ IO () ]

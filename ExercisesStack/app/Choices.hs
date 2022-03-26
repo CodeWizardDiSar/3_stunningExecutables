@@ -10,7 +10,7 @@ import VeryUseful.UsefulFunctions
   ( tabBefore, tabsBefore )
 import Data.Function
   ( (&) )
-import ToString
+import TypeClasses.ToString
   ( toString )
 
 -- WT = With Title

@@ -25,7 +25,8 @@ instance ToSubject ExData where
 class ToSubjects a where toSubjects :: a -> Subjects
 
 instance ToSubjects Exercises where
-  toSubjects = foldl ( \subjects exercise -> addToSubjects ( toSubject exercise ) subjects ) []
+  toSubjects =
+    foldl (\subjects exercise -> addToSubjects ( toSubject exercise ) subjects ) []
 
 addToSubjects :: Subject -> Subjects -> Subjects
 addToSubjects subject subjects

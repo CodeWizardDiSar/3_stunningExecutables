@@ -3,32 +3,32 @@ module Main where
 import Prelude
   ( String, IO, Maybe( Just, Nothing ), Int, (-), (!!), (>>), (>>=), Bool ( True ) , (>), (<=)
   , (&&), length )
-import Renaming
+import VeryUseful.Renaming
   ( forEach )
-import UsefulFunctions
+import VeryUseful.UsefulFunctions
   ( doSequentially, printEmptyLine, showConfusion )
-import FileManagement
+import Files.FileManagement
   ( getCurrentDataKeeper, downdateVersion )
 import Choices
   ( initialChoicesWT, addChoicesWT, showChoicesWT, editChoicesWT, deleteChoicesWT
   , moveChoicesWT )
-import Show
+import Actions.Show
   ( showActions )
-import Add
+import Actions.Add
   ( addActions )
-import Edit
+import Actions.Edit
   ( editActions )
-import Delete
+import Actions.Delete
   ( deleteActions )
-import Move
+import Actions.Move
   ( moveActions )
 import System.Directory
   ( removeFile )
 import Text.Read
   ( readMaybe )
-import UsefulForActions
+import Actions.UsefulForActions
   ( printAndGetAnswer )
-import ToString
+import TypeClasses.ToString
   ( print )
 
 main :: IO ()

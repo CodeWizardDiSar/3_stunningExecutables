@@ -4,19 +4,19 @@ import Prelude
   ( Bool, (!!), filter, (>>=), (==), (-), (>>), Int, IO, ($), getLine, (+) )
 import Types
   ( Exercise, Exercises, Subject, Subjects, ExercisesAndChosen( ExercisesAndChosen ) )
-import ToSubject
+import TypeClasses.ToSubject
   ( toSubject, toSubjects )
-import ToString
+import TypeClasses.ToString
   ( toStringForUser, print, toString )
 import Data.Function
   ( (&) )
-import Renaming 
+import VeryUseful.Renaming 
   ( forEach, wrap, (.>), glue )
 import Choices
   ( putNumbers )
-import UsefulFunctions
+import VeryUseful.UsefulFunctions
   ( doSequentially, tabBefore )
-import FromString
+import TypeClasses.FromString
   ( fromString )
 
 getChosen :: Exercises -> IO ExercisesAndChosen

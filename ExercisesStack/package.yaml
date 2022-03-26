@@ -22,6 +22,8 @@ description:         Please see the README on GitHub at <https://github.com/gith
 dependencies:
 - base >= 4.7 && < 5
 - directory
+- split
+- invertible
 
 library:
   source-dirs: src
@@ -35,6 +37,8 @@ executables:
     - -rtsopts
     - -with-rtsopts=-N
     - -XLambdaCase
+    - -XTypeSynonymInstances
+    - -XFlexibleInstances
     dependencies:
     - ExercisesStack
 

@@ -11,21 +11,21 @@ import Helpers
   ( removeChosen )
 import Helpers2
   ( exsAfter )
-import Renaming
+import VeryUseful.Renaming
   ( wrap, (.>) )
 import Data.Function
   ( (&) )
-import GetFromUser
+import TypeClasses.GetFromUser
   ( getFromUser )
-import UsefulFunctions   
+import VeryUseful.UsefulFunctions   
   ( printStrings )
-import UsefulForActions
+import Actions.UsefulForActions
   ( exsToFileAndUpdate )
-import ShowExercises
+import Actions.ShowExercises
   ( getChosen )
 import Control.Monad
   ( (>=>) )
-import ToString
+import TypeClasses.ToString
   ( print )
 
 moveActions :: [ IO () ]

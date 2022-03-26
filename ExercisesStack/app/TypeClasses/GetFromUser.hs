@@ -11,9 +11,9 @@ import Control.Monad.Zip
   ( mzipWith, mzip, MonadZip )
 import Control.Invertible.Monoidal
   ( pairADefault )
-import FromString
+import TypeClasses.FromString
   ( fromStrings, fromUserStrings )
-import UsefulForActions
+import Actions.UsefulForActions
   ( printAndGetAnswer )
 
 instance MonadZip IO where

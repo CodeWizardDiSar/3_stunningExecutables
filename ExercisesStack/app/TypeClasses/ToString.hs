@@ -2,7 +2,7 @@ module TypeClasses.ToString where
 
 import Prelude
   ( String, Int, IO, ($), (++), show, id, putStr )
-import Renaming
+import VeryUseful.Renaming
   ( (.>), forEach, glue )
 import Types
   ( Strings, ExData( ED ), ToDoExercise( exData, date )

@@ -8,11 +8,11 @@ import Helpers
   ( removeChosen )
 import Helpers2
   ( exsAfter )
-import Renaming
+import VeryUseful.Renaming
   ( wrap, (.>) )
-import UsefulForActions
+import Actions.UsefulForActions
   ( exsToFileAndUpdate )
-import ShowExercises
+import Actions.ShowExercises
   ( getChosen )
 import Control.Monad
   ( (>=>) )

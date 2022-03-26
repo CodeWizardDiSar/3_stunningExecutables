@@ -12,7 +12,7 @@ import Data.Function
   ( (&) )
 import Types
   ( Path )
-import ToString
+import TypeClasses.ToString
   ( print )
 
 dataDir :: Path

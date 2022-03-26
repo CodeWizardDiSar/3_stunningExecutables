@@ -6,9 +6,9 @@ import Types
   ( ExerciseType( ToDoEx, DoneEx, OtherEx ), Exercises )
 import Files.ExercisesFromFile
   ( getExercisesFromFile )
-import UsefulForActions
+import Actions.UsefulForActions
   ( exsToFileAndUpdate )
-import GetFromUser
+import TypeClasses.GetFromUser
   ( getExerciseFromUser, myMZipWith )
 import Control.Monad
   ( (>=>) )
