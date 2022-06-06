@@ -1,10 +1,10 @@
-module FileManagement where
+module Files.FileManagement where
 
 import Prelude
   ( Bool( True ), flip, (++), (>>=), (>>), String, IO, error )
-import Renaming
+import VeryUseful.Renaming
   ( fileExists, readFromFile, writeToFile, wrap, (.>) )
-import UsefulFunctions
+import VeryUseful.UsefulFunctions
   ( addOneToString, subOneFromString )
 import System.Directory
   ( renameFile )
@@ -12,11 +12,11 @@ import Data.Function
   ( (&) )
 import Types
   ( Path )
-import ToString
+import TypeClasses.ToString
   ( print )
 
 dataDir :: Path
-dataDir = "/home/gnostis/StunningExecutables/Exercises/Data"
+dataDir = "/home/gnostis/StunningExecutables/Exercises/app/Data"
 
 versionKeeper :: Path
 versionKeeper = dataDir ++ "/ver"   
