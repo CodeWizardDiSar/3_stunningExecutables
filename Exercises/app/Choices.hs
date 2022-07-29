@@ -14,12 +14,11 @@ import TypeClasses.ToString
   ( toString )
 
 -- WT = With Title
-allChoicesWT :: [ ChoicesWithTitle ]
 allChoicesWT =
-  [ initialChoicesWT, addChoicesWT, showChoicesWT, editChoicesWT, deleteChoicesWT
-  , moveChoicesWT ]
-[ initialChoicesWT, addChoicesWT, showChoicesWT, editChoicesWT, deleteChoicesWT
- ,moveChoicesWT] = zipWith mergeTitleAndChoices titles allChoices
+  [ initialChoicesWT, addChoicesWT, showChoicesWT, editChoicesWT, deleteChoicesWT,
+    moveChoicesWT ] :: [ ChoicesWithTitle ]
+[ initialChoicesWT, addChoicesWT, showChoicesWT, editChoicesWT, deleteChoicesWT,
+  moveChoicesWT] = zipWith mergeTitleAndChoices titles allChoices
 
 mergeTitleAndChoices :: Title -> Choices -> ChoicesWithTitle
 mergeTitleAndChoices title choices =

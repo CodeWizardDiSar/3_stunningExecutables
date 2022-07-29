@@ -62,7 +62,8 @@ doChosenFrom actions input =
         "" -> waveAndExit
         _ -> showConfusion >> initialMenu
 
-[ addActionsWIMAE, showActionsWIMAE, editActionsWIMAE, deleteActionsWIMAE, moveActionsWIMAE ] =
+[ addActionsWIMAE, showActionsWIMAE, editActionsWIMAE, deleteActionsWIMAE,
+  moveActionsWIMAE ] =
   forEach ( forEach ( >> initialMenu ) )
     [ addActions, showActions, editActions, deleteActions, moveActions ]
       :: [ [ IO () ] ]

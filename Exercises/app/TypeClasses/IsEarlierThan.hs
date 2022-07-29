@@ -16,4 +16,5 @@ instance IsEarlierThan Exercise where
           "Programmer messed up: trying to sort chronologically non-ToDo exercise"
 
 instance IsEarlierThan Date where 
-  ( Date day1 month1 ) `isEarlierThan` ( Date day2 month2 ) = month1 < month2 || ( month1 == month2 && day1 < day2 )
+  ( Date day1 month1 ) `isEarlierThan` ( Date day2 month2 ) =
+    month1 < month2 || ( month1 == month2 && day1 < day2 )
