@@ -39,6 +39,7 @@ executables:
     - -XLambdaCase
     - -XTypeSynonymInstances
     - -XFlexibleInstances
+    - -dcore-lint
     dependencies:
     - ExercisesStack
 
