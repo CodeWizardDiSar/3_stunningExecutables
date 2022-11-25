@@ -16,7 +16,7 @@ import TypeClasses.ToString
   ( print )
 
 dataDir :: Path
-dataDir = "/home/gnostis/StunningExecutables/Exercises/app/Data"
+dataDir = "Data"
 
 versionKeeper :: Path
 versionKeeper = dataDir ++ "/ver"   
