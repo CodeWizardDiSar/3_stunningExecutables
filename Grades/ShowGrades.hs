@@ -12,7 +12,6 @@ roes       = filter (\x -> element 1 from x == "r")
 elefthera  = filter (\x -> element 1 from x == "e") 
 passed     = filter (\x -> element 4 from x /= "0")
 
-passedKormos    = passed . kormos
 passedRoes      = passed . roes
 passedElefthera = passed . elefthera
 
@@ -55,6 +54,6 @@ moreInfo csv = concat [
   numGrades = \x -> element 4 from x `elem` map show [0..10]
   grades = map (\x -> read $ element 4 from x) $ filter numGrades $ passed subjects
   grade n = concat ["\n\t",show n,"άρια: ",show $ length $ filter (== n) grades]
-  l_p_k = length $ passedKormos subjects 
+  l_p_k = length $ passed . kormos subjects 
   l_p_r = length $ passedRoes subjects 
   l_p_e = length $ passedElefthera subjects 
