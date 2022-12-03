@@ -1,3 +1,5 @@
+{-# language LambdaCase #-}
+
 module Files.FileManagement where
 
 import Prelude

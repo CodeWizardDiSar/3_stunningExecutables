@@ -1,3 +1,5 @@
+{-# language LambdaCase #-}
+
 module VeryUseful.UsefulFunctions where
 
 import Prelude 

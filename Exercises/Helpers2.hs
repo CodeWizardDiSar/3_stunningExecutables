@@ -1,3 +1,5 @@
+{-# language LambdaCase #-}
+
 module Helpers2 where
 
 import Prelude 

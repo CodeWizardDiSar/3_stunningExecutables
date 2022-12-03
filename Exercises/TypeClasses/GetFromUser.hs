@@ -1,26 +1,20 @@
+{-# language LambdaCase #-}
+
 module TypeClasses.GetFromUser where
 
 import Prelude 
   ( IO, (>>=), sequence, Monad )
 import Types
-  ( ToDoExercise( ToDoExercise ), DoneExercise , OtherExercise, ExData, Strings, Date
-  , ExerciseType ( ToDoEx, DoneEx, OtherEx ), Exercise( ToDo, Done, Other ) )
+  ( ToDoExercise( ToDoExercise ), DoneExercise , OtherExercise, ExData, Strings
+  , Date, ExerciseType ( ToDoEx, DoneEx, OtherEx ), Exercise( ToDo, Done, Other ) )
 import VeryUseful.Renaming
   ( (.>), wrap, forEach )
 import Control.Monad.Zip
-  ( mzipWith, mzip, MonadZip )
-import Control.Invertible.Monoidal
-  ( pairADefault )
+  ( mzipWith )
 import TypeClasses.FromString
   ( fromStrings, fromUserStrings )
 import Actions.UsefulForActions
   ( printAndGetAnswer )
-
-instance MonadZip IO where
-  mzip = pairADefault
-
-myMZipWith :: MonadZip m => ( a -> b -> c ) ->  m a -> m b -> m c
-myMZipWith = mzipWith
 
 getExerciseFromUser :: ExerciseType -> IO Exercise
 getExerciseFromUser = \case
@@ -42,8 +36,8 @@ instance GetFromUser Strings where
 instance GetFromUser Date where 
   getFromUser = printAndGetAnswers dateQuestions >>= fromStrings .> wrap
 
-dateQuestions :: Strings
 dateQuestions = [ "Day? (number)", "Month? (number)" ]
+  :: Strings
 
-printAndGetAnswers :: Strings -> IO Strings 
 printAndGetAnswers = forEach printAndGetAnswer .> sequence
+  :: Strings -> IO Strings 

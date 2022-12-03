@@ -1,3 +1,5 @@
+{-# language LambdaCase #-}
+
 module Files.ExercisesFromFile where
 
 import Prelude

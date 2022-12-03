@@ -1,3 +1,5 @@
+{-# language LambdaCase #-}
+
 module TypeClasses.FromString where
 
 import Prelude
@@ -5,7 +7,8 @@ import Prelude
 import VeryUseful.Renaming
   ( (.>), printErrorMessage, forEach, glue )
 import Types
-  ( Strings, Subject, ExData( ED, subject, number, name ), ToDoExercise( ToDoExercise )
+  ( Strings, Subject, ExData( ED, subject, number, name )
+  , ToDoExercise( ToDoExercise )
   , DoneExercise, OtherExercise
   , Date( Date, day, month )
   , HopefullyExName , Exercise( ToDo, Done, Other ), Exercises

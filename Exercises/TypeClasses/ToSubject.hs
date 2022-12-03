@@ -1,3 +1,5 @@
+{-# language LambdaCase #-}
+
 module TypeClasses.ToSubject where
 
 import Prelude

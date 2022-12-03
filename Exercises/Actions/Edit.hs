@@ -1,10 +1,12 @@
+{-# language LambdaCase #-}
+
 module Actions.Edit where
 
 import Prelude
   ( getLine, (++), (>>=), IO, String, (>>) )
 import Types
-  ( Exercise( ToDo, Done, Other ), HopefullySome( IndeedItIsAn ), Exercises, Date, Strings
-  , ExData ( subject, number, name ), ToDoExercise( ToDoExercise ), Choice
+  ( Exercise( ToDo, Done, Other ), HopefullySome( IndeedItIsAn ), Exercises, Date
+  , Strings, ExData ( subject, number, name ), ToDoExercise( ToDoExercise ), Choice
   , ExerciseType ( ToDoEx, DoneEx, OtherEx ), Choices
   , ExercisesAndChosen ( ExercisesAndChosen, chosen ) )
 import Helpers
@@ -52,8 +54,10 @@ editToDoEx ( ToDoExercise exerciseData date ) =
     "1" -> changeSubject exerciseData >>= newToDoExercise date
     "2" -> changeNumber exerciseData >>= newToDoExercise date
     "3" -> changeName exerciseData >>= newToDoExercise date
-    "4" -> getFromUser >>= \newDate -> ToDo ( ToDoExercise exerciseData newDate ) & wrap
-    _   -> print "I'm sorry, what?\n" >> editToDoEx ( ToDoExercise exerciseData date )
+    "4" ->
+      getFromUser >>= \newDate -> ToDo ( ToDoExercise exerciseData newDate ) & wrap
+    _   ->
+      print "I'm sorry, what?\n" >> editToDoEx ( ToDoExercise exerciseData date )
 
 newToDoExercise :: Date -> ExData -> IO Exercise
 newToDoExercise date newExData = ToDo ( ToDoExercise newExData date ) & wrap
@@ -79,7 +83,8 @@ changeName exerciseData =
   getEName >>= \newName -> exerciseData { name = IndeedItIsAn newName } & wrap
 
 [ getChoice, getChoiceWithDate ] =
-  forEach ( >> getLine ) [ printExDataChoices, printExDataAndDateChoices ] :: [ IO Choice ]
+  forEach ( >> getLine ) [ printExDataChoices, printExDataAndDateChoices ]
+  :: [ IO Choice ]
 
 exDataChoices :: Choices
 exDataChoices = [ "Subject", "Number", "Name" ]
@@ -88,7 +93,9 @@ putNumbersTabsAndPrint :: Choices -> IO ()
 putNumbersTabsAndPrint = putNumbers .> forEach ('\t':) .> printStrings
 
 [ printExDataChoices, printExDataAndDateChoices ] = 
-  forEach putNumbersTabsAndPrint [ exDataChoices, exDataChoices ++ [ "Date" ] ] :: [ IO () ]
+  forEach putNumbersTabsAndPrint [ exDataChoices, exDataChoices ++ [ "Date" ] ]
+  :: [ IO () ]
 
 [ getSubject, getENum, getEName ] =
-  forEach printAndGetAnswer [ "New Subject?", "New Number?", "New Name?" ] :: [ IO String ]
+  forEach printAndGetAnswer [ "New Subject?", "New Number?", "New Name?" ]
+  :: [ IO String ]
